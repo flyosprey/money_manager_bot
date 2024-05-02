@@ -1,0 +1,9 @@
+import enum
+
+
+class UserStates(enum.Enum):
+    IDLE = 0
+    AWAITING_MONOTOKEN = 1
+    AWAITING_WALLETAPP_USERNAME = 2
+    AWAITING_WALLETAPP_PASSWORD = 3
+    WRITE_TRANSACTION = 4

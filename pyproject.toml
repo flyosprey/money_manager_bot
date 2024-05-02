@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "money-manager-bot"
+version = "0.1.0"
+description = ""
+authors = ["vladyslav <vlad.bashtannyk11@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.4"
+django-heroku = "^0.3.1"
+loguru = "^0.7.2"
+telebot = "^0.0.5"
+validators = "^0.28.1"
+psycopg2 = "^2.9.9"
+orjson = "^3.10.1"
+cryptography = "^42.0.5"
+pydantic-settings = "^2.2.1"
+pydantic = "^2.7.1"
+selenium = "^4.20.0"
+enums = "^0.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

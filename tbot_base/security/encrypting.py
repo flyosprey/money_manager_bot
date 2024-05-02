@@ -14,11 +14,11 @@ class EncryptManagerError(Exception):
     pass
 
 
-class EncodeException(EncryptManagerError):
+class EncodeExceptionError(EncryptManagerError):
     pass
 
 
-class DecodeException(EncryptManagerError):
+class DecodeExceptionError(EncryptManagerError):
     pass
 
 
@@ -56,9 +56,9 @@ class EncryptManager:
             json_data = {"iv": iv_64, "data": encrypted_64}
 
             return base64.b64encode(orjson.dumps(json_data)).decode("utf-8")
-        except (TypeError, UnicodeEncodeError, binascii.Error):
+        except (TypeError, UnicodeEncodeError, binascii.Error) as e:
             # logger.error("{} {}, error {}", err_message, data, error)
-            raise EncodeException("Failed encode key.")
+            raise EncodeExceptionError("Failed encode key.") from e
 
     def decrypt_key(self, data: str) -> str:
         return self._decrypt_key(data=data)
@@ -77,5 +77,5 @@ class EncryptManager:
 
             decrypt_data = decryptor.update(encrypted_data) + decryptor.finalize()
             return base64.b64decode(decrypt_data).decode("utf-8")
-        except (TypeError, UnicodeDecodeError, binascii.Error, json.JSONDecodeError):
-            raise DecodeException("Failed decode key. Seems credentials is not valid!")
+        except (TypeError, UnicodeDecodeError, binascii.Error, json.JSONDecodeError) as e:
+            raise DecodeExceptionError("Failed decode key. Seems credentials is not valid!") from e

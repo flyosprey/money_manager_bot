@@ -2,7 +2,7 @@ import time
 
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tbot.clients.walletapp.enums.categories import Category, SubCategoryFood
@@ -17,7 +17,7 @@ class MoneyManager(MoneyManagerBase):
     def login(self) -> None:
         self.login_request()
         email_element = WebDriverWait(self.driver, 5).until(
-            EC.presence_of_element_located((By.XPATH, ".//input[@name='email']"))
+            ec.presence_of_element_located((By.XPATH, ".//input[@name='email']"))
         )
         email_element.send_keys(self.username)
 
@@ -38,7 +38,7 @@ class MoneyManager(MoneyManagerBase):
 
     def press_create_record(self) -> None:
         record_button = WebDriverWait(self.driver, 5).until(
-            EC.presence_of_element_located(
+            ec.presence_of_element_located(
                 (By.XPATH, ".//button[@class='ui blue mini circular compact button']")
             )
         )
@@ -89,4 +89,3 @@ class MoneyManager(MoneyManagerBase):
 
 class InvalidCredentialsError(Exception):
     pass
-

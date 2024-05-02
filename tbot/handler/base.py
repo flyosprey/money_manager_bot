@@ -1,8 +1,8 @@
 from telebot.types import Message
 
 from tbot.dispatcher.base import (
-    handle_start,
     handle_help,
+    handle_start,
 )
 from tbot_base.bot import tbot as bot
 

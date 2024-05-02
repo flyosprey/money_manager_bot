@@ -36,5 +36,5 @@ def walletapp_username_handler(message: Message):
     func=lambda message: get_user_state(message.chat.id)
     == UserStates.AWAITING_WALLETAPP_PASSWORD
 )
-def walletapp_username_handler(message: Message):
+def walletapp_password_handler(message: Message):
     handle_walletapp_password(message=message)

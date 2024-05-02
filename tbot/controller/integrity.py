@@ -1,8 +1,8 @@
-from money_manager.config import settings
+from money_manager.config import config
 from tbot.clients.monobank.mono_client import MonobankClient
 from tbot.clients.walletapp.manager.manager import MoneyManager
-from tbot.user_states import set_user_state, get_user_state
 from tbot.enums.users import UserStates
+from tbot.user_states import get_user_state, set_user_state
 from tbot_base.models import UserIntegrations
 from tbot_base.security.encrypting import EncryptManager
 
@@ -24,7 +24,7 @@ def check_walletapp_credentials(username: str, password: str, base_url: str, use
 
 
 def save_all_credentials(user_id: int, mono_token: str, walletapp_username: str, walletapp_password: str):
-    encryptor = EncryptManager(secret_key=settings.secret_key)
+    encryptor = EncryptManager(secret_key=config.secret_key)
     UserIntegrations(
         user_id=user_id,
         monobank_token=encryptor.encrypt_key(data=mono_token),

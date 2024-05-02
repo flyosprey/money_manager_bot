@@ -19,7 +19,68 @@ pydantic-settings = "^2.2.1"
 pydantic = "^2.7.1"
 selenium = "^4.20.0"
 enums = "^0.0.2"
+ruff = "^0.4.2"
+pre-commit = "^3.7.0"
 
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+select = [
+    "F", # Pyflakes
+    "W", # pycodestyle
+    "E", # pycodestyle
+    "C", # mccabe
+    "I", # isort
+    "N", # pep8-naming
+    "UP", # pyupgrade
+    "ASYNC", # flake8-async
+    "S", # flake8-bandit
+    "BLE", # flake8-blind-except
+    "FBT", # flake8-boolean-trap
+    "B", # flake8-bugbear
+    "A", # flake8-builtins
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
+    "T20", # flake8-print
+    "DTZ", # flake8-datetimez
+    "T10", # flake8-debugger
+    "FA", # flake8-future-annotations
+    "G", # flake8-logging-format
+    "INP", # flake8-no-pep420
+    "PIE", # flake8-pie
+    "PT", # flake8-pytest-style
+    "Q", # flake8-quotes
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "RUF", # Ruff
+]
+ignore = [
+    "S603",
+    "A003",
+    "N813",
+    "S314",
+    "B027",
+    "BLE001",
+    "DTZ007",
+    "N805",
+    "B008",
+    "S104",
+    "T201",
+    "RUF001",
+    "FBT001",
+    "FBT002",
+    "RET502",
+    "RUF013",
+    "FBT003",
+    "COM812",
+    "F403",
+]
+unfixable = [
+]
+exclude = [
+    "./tests/**",
+]
 
 [build-system]
 requires = ["poetry-core"]

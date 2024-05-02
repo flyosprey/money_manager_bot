@@ -1,7 +1,7 @@
 from requests import RequestException
 from telebot.types import Message
 
-from money_manager.config import settings
+from money_manager.config import config
 from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
 from tbot.controller.integrity import (
     check_mono_token,
@@ -9,8 +9,7 @@ from tbot.controller.integrity import (
     save_all_credentials,
 )
 from tbot.enums.users import UserStates
-from tbot.user_states import set_user_state, CREDENTIALS
-
+from tbot.user_states import CREDENTIALS, set_user_state
 from tbot_base.bot import tbot as bot
 
 
@@ -40,7 +39,7 @@ def handle_mono_token(message: Message):
     try:
         check_mono_token(
             mono_token=mono_token,
-            base_url=settings.monobank.base_url,
+            base_url=config.monobank.base_url,
         )
     except RequestException:
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
@@ -79,7 +78,7 @@ def handle_walletapp_password(message: Message):
         check_walletapp_credentials(
             username=CREDENTIALS[message.from_user.id]["walletapp_username"],
             password=CREDENTIALS[message.from_user.id]["walletapp_password"],
-            base_url=settings.walletapp.base_url,
+            base_url=config.walletapp.base_url,
             user_id=message.from_user.id,
         )
     except InvalidCredentialsError:

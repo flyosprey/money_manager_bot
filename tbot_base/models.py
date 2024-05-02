@@ -1,20 +1,42 @@
-from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.db import models
 from loguru import logger
 from telebot.apihelper import ApiTelegramException
 
-AUTO_FILLED = 'default field'
+AUTO_FILLED = "default field"
 
 
 class BotConfig(models.Model):
-    """ Base Telegram bot model """
-    title = models.CharField(verbose_name='Bot name', max_length=100, blank=True, editable=False, default=AUTO_FILLED)
-    link = models.URLField(verbose_name='Bot link', max_length=150, blank=True, editable=False, default=AUTO_FILLED)
-    username = models.CharField(max_length=100, blank=True, editable=False, default=AUTO_FILLED)
-    tid = models.CharField(max_length=100, blank=True, editable=False, default=AUTO_FILLED)
-    token = models.CharField(verbose_name='Bot Token', max_length=150, help_text='Put bot token from BotFather')
-    server_url = models.CharField(verbose_name='Webhook Url', max_length=200, help_text='https://<domain>')
+    """Base Telegram bot model"""
+
+    title = models.CharField(
+        verbose_name="Bot name",
+        max_length=100,
+        blank=True,
+        editable=False,
+        default=AUTO_FILLED,
+    )
+    link = models.URLField(
+        verbose_name="Bot link",
+        max_length=150,
+        blank=True,
+        editable=False,
+        default=AUTO_FILLED,
+    )
+    username = models.CharField(
+        max_length=100, blank=True, editable=False, default=AUTO_FILLED
+    )
+    tid = models.CharField(
+        max_length=100, blank=True, editable=False, default=AUTO_FILLED
+    )
+    token = models.CharField(
+        verbose_name="Bot Token",
+        max_length=150,
+        help_text="Put bot token from BotFather",
+    )
+    server_url = models.CharField(
+        verbose_name="Webhook Url", max_length=200, help_text="https://<domain>"
+    )
     is_active = models.BooleanField(default=True)
 
     def update_bot_config(self):
@@ -40,10 +62,9 @@ class BotConfig(models.Model):
         if self.is_active:
             other_active_configs = BotConfig.objects.filter(is_active=True)
             for config in other_active_configs:
-                if config.pk != self.pk:
-                    if config.token != self.token:
-                        config.is_active = False
-                        config.save()
+                if config.pk != self.pk and config.token != self.token:
+                    config.is_active = False
+                    config.save()
 
     def clean(self):
         tbot = self.update_bot_config()
@@ -55,39 +76,71 @@ class BotConfig(models.Model):
             logger.debug(e)
             raise ValidationError(
                 'Wrong "Bot Token" or "Webhook Url"! '
-                'Write correct values and save configs once again, please.'
-            )
+                "Write correct values and save configs once again, please."
+            ) from e
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = 'Telegram Bot Settings'
-        verbose_name_plural = 'Telegram Bots Settings'
+        verbose_name = "Telegram Bot Settings"
+        verbose_name_plural = "Telegram Bots Settings"
 
 
 class BotUsers(models.Model):
-    user_id = models.CharField(verbose_name='User id', max_length=30, blank=False, primary_key=True, editable=False)
-    user_name = models.CharField(verbose_name='User name', max_length=50, blank=False, editable=False, default="")
-    first_name = models.CharField(verbose_name='First name', max_length=50, blank=False, editable=False, default="")
-    last_name = models.CharField(verbose_name='Last name', max_length=50, blank=False, editable=False, default="")
+    user_id = models.CharField(
+        verbose_name="User id",
+        max_length=30,
+        blank=False,
+        primary_key=True,
+        editable=False,
+    )
+    user_name = models.CharField(
+        verbose_name="User name", max_length=50, blank=False, editable=False, default=""
+    )
+    first_name = models.CharField(
+        verbose_name="First name",
+        max_length=50,
+        blank=False,
+        editable=False,
+        default="",
+    )
+    last_name = models.CharField(
+        verbose_name="Last name", max_length=50, blank=False, editable=False, default=""
+    )
     is_bot = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user_name
 
     class Meta:
-        verbose_name = 'Registered User'
-        verbose_name_plural = 'Registered Users'
+        verbose_name = "Registered User"
+        verbose_name_plural = "Registered Users"
 
 
 class UserPayments(models.Model):
-    user_id = models.CharField(verbose_name='User id', max_length=30, blank=False, editable=False)
-    user_name = models.CharField(verbose_name='User name', max_length=50, blank=False, editable=False, default="")
-    first_name = models.CharField(verbose_name='First name', max_length=50, blank=False, editable=False, default="")
-    last_name = models.CharField(verbose_name='Last name', max_length=50, blank=False, editable=False, default="")
-    amount = models.IntegerField(verbose_name='Amount of payment', editable=False, blank=False)
-    currency = models.CharField(verbose_name='Currency of payment', max_length=50, editable=False, blank=False)
+    user_id = models.CharField(
+        verbose_name="User id", max_length=30, blank=False, editable=False
+    )
+    user_name = models.CharField(
+        verbose_name="User name", max_length=50, blank=False, editable=False, default=""
+    )
+    first_name = models.CharField(
+        verbose_name="First name",
+        max_length=50,
+        blank=False,
+        editable=False,
+        default="",
+    )
+    last_name = models.CharField(
+        verbose_name="Last name", max_length=50, blank=False, editable=False, default=""
+    )
+    amount = models.IntegerField(
+        verbose_name="Amount of payment", editable=False, blank=False
+    )
+    currency = models.CharField(
+        verbose_name="Currency of payment", max_length=50, editable=False, blank=False
+    )
     is_vip = models.BooleanField(default=False)
 
     def __str__(self):
@@ -95,16 +148,24 @@ class UserPayments(models.Model):
         return f"{user_name} - {self.currency} {self.amount}"
 
     class Meta:
-        verbose_name = 'User Payments'
-        verbose_name_plural = 'Users Payments'
+        verbose_name = "User Payments"
+        verbose_name_plural = "Users Payments"
 
 
 class UserIntegrations(models.Model):
-    user_id = models.CharField(verbose_name='User id', max_length=30, blank=False, editable=False)
-    monobank_token = models.CharField(verbose_name='Monobank Token', max_length=100, blank=False, editable=True)
-    wallet_app_password = models.CharField(verbose_name='WalletApp Password', max_length=100, blank=False, editable=True)
-    wallet_app_login = models.CharField(verbose_name='WalletApp Login', max_length=100, blank=False, editable=True)
+    user_id = models.CharField(
+        verbose_name="User id", max_length=30, blank=False, editable=False
+    )
+    monobank_token = models.CharField(
+        verbose_name="Monobank Token", max_length=100, blank=False, editable=True
+    )
+    wallet_app_password = models.CharField(
+        verbose_name="WalletApp Password", max_length=100, blank=False, editable=True
+    )
+    wallet_app_login = models.CharField(
+        verbose_name="WalletApp Login", max_length=100, blank=False, editable=True
+    )
 
     class Meta:
-        verbose_name = 'User Integrations'
-        verbose_name_plural = 'Users Integrations'
+        verbose_name = "User Integrations"
+        verbose_name_plural = "Users Integrations"

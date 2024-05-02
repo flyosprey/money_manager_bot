@@ -15,9 +15,8 @@ class MoneyManagerBase(ABC):
 
     @staticmethod
     def __set_options() -> Options:
-        options = Options()
+        return Options()
         # options.add_argument('--headless')
-        return options
 
     def __enter__(self):
         self.driver = webdriver.Firefox(options=self.options)

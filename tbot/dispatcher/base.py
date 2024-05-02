@@ -3,10 +3,8 @@ from telebot.types import Message
 from tbot.controller.base import (
     register_user,
 )
-
-from tbot_base.bot import tbot as bot
-
 from tbot.keyboards import menu
+from tbot_base.bot import tbot as bot
 
 
 def handle_start(message: Message):

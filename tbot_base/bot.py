@@ -1,5 +1,7 @@
-from telebot import TeleBot, types
 from loguru import logger
+from telebot import TeleBot, types
+
+from money_manager.config import config
 
 
 class TBot(TeleBot):
@@ -15,9 +17,9 @@ class TBot(TeleBot):
         except Exception as e:
             logger.error(e)
 
-            self.token = 'foo'
+            self.token = config.bot_conf.default_token
 
-        super().__init__(self.token, parse_mode='HTML', threaded=False)
+        super().__init__(self.token, parse_mode="HTML", threaded=False)
 
     @staticmethod
     def update(json_data):

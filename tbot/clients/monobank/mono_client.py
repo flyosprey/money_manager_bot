@@ -1,7 +1,7 @@
 from typing import Any
 from urllib.parse import urljoin
 
-from requests import Session, RequestException
+from requests import RequestException, Session
 
 DEFAULT_TIMEOUT = 10
 
@@ -34,15 +34,15 @@ class MonobankClient:
             #     request={"method": method, "uri": uri, **kwargs},
             # )
         except RequestException as e:
-            raise MonoException(f"Unsuccessful request to Monobank: {e}")
+            raise MonoExceptionError(f"Unsuccessful request to Monobank: {e}") from e
         if response.status_code >= 400:
-            raise MonoException(
+            raise MonoExceptionError(
                 f"Unsuccessful request to Monobank: [status={response.status_code}] {response.text}"
             )
         try:
             return response.json()
         except RequestException as e:
-            raise MonoException(f"Unsuccessful request to Monobank: {e}")
+            raise MonoExceptionError(f"Unsuccessful request to Monobank: {e}") from e
 
     def get_currency_rate(self, token: str) -> dict[str, Any]:
         return self._request(
@@ -59,5 +59,5 @@ class MonobankClient:
         )
 
 
-class MonoException(Exception):
+class MonoExceptionError(Exception):
     pass

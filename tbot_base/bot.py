@@ -5,7 +5,7 @@ from money_manager.config import config
 
 
 class TBot(TeleBot):
-    """ Base Telegram bot config """
+    """Base Telegram bot config"""
 
     def __init__(self):
         try:

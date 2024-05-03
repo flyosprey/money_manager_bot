@@ -95,6 +95,13 @@ class BotUsers(models.Model):
         primary_key=True,
         editable=False,
     )
+    chat_id = models.CharField(
+        verbose_name="Chat id",
+        max_length=30,
+        blank=False,
+        null=False,
+        editable=False,
+    )
     user_name = models.CharField(
         verbose_name="User name", max_length=50, blank=False, editable=False, default=""
     )
@@ -119,8 +126,11 @@ class BotUsers(models.Model):
 
 
 class UserPayments(models.Model):
-    user_id = models.CharField(
-        verbose_name="User id", max_length=30, blank=False, editable=False
+    user = models.ForeignKey(
+        BotUsers,
+        on_delete=models.CASCADE,  # Ensures deletion of integrations if user is deleted
+        verbose_name="User",
+        related_name="payments",  # Allows accessing user.integrations for all related integrations
     )
     user_name = models.CharField(
         verbose_name="User name", max_length=50, blank=False, editable=False, default=""
@@ -153,18 +163,24 @@ class UserPayments(models.Model):
 
 
 class UserIntegrations(models.Model):
-    user_id = models.CharField(
-        verbose_name="User id", max_length=30, blank=False, editable=False
+    user = models.OneToOneField(
+        BotUsers,
+        on_delete=models.CASCADE,
+        verbose_name="User",
+        related_name="integration",
     )
     monobank_token = models.CharField(
-        verbose_name="Monobank Token", max_length=100, blank=False, editable=True
+        verbose_name="Monobank Token", max_length=256, blank=False, editable=True
     )
     wallet_app_password = models.CharField(
-        verbose_name="WalletApp Password", max_length=100, blank=False, editable=True
+        verbose_name="WalletApp Password", max_length=256, blank=False, editable=True
     )
     wallet_app_login = models.CharField(
-        verbose_name="WalletApp Login", max_length=100, blank=False, editable=True
+        verbose_name="WalletApp Login", max_length=256, blank=False, editable=True
     )
+
+    def __str__(self):
+        return f"Integration for {self.user.user_name}"
 
     class Meta:
         verbose_name = "User Integrations"

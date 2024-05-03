@@ -3,14 +3,21 @@ from telebot.types import Message
 
 from money_manager.config import config
 from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
-from tbot.controller.integrity import (
+from tbot.controllers.integrity import (
     check_mono_token,
     check_walletapp_credentials,
     save_all_credentials,
 )
-from tbot.enums.users import UserStates
-from tbot.user_states import CREDENTIALS, set_user_state
+from tbot.dto.users.type import UserStates
+from tbot.utils import CREDENTIALS, set_user_state
 from tbot_base.bot import tbot as bot
+
+IOS_WALLETAPP_URL = (
+    "https://apps.apple.com/us/app/wallet-daily-budget-profit/id1032467659"
+)
+ANDROID_WALLETAPP_URL = "https://play.google.com/store/apps/details?id=com.droid4you.application.wallet&referrer=utm_source%3Dhome_page"
+WEB_WALLETAPP_URL = "https://budgetbakers.com/"
+MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def delete_credential_message(message: Message):
@@ -29,7 +36,11 @@ def handle_integration(message: Message):
     #     bot.send_message(chat_id=message.chat.id, text="Integration is already exist.")
     #     return # TODO uncomment
 
-    bot.send_message(chat_id=message.chat.id, text="Введіть ваш токен Monobank:")
+    bot.send_message(
+        chat_id=message.chat.id,
+        text="Введіть ваш токен Monobank.\n"
+        f"Його можна знайти за посиланням відсканувавши QR {MONOBANK_URL}",
+    )
     set_user_state(message.from_user.id, state=UserStates.AWAITING_MONOTOKEN)
 
 
@@ -43,7 +54,7 @@ def handle_mono_token(message: Message):
         )
     except RequestException:
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
-        set_user_state(user_id=message.chat.id, state=UserStates.IDLE)
+        set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)
         return
 
     CREDENTIALS[message.from_user.id]["mono_token"] = mono_token
@@ -52,7 +63,7 @@ def handle_mono_token(message: Message):
         chat_id=message.chat.id, text="Введіть ваш юзернейм для WalletApp:"
     )
     set_user_state(
-        user_id=message.chat.id, state=UserStates.AWAITING_WALLETAPP_USERNAME
+        user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_USERNAME
     )
 
 
@@ -62,10 +73,15 @@ def handle_walletapp_username(message: Message):
     )
     delete_credential_message(message)
     bot.send_message(
-        chat_id=message.chat.id, text="Введіть ваш пароль для WalletApp:"
+        chat_id=message.chat.id,
+        text="Введіть ваш пароль для WalletApp.\n"
+        "Створити аккаунт можна за посиланнями:\n"
+        f"- iOS -> {IOS_WALLETAPP_URL}\n"
+        f"- Android -> {ANDROID_WALLETAPP_URL}\n"
+        f"- Веб-сайт -> {WEB_WALLETAPP_URL}",
     )
     set_user_state(
-        user_id=message.chat.id, state=UserStates.AWAITING_WALLETAPP_PASSWORD
+        user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_PASSWORD
     )
 
 
@@ -82,7 +98,9 @@ def handle_walletapp_password(message: Message):
             user_id=message.from_user.id,
         )
     except InvalidCredentialsError:
-        bot.send_message(chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!")
+        bot.send_message(
+            chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!"
+        )
         return
 
     save_all_credentials(
@@ -90,6 +108,7 @@ def handle_walletapp_password(message: Message):
         mono_token=CREDENTIALS[message.from_user.id]["mono_token"],
         walletapp_password=CREDENTIALS[message.from_user.id]["walletapp_password"],
         walletapp_username=CREDENTIALS[message.from_user.id]["walletapp_username"],
+        secret_key=config.secret_key,
     )
     del CREDENTIALS[message.from_user.id]
     bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!")

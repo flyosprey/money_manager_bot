@@ -1,13 +1,13 @@
 from telebot.types import Message
 
-from tbot.dispatcher.integration import (
+from tbot.dispatchers.integration import (
     handle_integration,
     handle_mono_token,
     handle_walletapp_password,
     handle_walletapp_username,
 )
-from tbot.enums.users import UserStates
-from tbot.user_states import get_user_state
+from tbot.dto.users.type import UserStates
+from tbot.utils import get_user_state
 from tbot_base.bot import tbot as bot
 
 

@@ -14,16 +14,30 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="botusers",
             name="first_name",
-            field=models.CharField(blank=True, editable=False, max_length=50, null=True, verbose_name="First name"),
+            field=models.CharField(
+                blank=True,
+                editable=False,
+                max_length=50,
+                null=True,
+                verbose_name="First name",
+            ),
         ),
         migrations.AlterField(
             model_name="botusers",
             name="last_name",
-            field=models.CharField(blank=True, editable=False, max_length=50, null=True, verbose_name="Last name"),
+            field=models.CharField(
+                blank=True,
+                editable=False,
+                max_length=50,
+                null=True,
+                verbose_name="Last name",
+            ),
         ),
         migrations.AlterField(
             model_name="botusers",
             name="user_id",
-            field=models.CharField(max_length=30, primary_key=True, serialize=False, verbose_name="User id"),
+            field=models.CharField(
+                max_length=30, primary_key=True, serialize=False, verbose_name="User id"
+            ),
         ),
     ]

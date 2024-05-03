@@ -41,7 +41,8 @@ class EncryptManager:
             padder = padding.PKCS7(128).padder()
 
             data_to_encrypt = (
-                padder.update(base64.b64encode(data.encode("utf-8"))) + padder.finalize()
+                padder.update(base64.b64encode(data.encode("utf-8")))
+                + padder.finalize()
             )
             key = binascii.unhexlify(self._secret_key)
             iv = os.urandom(16)
@@ -72,10 +73,19 @@ class EncryptManager:
 
             key = binascii.unhexlify(self._secret_key)
 
-            cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+            cipher = Cipher(
+                algorithms.AES(key), modes.CBC(iv), backend=default_backend()
+            )
             decryptor = cipher.decryptor()
 
             decrypt_data = decryptor.update(encrypted_data) + decryptor.finalize()
             return base64.b64decode(decrypt_data).decode("utf-8")
-        except (TypeError, UnicodeDecodeError, binascii.Error, json.JSONDecodeError) as e:
-            raise DecodeExceptionError("Failed decode key. Seems credentials is not valid!") from e
+        except (
+            TypeError,
+            UnicodeDecodeError,
+            binascii.Error,
+            json.JSONDecodeError,
+        ) as e:
+            raise DecodeExceptionError(
+                "Failed decode key. Seems credentials is not valid!"
+            ) from e

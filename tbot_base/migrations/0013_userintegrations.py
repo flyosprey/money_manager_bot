@@ -14,11 +14,33 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="UserIntegrations",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("user_id", models.CharField(editable=False, max_length=30, verbose_name="User id")),
-                ("monobank_token", models.CharField(max_length=256, verbose_name="Monobank Token")),
-                ("wallet_app_password", models.CharField(max_length=256, verbose_name="Monobank Token")),
-                ("wallet_app_login", models.CharField(max_length=100, verbose_name="Monobank Token")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user_id",
+                    models.CharField(
+                        editable=False, max_length=30, verbose_name="User id"
+                    ),
+                ),
+                (
+                    "monobank_token",
+                    models.CharField(max_length=256, verbose_name="Monobank Token"),
+                ),
+                (
+                    "wallet_app_password",
+                    models.CharField(max_length=256, verbose_name="Monobank Token"),
+                ),
+                (
+                    "wallet_app_login",
+                    models.CharField(max_length=100, verbose_name="Monobank Token"),
+                ),
             ],
             options={
                 "verbose_name": "User Integrations",

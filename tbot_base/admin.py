@@ -35,9 +35,14 @@ class BotPaymentsAdmin(admin.ModelAdmin):
 
 @admin.register(UserIntegrations)
 class UserIntegrationsAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "monobank_token", "wallet_app_password", "wallet_app_login")
+    list_display = (
+        "user_id",
+        "monobank_token",
+        "wallet_app_password",
+        "wallet_app_login",
+    )
     list_display_links = ("user_id",)
-    search_fields = ("user_id", )
+    search_fields = ("user_id",)
 
     def has_delete_permission(self, request, obj=None):
         return False

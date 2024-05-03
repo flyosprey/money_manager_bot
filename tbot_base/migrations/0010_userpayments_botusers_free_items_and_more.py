@@ -14,13 +14,62 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="UserPayments",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("user_id", models.CharField(editable=False, max_length=30, verbose_name="User id")),
-                ("user_name", models.CharField(default="", editable=False, max_length=50, verbose_name="User name")),
-                ("first_name", models.CharField(default="", editable=False, max_length=50, verbose_name="First name")),
-                ("last_name", models.CharField(default="", editable=False, max_length=50, verbose_name="Last name")),
-                ("amount", models.IntegerField(editable=False, verbose_name="Amount of payment")),
-                ("currency", models.CharField(editable=False, max_length=50, verbose_name="Currency of payment")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user_id",
+                    models.CharField(
+                        editable=False, max_length=30, verbose_name="User id"
+                    ),
+                ),
+                (
+                    "user_name",
+                    models.CharField(
+                        default="",
+                        editable=False,
+                        max_length=50,
+                        verbose_name="User name",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        default="",
+                        editable=False,
+                        max_length=50,
+                        verbose_name="First name",
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        default="",
+                        editable=False,
+                        max_length=50,
+                        verbose_name="Last name",
+                    ),
+                ),
+                (
+                    "amount",
+                    models.IntegerField(
+                        editable=False, verbose_name="Amount of payment"
+                    ),
+                ),
+                (
+                    "currency",
+                    models.CharField(
+                        editable=False,
+                        max_length=50,
+                        verbose_name="Currency of payment",
+                    ),
+                ),
                 ("is_vip", models.BooleanField(default=False)),
             ],
             options={
@@ -36,21 +85,31 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="botconfig",
             name="server_url",
-            field=models.CharField(help_text="https://<domain>", max_length=200, verbose_name="Webhook Url"),
+            field=models.CharField(
+                help_text="https://<domain>", max_length=200, verbose_name="Webhook Url"
+            ),
         ),
         migrations.AlterField(
             model_name="botconfig",
             name="token",
-            field=models.CharField(help_text="Put bot token from BotFather", max_length=150, verbose_name="Bot Token"),
+            field=models.CharField(
+                help_text="Put bot token from BotFather",
+                max_length=150,
+                verbose_name="Bot Token",
+            ),
         ),
         migrations.AlterField(
             model_name="botusers",
             name="first_name",
-            field=models.CharField(default="", editable=False, max_length=50, verbose_name="First name"),
+            field=models.CharField(
+                default="", editable=False, max_length=50, verbose_name="First name"
+            ),
         ),
         migrations.AlterField(
             model_name="botusers",
             name="last_name",
-            field=models.CharField(default="", editable=False, max_length=50, verbose_name="Last name"),
+            field=models.CharField(
+                default="", editable=False, max_length=50, verbose_name="Last name"
+            ),
         ),
     ]

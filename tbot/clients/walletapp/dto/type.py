@@ -3,6 +3,12 @@ import enum
 
 class Category(str, enum.Enum):
     FOOD = "Food & Beverages"
+    OTHERS = "Others"
+
+
+class SubCategoryOthers(str, enum.Enum):
+    OTHERS = "Others"
+    MISSING = "Missing"
 
 
 class SubCategoryFood(str, enum.Enum):
@@ -11,3 +17,8 @@ class SubCategoryFood(str, enum.Enum):
     GROCERIES = "Groceries"
     RESTAURANT = "Restaurant, fast-food"
 
+
+class RecordType(str, enum.Enum):
+    EXPENSE = "Expense"
+    INCOME = "Income"
+    TRANSFER = "Transfer"

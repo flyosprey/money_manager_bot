@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="botusers",
             name="user_id",
-            field=models.CharField(blank=True, default="None", max_length=30, verbose_name="User id"),
+            field=models.CharField(
+                blank=True, default="None", max_length=30, verbose_name="User id"
+            ),
         ),
     ]

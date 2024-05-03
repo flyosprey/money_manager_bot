@@ -7,7 +7,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies: ClassVar = [
-        ("tbot_base", "0002_users_alter_botconfig_options_alter_botconfig_link_and_more"),
+        (
+            "tbot_base",
+            "0002_users_alter_botconfig_options_alter_botconfig_link_and_more",
+        ),
     ]
 
     operations: ClassVar = [

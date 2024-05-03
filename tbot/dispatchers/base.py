@@ -1,6 +1,6 @@
 from telebot.types import Message
 
-from tbot.controller.base import (
+from tbot.controllers.base import (
     register_user,
 )
 from tbot.keyboards import menu
@@ -8,7 +8,7 @@ from tbot_base.bot import tbot as bot
 
 
 def handle_start(message: Message):
-    register_user(message)
+    register_user(message=message)
     bot.send_message(
         chat_id=message.chat.id,
         text="Hi there!👋\n To start run /integrate",

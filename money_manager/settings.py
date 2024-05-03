@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tbot_base",
+    "django_celery_beat",
+    "money_manager.celery",
 ]
 
 MIDDLEWARE = [
@@ -136,7 +138,15 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 BOT_HANDLERS = [
-    "tbot.handler",
+    "tbot.handlers.base",
+    "tbot.handlers.integration",
+    "tbot.handlers.transaction",
 ]
+
+CELERY_BROKER_URL = config.redis.url
+CELERY_RESULT_BACKEND = config.redis.url
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 django_heroku.settings(locals())

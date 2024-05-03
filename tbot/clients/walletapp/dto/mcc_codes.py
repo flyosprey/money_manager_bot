@@ -1,9 +1,10 @@
 from typing import TypeVar
 
-from tbot.clients.walletapp.enums.categories import Category, SubCategoryFood
+from tbot.clients.walletapp.dto.type import Category, SubCategoryFood, SubCategoryOthers
 
 MCCCodeCategory = {
     5411: (Category.FOOD, SubCategoryFood.GROCERIES),
+    4829: (Category.OTHERS, SubCategoryOthers.OTHERS),
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -724,7 +725,7 @@ MCCCodeCategory = {
     4815: "VISAPHONE",
     4816: "COMPUTER_NETWORK_SERVICES",
     4821: "TELEGRAPH_SERVICES",
-    4829: "MONEY_ORDERS",
+    # 4829: "MONEY_ORDERS",
     4899: "CABLE_AND_OTHER",
     4900: "ELECTRIC_GAS_SANITARY",
     5013: "MOTOR_VEHICLE_SUPPLIES",

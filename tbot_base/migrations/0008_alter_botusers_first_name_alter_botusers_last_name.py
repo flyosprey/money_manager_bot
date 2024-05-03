@@ -7,18 +7,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies: ClassVar = [
-        ("tbot_base", "0007_alter_botusers_first_name_alter_botusers_last_name_and_more"),
+        (
+            "tbot_base",
+            "0007_alter_botusers_first_name_alter_botusers_last_name_and_more",
+        ),
     ]
 
     operations: ClassVar = [
         migrations.AlterField(
             model_name="botusers",
             name="first_name",
-            field=models.CharField(blank=True, default="", editable=False, max_length=50, verbose_name="First name"),
+            field=models.CharField(
+                blank=True,
+                default="",
+                editable=False,
+                max_length=50,
+                verbose_name="First name",
+            ),
         ),
         migrations.AlterField(
             model_name="botusers",
             name="last_name",
-            field=models.CharField(blank=True, default="", editable=False, max_length=50, verbose_name="Last name"),
+            field=models.CharField(
+                blank=True,
+                default="",
+                editable=False,
+                max_length=50,
+                verbose_name="Last name",
+            ),
         ),
     ]

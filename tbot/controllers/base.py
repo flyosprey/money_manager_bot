@@ -9,8 +9,9 @@ def register_user(message):
         message.from_user.username,
         message.from_user.first_name,
     )
+    chat_id = message.chat.id
     last_name, is_bot = message.from_user.last_name, message.from_user.is_bot
     first_name = "" if first_name is None else first_name
     last_name = "" if last_name is None else last_name
     user_name = "" if user_name is None else user_name
-    BotUsers(user_id, user_name, first_name, last_name, is_bot).save()
+    BotUsers(user_id, chat_id, user_name, first_name, last_name, is_bot).save()

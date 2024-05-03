@@ -1,18 +1,19 @@
 import time
+from datetime import datetime
 
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tbot.clients.walletapp.enums.categories import Category, SubCategoryFood
-from tbot.clients.walletapp.enums.mcc_codes import MCCTransactionCategoryT
+from tbot.clients.walletapp.dto.mcc_codes import MCCTransactionCategoryT
+from tbot.clients.walletapp.dto.type import Category, RecordType, SubCategoryFood
 from tbot.clients.walletapp.manager.base import MoneyManagerBase
 
 
 class MoneyManager(MoneyManagerBase):
     def login_request(self):
-        self.driver.get(self.base_url + "login")
+        self.driver.get(self.base_url + "/login")
 
     def login(self) -> None:
         self.login_request()
@@ -30,11 +31,21 @@ class MoneyManager(MoneyManagerBase):
         login_button.click()
 
         try:
-            self.driver.find_element(By.XPATH, ".//div[@class='ui error message error-message']")
+            self.driver.find_element(
+                By.XPATH, ".//div[@class='ui error message error-message']"
+            )
         except NoSuchElementException:
             pass
         else:
             raise InvalidCredentialsError("Username or password are invalid")
+
+    def select_record_type(self, record_type: RecordType):
+        record_type_button = self.driver.find_element(
+            By.XPATH,
+            f".//a[contains(@class, 'item') and contains(text(), '{record_type.value}')]",
+        )
+        self.scroll_into_view(record_type_button)
+        record_type_button.click()
 
     def press_create_record(self) -> None:
         record_button = WebDriverWait(self.driver, 5).until(
@@ -75,7 +86,45 @@ class MoneyManager(MoneyManagerBase):
         add_record.click()
         time.sleep(1)
 
-    def select_category(self, category: Category | type[SubCategoryFood] | None) -> None:
+    def set_date(self, date: datetime):
+        date_input = self.driver.find_element(
+            By.XPATH,
+            "(.//div[@class='equal width fields']//div[@class='react-datepicker__input-container']//input)[1]",
+        )
+        self.scroll_into_view(date_input)
+        date_input.send_keys(date.strftime("%a %-d, %Y"))
+
+    def set_time(self, date: datetime):
+        time_input = self.driver.find_element(
+            By.XPATH,
+            "(.//div[@class='equal width fields']//div[@class='react-datepicker__input-container']//input)[2]",
+        )
+        self.scroll_into_view(time_input)
+        time_input.send_keys(date.strftime("%-I:%M %p"))
+
+    def set_contractor(self, contractor: str):
+        contractor_input = self.driver.find_element(
+            By.XPATH, ".//input[@name='cGF5ZWU=']"
+        )
+        self.scroll_into_view(contractor_input)
+        contractor_input.send_keys(contractor)
+
+    def set_payment(self, payment_type: str):
+        payment_input = self.driver.find_element(
+            By.XPATH, ".//div[@name='paymentType']"
+        )
+        self.scroll_into_view(payment_input)
+        payment_input.click()
+        payment_type = self.driver.find_element(
+            By.XPATH,
+            f".//div[@name='paymentType']//div[contains(@class, 'item') and contains(text(), '{payment_type}')]",
+        )
+        self.scroll_into_view(payment_type)
+        payment_type.click()
+
+    def select_category(
+        self, category: Category | type[SubCategoryFood] | None
+    ) -> None:
         if category is None:
             return
 

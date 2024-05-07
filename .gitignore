@@ -92,4 +92,5 @@ requirements.txt
 Procfile
 venv
 .idea
-celerybeat-schedule.db
+*.db
+*.rdb

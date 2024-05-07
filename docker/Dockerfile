@@ -1,7 +1,3 @@
-###################################################################################################
-# Build package
-###################################################################################################
-
 FROM python:3.11-slim-buster
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -12,11 +8,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
 
-RUN apt update && \
-    apt install -y \
-        curl libpq-dev gcc && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python - && \
+RUN apt-get update && \
+    apt-get install -y curl libpq-dev gcc firefox-esr && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python - && \
     ln -s /opt/poetry/bin/poetry /usr/local/bin && \
     poetry config virtualenvs.in-project true && \
     poetry config installer.max-workers 10
@@ -25,6 +21,14 @@ ENV VIRTUAL_ENV=/opt/money_manager_bot/.venv \
     PATH="/opt/money_manager_bot/.venv/bin:$PATH"
 
 WORKDIR /opt/money_manager_bot/
+
 COPY . /opt/money_manager_bot/
+
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
+
+RUN curl -sSLo /tmp/geckodriver.tar.gz "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz" && \
+    tar -xzf /tmp/geckodriver.tar.gz -C /usr/local/bin && \
+    rm /tmp/geckodriver.tar.gz
+
+CMD ["/opt/money_manager_bot/start.sh"]

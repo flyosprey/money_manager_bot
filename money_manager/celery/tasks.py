@@ -17,7 +17,7 @@ from tbot_base.security.encrypting import EncryptManager
 
 @shared_task
 def check_monobank_users_transactions():
-    for user in BotUsers.objects.select_related("integration").all():
+    for user in BotUsers.objects.select_related("integration").filter(integration__isnull=False):
         check_monobank_user_transactions.delay(
             user.integration.monobank_token, user.chat_id
         )

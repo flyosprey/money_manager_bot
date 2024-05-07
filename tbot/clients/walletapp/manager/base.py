@@ -3,6 +3,8 @@ from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
 
 from tbot.clients.walletapp.dto.mcc_codes import MCCTransactionCategoryT
 from tbot.clients.walletapp.dto.type import RecordType
@@ -12,16 +14,22 @@ class MoneyManagerBase(ABC):
     def __init__(self, username: str, password: str, base_url: str):
         self.base_url = base_url
         self.driver = None
-        self.options = self.__set_options()
         self.username, self.password = username, password
 
     @staticmethod
     def __set_options() -> Options:
-        return Options()
-        # options.add_argument('--headless')
+        options = Options()
+        options.add_argument("--headless")
+        return options
+
+    @staticmethod
+    def __set_service() -> Service:
+        return Service(executable_path=GeckoDriverManager().install())
 
     def __enter__(self):
-        self.driver = webdriver.Firefox(options=self.options)
+        self.driver = webdriver.Firefox(
+            options=self.__set_options(), service=self.__set_service()
+        )
         self.login()
         return self
 

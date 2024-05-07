@@ -36,6 +36,7 @@ class Config(BaseSettings):
     class Config:
         env_prefix = "APP_"
         env_nested_delimiter = "__"
+        extra = "ignore"
 
 
 config = Config(_env_file=".env")

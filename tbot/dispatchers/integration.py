@@ -1,4 +1,5 @@
 from requests import RequestException
+from selenium.common import WebDriverException
 from telebot.types import Message
 
 from money_manager.config import config
@@ -102,6 +103,11 @@ def handle_walletapp_password(message: Message):
     except InvalidCredentialsError:
         bot.send_message(
             chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!"
+        )
+        return
+    except WebDriverException:
+        bot.send_message(
+            chat_id=message.chat.id, text="Виникла помилка перевірки облікових даних! Інтеграцію не додано."
         )
         return
 

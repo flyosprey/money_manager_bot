@@ -1,4 +1,4 @@
-version: "3.11"
+version: "3.8"
 
 
 services:
@@ -7,13 +7,13 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     environment:
-      POSTGRES_DB: db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB-db}
+      POSTGRES_USER: ${POSTGRES_USER-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
     expose:
       - 5432
     ports:
-      - ${PUBLIC_POSTGRESQL_PORT-54322}:5432
+      - ${POSTGRES_PORT-54322}:5432
 
   web:
     expose:
@@ -21,41 +21,26 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
     environment:
-      APP_POSTGRES__URL: postgres://user:password@db:5432/money_manager?sslmode=disable
+      APP_POSTGRES__URL: ${APP_POSTGRES__URL}
+      APP_SECRET_KEY: ${APP_SECRET_KEY}
+      APP_MONOBANK__BASE_URL: ${APP_MONOBANK__BASE_URL}
+      APP_MONOBANK__TRANSACTION_PERIOD: ${APP_MONOBANK__TRANSACTION_PERIOD}
+      APP_WALLETAPP__BASE_URL: ${APP_WALLETAPP__BASE_URL}
+      APP_BOT_CONF__DEFAULT_TOKEN: ${APP_BOT_CONF__DEFAULT_TOKEN}
+      APP_REDIS__URL: ${APP_REDIS__URL}
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
 
-  worker:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    command: celery -A money_manager.celery.app worker -l info
-    volumes:
-      - .:/code
-    depends_on:
-      - web
-
-  beat:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    command: celery -A money_manager.celery.app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - .:/code
-    depends_on:
-      - web
-
   redis:
     image: redis:6.0.7-alpine
     volumes:
       - ./redis:/data
     ports:
-      - ${PUBLIC_REDIS_PORT-6379}:6379
+      - ${REDIS_PORT-6379}:6379
 
 volumes:
   postgres-data:

@@ -131,6 +131,8 @@ class UserPayments(models.Model):
         on_delete=models.CASCADE,  # Ensures deletion of integrations if user is deleted
         verbose_name="User",
         related_name="payments",  # Allows accessing user.integrations for all related integrations
+        default=None,
+        null=True,
     )
     user_name = models.CharField(
         verbose_name="User name", max_length=50, blank=False, editable=False, default=""
@@ -168,6 +170,8 @@ class UserIntegrations(models.Model):
         on_delete=models.CASCADE,
         verbose_name="User",
         related_name="integration",
+        default=None,
+        null=True,
     )
     monobank_token = models.CharField(
         verbose_name="Monobank Token", max_length=256, blank=False, editable=True

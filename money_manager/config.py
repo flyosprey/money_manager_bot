@@ -21,12 +21,17 @@ class RedisConfig(BaseSettings):
     url: str = Field(..., description="Redis url")
 
 
+class PostgresConfig(BaseSettings):
+    url: str = Field(..., description="Redis url")
+
+
 class Config(BaseSettings):
     secret_key: SecretStr = Field(..., description="Secret Key")
     monobank: MonoConfig = Field(..., description="Monobank Config")
     walletapp: WalletAppConfig = Field(..., description="WalletApp Config")
     bot_conf: BotConfig = Field(..., description="Bot Config")
     redis: RedisConfig = Field(..., description="Redis Config")
+    postgres: PostgresConfig = Field(..., description="Postgres Config")
 
     class Config:
         env_prefix = "APP_"

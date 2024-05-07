@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+import dj_database_url
 import django_heroku
 
 from money_manager.config import config
@@ -87,14 +88,7 @@ WSGI_APPLICATION = "money_manager.wsgi.application"
 #     }
 # }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "money_manager",
-        "USER": "user",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "54321",
-    }
+    "default": dj_database_url.config(default=config.postgres.url),
 }
 
 

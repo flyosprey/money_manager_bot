@@ -11,7 +11,7 @@ def handle_start(message: Message):
     register_user(message=message)
     bot.send_message(
         chat_id=message.chat.id,
-        text="Hi there!👋\n To start run /integrate",
+        text="Привіт!👋\nЩоб розпочати натисніть /integrate",
         parse_mode="HTML",
         reply_markup=menu(bot),
     )
@@ -20,8 +20,9 @@ def handle_start(message: Message):
 def handle_help(message: Message):
     bot.send_message(
         chat_id=message.chat.id,
-        text="""Here you can see all available commands:
-         /start - To start bot.
-         /help - To view all available commands.
+        text="""Доступні команди:
+         /start - Розпочати бота.
+         /integrate - Розпочати інтеграцію.
+         /help - Подивитися всі доступні команди.
          """,
     )

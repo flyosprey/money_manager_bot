@@ -4,8 +4,6 @@ from tbot.dto.transactions.type import TransactionStatus
 
 ########################################### KEYBOARDS ##################################################################
 
-# ASK_LINK = "🔗 Cut Link Now 🔗"
-
 
 def menu(bot):
     keyboard = types.ReplyKeyboardMarkup(
@@ -14,6 +12,7 @@ def menu(bot):
     bot.set_my_commands(
         [
             types.BotCommand("/start", "start"),
+            types.BotCommand("/integrate", "integrate"),
             types.BotCommand("/help", "help"),
         ]
     )
@@ -21,8 +20,8 @@ def menu(bot):
 
 
 def transaction_menu(
-    accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
-    rejected_data: TransactionStatus = TransactionStatus.REJECTED,
+        accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
+        rejected_data: TransactionStatus = TransactionStatus.REJECTED,
 ):
     add_transaction = types.InlineKeyboardButton(
         "Записати", callback_data=accepted_data

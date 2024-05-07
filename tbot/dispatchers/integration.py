@@ -6,6 +6,7 @@ from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
 from tbot.controllers.integrity import (
     check_mono_token,
     check_walletapp_credentials,
+    is_integration_exist,
     save_all_credentials,
 )
 from tbot.dto.users.type import UserStates
@@ -32,9 +33,9 @@ def normalize_credential(credential: str):
 
 
 def handle_integration(message: Message):
-    # if is_integration_exist(user_id=message.from_user.id):
-    #     bot.send_message(chat_id=message.chat.id, text="Integration is already exist.")
-    #     return # TODO uncomment
+    if is_integration_exist(user_id=message.from_user.id):
+        bot.send_message(chat_id=message.chat.id, text="Integration is already exist.")
+        return
 
     bot.send_message(
         chat_id=message.chat.id,
@@ -60,7 +61,12 @@ def handle_mono_token(message: Message):
     CREDENTIALS[message.from_user.id]["mono_token"] = mono_token
 
     bot.send_message(
-        chat_id=message.chat.id, text="Введіть ваш юзернейм для WalletApp:"
+        chat_id=message.chat.id,
+        text="Введіть ваш юзернейм для WalletApp:\n"
+        "Створити аккаунт можна за посиланнями:\n"
+        f"- iOS -> {IOS_WALLETAPP_URL}\n"
+        f"- Android -> {ANDROID_WALLETAPP_URL}\n"
+        f"- Веб-сайт -> {WEB_WALLETAPP_URL}",
     )
     set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_USERNAME
@@ -75,10 +81,6 @@ def handle_walletapp_username(message: Message):
     bot.send_message(
         chat_id=message.chat.id,
         text="Введіть ваш пароль для WalletApp.\n"
-        "Створити аккаунт можна за посиланнями:\n"
-        f"- iOS -> {IOS_WALLETAPP_URL}\n"
-        f"- Android -> {ANDROID_WALLETAPP_URL}\n"
-        f"- Веб-сайт -> {WEB_WALLETAPP_URL}",
     )
     set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_PASSWORD

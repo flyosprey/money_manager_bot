@@ -1,27 +1,20 @@
 import time
-from collections import defaultdict
 from datetime import datetime
 
-from tbot.dto.users.type import UserStates
+import structlog
+from telebot.apihelper import ApiTelegramException
+from telebot.types import InlineKeyboardMarkup
+
+from tbot_base.bot import tbot as bot
+
+logger = structlog.get_logger()
+
 
 CURRENCY_NUMBERS = {
     980: {"code": "UAH", "symbol": "₴"},
     840: {"code": "USD", "symbol": "$"},
     978: {"code": "EUR", "symbol": "€"},
 }
-
-
-USERS_STATE = defaultdict(dict)
-TRANSACTION_DATA = defaultdict(dict)
-CREDENTIALS = defaultdict(dict)
-
-
-def set_user_state(user_id: int, state: UserStates):
-    USERS_STATE[user_id]["state"] = state
-
-
-def get_user_state(user_id: int) -> UserStates:
-    return USERS_STATE.get(user_id, {}).get("state", UserStates.IDLE)
 
 
 def get_unix_time(seconds: int = 0) -> int:
@@ -44,3 +37,18 @@ def convert_currency_number_to_code(currency_number: int) -> str:
 
 def convert_currency_number_to_symbol(currency_number: int) -> str:
     return CURRENCY_NUMBERS.get(currency_number, {}).get("symbol", "")
+
+
+def edit_message(
+    chat_id: int,
+    message_id: int,
+    text: str,
+    reply_markup: InlineKeyboardMarkup | None = None,
+):
+    try:
+        bot.edit_message_text(
+            chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
+        )
+    except ApiTelegramException as e:
+        if e.result.status_code == 400 and "message is not modified" in e.result.text:
+            logger.debug("Attempted to edit message with no changes.")

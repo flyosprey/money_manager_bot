@@ -3,10 +3,14 @@ from time import sleep
 from typing import Any
 from urllib.parse import urljoin
 
+import structlog
 from requests import RequestException, Session
 
 from tbot.dto.monobank.payload import ClientInfoPayload, Transaction
 from tbot.utils import get_unix_time
+
+logger = structlog.get_logger()
+
 
 DEFAULT_TIMEOUT = 20
 SLEEP_TIME = 62
@@ -47,12 +51,10 @@ class MonobankClient:
                     access_token=access_token,
                     **kwargs,
                 )
-            # logger.info(
-            #     "DeepLoyalty response status=%s, content=%s",
-            #     response.status_code,
-            #     response.text,
-            #     request={"method": method, "uri": uri, **kwargs},
-            # )
+            logger.info(
+                "Monobank response status=%s, content=%s.", response.status_code, response.text,
+                request={"method": method, "uri": uri, **kwargs},
+            )
         except RequestException as e:
             raise MonoExceptionError(f"Unsuccessful request to Monobank: {e}") from e
         if response.status_code >= 400:

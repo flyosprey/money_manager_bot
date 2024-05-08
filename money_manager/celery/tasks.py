@@ -1,8 +1,11 @@
 from celery import shared_task
+from structlog import get_logger
 
 from money_manager.config import config
 from tbot.clients.monobank.mono_client import MonobankClient
+from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.monobank.payload import Transaction
+from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
     convert_currency_number_to_symbol,
@@ -14,17 +17,27 @@ from tbot_base.bot import tbot as bot
 from tbot_base.models import BotUsers
 from tbot_base.security.encrypting import EncryptManager
 
+logger = get_logger()
+
 
 @shared_task
 def check_monobank_users_transactions():
-    for user in BotUsers.objects.select_related("integration").filter(integration__isnull=False):
+    logger.info("Start checking transactions")
+    for user in BotUsers.objects.select_related("integration").filter(
+        integration__isnull=False
+    ):
         check_monobank_user_transactions.delay(
             user.integration.monobank_token, user.chat_id
         )
 
 
 @shared_task
-def check_monobank_user_transactions(monobank_token: str, chat_id: str):
+def check_monobank_user_transactions(
+    monobank_token: str,
+    chat_id: str,
+    redis: RedisWrapper = RedisWrapper.create_redis_instance(),
+):
+    logger.info("Start checking transactions for an user")
     encryptor = EncryptManager(secret_key=config.secret_key)
     client = MonobankClient(
         base_url=config.monobank.base_url,
@@ -42,16 +55,28 @@ def check_monobank_user_transactions(monobank_token: str, chat_id: str):
             chat_id=chat_id, text=f"Транзакції за період {from_date} - {to_date}"
         )
         for transaction in transactions:
-            bot.send_message(
+            message = bot.send_message(
                 chat_id=chat_id,
                 text=f"Опис - {transaction.description}\n"
                 f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
                 f"{convert_money(transaction.amount)}\n"
                 f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
                 f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
-                f"Коментар - {transaction.comment or 'відсутній'}\b"
-                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}",
+                f"Коментар - {transaction.comment or 'відсутній'}\n"
+                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}\n"
+                f"MCC - {transaction.mcc}",
                 reply_markup=transaction_menu(),
+            )
+            redis.set_transaction_details(
+                chat_id=message.chat.id,
+                message_id=message.id,
+                transaction=SimpleTransaction(
+                    mcc=transaction.mcc,
+                    amount=transaction.amount,
+                    note=transaction.comment,
+                    time=transaction.time,
+                    contractor=transaction.description,
+                ),
             )
 
 

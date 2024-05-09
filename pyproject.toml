@@ -28,9 +28,22 @@ django-heroku = "^0.3.1"
 webdriver-manager = "^4.0.1"
 structlog = "^24.1.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests"
+]
+
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+
+
+[tool.ruff.lint]
 select = [
     "F", # Pyflakes
     "W", # pycodestyle

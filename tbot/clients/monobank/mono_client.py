@@ -14,7 +14,7 @@ logger = structlog.get_logger()
 
 DEFAULT_TIMEOUT = 20
 SLEEP_TIME = 62
-MAX_RETRIES = 3
+MAX_RETRIES = 8
 
 
 class MonobankClient:

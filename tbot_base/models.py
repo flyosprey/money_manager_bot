@@ -94,6 +94,7 @@ class BotUsers(models.Model):
         blank=False,
         primary_key=True,
         editable=False,
+        unique=True,
     )
     chat_id = models.CharField(
         verbose_name="Chat id",

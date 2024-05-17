@@ -3,9 +3,7 @@ from structlog import get_logger
 
 from money_manager.config import config
 from tbot.clients.monobank.mono_client import MonobankClient
-from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.monobank.payload import Transaction
-from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
     convert_currency_number_to_symbol,
@@ -27,7 +25,7 @@ def check_monobank_users_transactions():
         integration__isnull=False
     ):
         check_monobank_user_transactions.delay(
-            user.integration.monobank_token, user.chat_id
+            user.integration.monobank_token, user.chat_id, user.user_name
         )
 
 
@@ -35,9 +33,9 @@ def check_monobank_users_transactions():
 def check_monobank_user_transactions(
     monobank_token: str,
     chat_id: str,
-    redis: RedisWrapper = RedisWrapper.create_redis_instance(),
+    user_name: str,
 ):
-    logger.info("Start checking transactions for an user")
+    logger.info("Start checking transactions for an user %s | chat_id %s", user_name, chat_id)
     encryptor = EncryptManager(secret_key=config.secret_key)
     client = MonobankClient(
         base_url=config.monobank.base_url,
@@ -55,7 +53,7 @@ def check_monobank_user_transactions(
             chat_id=chat_id, text=f"Транзакції за період {from_date} - {to_date}"
         )
         for transaction in transactions:
-            message = bot.send_message(
+            bot.send_message(
                 chat_id=chat_id,
                 text=f"Опис - {transaction.description}\n"
                 f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
@@ -66,17 +64,6 @@ def check_monobank_user_transactions(
                 f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}\n"
                 f"MCC - {transaction.mcc}",
                 reply_markup=transaction_menu(),
-            )
-            redis.set_transaction_details(
-                chat_id=message.chat.id,
-                message_id=message.id,
-                transaction=SimpleTransaction(
-                    mcc=transaction.mcc,
-                    amount=transaction.amount,
-                    note=transaction.comment,
-                    time=transaction.time,
-                    contractor=transaction.description,
-                ),
             )
 
 

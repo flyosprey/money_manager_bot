@@ -1,3 +1,4 @@
+import re
 import time
 from datetime import datetime
 
@@ -17,6 +18,13 @@ CURRENCY_NUMBERS = {
 }
 
 
+def get_field_value_from_text(text: str, pattern: str, group_index: int = 0) -> str | None:
+    value = re.search(pattern, text)
+    if value:
+        return value[group_index].strip()
+    return None
+
+
 def get_unix_time(seconds: int = 0) -> int:
     return int(time.time()) - seconds
 
@@ -29,6 +37,11 @@ def convert_money(money_in_cents: int) -> float:
 
 def convert_timestamp_to_datetime(timestamp: int) -> datetime:
     return datetime.fromtimestamp(timestamp)
+
+
+def convert_datetime_to_timestamp(time_: str | datetime, format_: str = "%Y-%m-%d %H:%M:%S") -> int:
+    converted = datetime.strptime(time_, format_).timestamp() if isinstance(time_, str) else time_.timestamp()
+    return int(converted)
 
 
 def convert_currency_number_to_code(currency_number: int) -> str:

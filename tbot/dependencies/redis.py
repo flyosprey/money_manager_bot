@@ -1,7 +1,4 @@
-import json
-
 from redis.client import Redis
-from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.users.type import CredentialType, UserStates
 
 TRANSACTION_TTL = 432000  # 5 days
@@ -26,49 +23,21 @@ class RedisWrapper:
         )
 
     def get_user_state(self, user_id: int) -> UserStates:
-        return UserStates(
-            int(
-                self.redis.get(
-                    name=USER_STATE_TEMPLATE.format(user_id=user_id)
-                ).decode()
-            )
-        )
+        state = self.redis.get(
+            name=USER_STATE_TEMPLATE.format(user_id=user_id)
+        ).decode()
 
-    def set_transaction_details(
-        self,
-        chat_id: int,
-        message_id: int,
-        transaction: SimpleTransaction,
-        ex: int = TRANSACTION_TTL,
-    ):
-        self.redis.set(
-            name=TRANSACTION_DETAILS_TEMPLATE.format(
-                chat_id=chat_id, message_id=message_id
-            ),
-            value=transaction.model_dump_json(),
-            ex=ex,
-        )
+        if not state:
+            return UserStates.IDLE
 
-    def get_transaction_details(
-        self, chat_id: int, message_id: int
-    ) -> SimpleTransaction:
-        return SimpleTransaction.model_validate(
-            json.loads(
-                self.redis.get(
-                    name=TRANSACTION_DETAILS_TEMPLATE.format(
-                        chat_id=chat_id, message_id=message_id
-                    )
-                )
-            )
-        )
-
-    def delete_transaction_details(self, chat_id: int, message_id: int):
-        self.redis.delete(
-            TRANSACTION_DETAILS_TEMPLATE.format(chat_id=chat_id, message_id=message_id)
-        )
+        return UserStates(int(state))
 
     def set_credential(
-        self, credential_type: CredentialType, value: str, user_id: int, ex: int = CREDENTIALS_TTL
+        self,
+        credential_type: CredentialType,
+        value: str,
+        user_id: int,
+        ex: int = CREDENTIALS_TTL,
     ):
         self.redis.set(
             name=self.get_credential_template(credential_type=credential_type).format(
@@ -87,7 +56,9 @@ class RedisWrapper:
 
     def delete_credential(self, credential_type: CredentialType, user_id: int):
         self.redis.delete(
-            self.get_credential_template(credential_type=credential_type).format(user_id=user_id)
+            self.get_credential_template(credential_type=credential_type).format(
+                user_id=user_id
+            )
         )
 
     @staticmethod

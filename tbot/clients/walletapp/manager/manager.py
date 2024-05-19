@@ -6,8 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tbot.clients.walletapp.dto.mcc_codes import MCCTransactionCategoryT
-from tbot.clients.walletapp.dto.type import Category, RecordType, SubCategoryFood
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryT
+from tbot.dto.walletapp.type import Category, RecordType, SubCategoryFood
 from tbot.clients.walletapp.manager.base import MoneyManagerBase
 
 

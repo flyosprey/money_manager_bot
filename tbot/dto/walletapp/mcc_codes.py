@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from tbot.clients.walletapp.dto.type import (
+from tbot.dto.walletapp.type import (
     Category,
     SubCategoryCommunicationPC,
     SubCategoryFinancialExpenses,

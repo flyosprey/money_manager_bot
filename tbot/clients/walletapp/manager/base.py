@@ -6,8 +6,8 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 
-from tbot.clients.walletapp.dto.mcc_codes import MCCTransactionCategoryT
-from tbot.clients.walletapp.dto.type import RecordType
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryT
+from tbot.dto.walletapp.type import RecordType
 
 
 class MoneyManagerBase(ABC):

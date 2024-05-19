@@ -1,6 +1,6 @@
 from pydantic import SecretStr
 
-from tbot.clients.walletapp.dto.mcc_codes import MCCCodeCategory
+from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.clients.walletapp.manager.manager import MoneyManager
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.utils import (
@@ -29,7 +29,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
     )
     return SimpleTransaction(
         mcc=int(mcc),
-        amount=float(amount) * 100,
+        amount=int(float(amount) * 100),
         note=comment if comment != "відсутній" else None,
         time=convert_datetime_to_timestamp(time_=time),
         contractor=description,

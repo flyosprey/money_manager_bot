@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tbot_base",
-    "django_celery_beat",
-    "money_manager.celery",
 ]
 
 MIDDLEWARE = [

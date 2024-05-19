@@ -1,14 +1,12 @@
 import structlog
 from requests import RequestException
-from selenium.common import WebDriverException
 from telebot.apihelper import ApiTelegramException
 from telebot.types import Message
 
 from money_manager.config import config
-from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
 from tbot.controllers.integrity import (
+    absolute_endpoint_path,
     check_mono_token,
-    check_walletapp_credentials,
     is_integration_exist,
     save_all_credentials,
 )
@@ -59,13 +57,15 @@ def handle_integration(message: Message, redis: RedisWrapper):
     redis.set_user_state(message.from_user.id, state=UserStates.AWAITING_MONOTOKEN)
 
 
-def handle_mono_token(message: Message, redis: RedisWrapper):
+def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     mono_token = normalize_credential(credential=message.text)
     delete_message(message)
+    webhook_url = absolute_endpoint_path(dsn=dsn, view_name="handle_mono_webhook", args=[message.chat.id])
     try:
         check_mono_token(
             mono_token=mono_token,
             base_url=config.monobank.base_url,
+            webhook_url=webhook_url,
         )
     except RequestException:
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
@@ -117,27 +117,27 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         user_id=message.from_user.id,
     )
     encryptor = EncryptManager(secret_key=config.secret_key)
-    try:
-        check_walletapp_credentials(
-            username=encryptor.decrypt_key(walletapp_username),
-            password=walletapp_password,
-            base_url=config.walletapp.base_url,
-            user_id=message.from_user.id,
-            redis=redis,
-        )
-    except InvalidCredentialsError as e:
-        logger.error(e)
-        bot.send_message(
-            chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!🚫"
-        )
-        return
-    except WebDriverException as e:
-        logger.error(e.msg)
-        bot.send_message(
-            chat_id=message.chat.id,
-            text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
-        )
-        return
+    # try:
+    #     check_walletapp_credentials(
+    #         username=encryptor.decrypt_key(walletapp_username),
+    #         password=walletapp_password,
+    #         base_url=config.walletapp.base_url,
+    #         user_id=message.from_user.id,
+    #         redis=redis,
+    #     )
+    # except InvalidCredentialsError as e:
+    #     logger.error(e)
+    #     bot.send_message(
+    #         chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!🚫"
+    #     )
+    #     return
+    # except WebDriverException as e:
+    #     logger.error(e.msg)
+    #     bot.send_message(
+    #         chat_id=message.chat.id,
+    #         text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
+    #     )
+    #     return
 
     save_all_credentials(
         user_id=message.from_user.id,

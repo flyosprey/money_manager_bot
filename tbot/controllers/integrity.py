@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 from tbot.clients.monobank.mono_client import MonobankClient
 from tbot.clients.walletapp.manager.manager import MoneyManager
 from tbot.dependencies.redis import RedisWrapper
@@ -5,13 +7,17 @@ from tbot.dto.users.type import UserStates
 from tbot_base.models import UserIntegrations
 
 
+def absolute_endpoint_path(dsn: str, view_name: str, args: list) -> str:
+    return f"{dsn}{reverse(view_name, args=args)}"
+
+
 def is_integration_exist(user_id: int) -> bool:
     return UserIntegrations.objects.filter(user_id=user_id).exists()
 
 
-def check_mono_token(mono_token: str, base_url: str):
+def check_mono_token(mono_token: str, base_url: str, webhook_url: str):
     client = MonobankClient(base_url=base_url)
-    client.get_client_info(token=mono_token)
+    client.set_webhook(token=mono_token, webhook_url=webhook_url)
 
 
 def check_walletapp_credentials(

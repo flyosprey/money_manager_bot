@@ -26,6 +26,7 @@ class PostgresConfig(BaseSettings):
 
 
 class Config(BaseSettings):
+    dsn: str = Field(..., description="DSN of the application")
     secret_key: SecretStr = Field(..., description="Secret Key")
     monobank: MonoConfig = Field(..., description="Monobank Config")
     walletapp: WalletAppConfig = Field(..., description="WalletApp Config")

@@ -22,7 +22,7 @@ def integrate_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=c
     == UserStates.AWAITING_MONOTOKEN
 )
 def mono_token_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)):
-    handle_mono_token(message=message, redis=redis)
+    handle_mono_token(message=message, redis=redis, dsn=config.dsn)
 
 
 @bot.message_handler(

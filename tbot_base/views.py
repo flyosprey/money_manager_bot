@@ -9,7 +9,11 @@ from django.views.generic import View
 
 from tbot.dto.monobank.payload import Transaction
 from tbot.keyboards import transaction_menu
-from tbot.utils import convert_currency_number_to_symbol, convert_money, convert_timestamp_to_datetime
+from tbot.utils import (
+    convert_currency_number_to_symbol,
+    convert_money,
+    convert_timestamp_to_datetime,
+)
 
 from .bot import tbot
 
@@ -38,7 +42,9 @@ class MonobankWebhookView(View):
         if request.META["CONTENT_TYPE"] == "application/json":
             try:
                 payload = json.loads(request.body)
-                transaction = Transaction(**payload.get("data", {}).get("statementItem", {}))
+                transaction = Transaction(
+                    **payload.get("data", {}).get("statementItem", {})
+                )
             except json.JSONDecodeError:
                 return JsonResponse({"error": "Invalid JSON"}, status=400)
             except ValidationError as e:
@@ -47,13 +53,13 @@ class MonobankWebhookView(View):
             tbot.send_message(
                 chat_id=chat_id,
                 text=f"Опис - {transaction.description}\n"
-                     f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
-                     f"{convert_money(transaction.amount)}\n"
-                     f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
-                     f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
-                     f"Коментар - {transaction.comment or 'відсутній'}\n"
-                     f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}\n"
-                     f"MCC - {transaction.mcc}",
+                f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
+                f"{convert_money(transaction.amount)}\n"
+                f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
+                f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
+                f"Коментар - {transaction.comment or 'відсутній'}\n"
+                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}\n"
+                f"MCC - {transaction.mcc}",
                 reply_markup=transaction_menu(),
             )
 

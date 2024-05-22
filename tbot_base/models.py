@@ -175,13 +175,25 @@ class UserIntegrations(models.Model):
         null=True,
     )
     monobank_token = models.CharField(
-        verbose_name="Monobank Token", max_length=256, blank=False, editable=True
+        verbose_name="Monobank Token",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
     )
     wallet_app_password = models.CharField(
-        verbose_name="WalletApp Password", max_length=256, blank=False, editable=True
+        verbose_name="WalletApp Password",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
     )
     wallet_app_login = models.CharField(
-        verbose_name="WalletApp Login", max_length=256, blank=False, editable=True
+        verbose_name="WalletApp Login",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
     )
 
     def __str__(self):

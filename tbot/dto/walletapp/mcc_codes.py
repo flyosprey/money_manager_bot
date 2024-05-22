@@ -18,7 +18,10 @@ MCCCodeCategory = {
     7523: (Category.VEHICLE, SubCategoryVehicle.PARKING),
     4829: (Category.OTHERS, SubCategoryOthers.OTHERS),
     5734: (Category.COMMUNICATION_PC, SubCategoryCommunicationPC.SOFTWARE_APPS_GAMES),
-    5993: (Category.LIFE_AND_ENTERTAINMENT, SubCategoryLifeAndEntertainment.ALCOHOL_AND_TOBACCO),
+    5993: (
+        Category.LIFE_AND_ENTERTAINMENT,
+        SubCategoryLifeAndEntertainment.ALCOHOL_AND_TOBACCO,
+    ),
     8999: (Category.FINANCIAL_EXPENSES, SubCategoryFinancialExpenses.CHARGES_FEES),
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",

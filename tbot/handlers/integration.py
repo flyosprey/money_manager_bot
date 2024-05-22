@@ -3,8 +3,10 @@ from telebot.types import Message
 from money_manager.config import config
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dispatchers.integration import (
+    handle_ask_reset,
     handle_integration,
     handle_mono_token,
+    handle_reset,
     handle_walletapp_password,
     handle_walletapp_username,
 )
@@ -13,29 +15,62 @@ from tbot_base.bot import tbot as bot
 
 
 @bot.message_handler(commands=["integrate"])
-def integrate_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)):
+def integrate_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
     handle_integration(message=message, redis=redis)
 
 
 @bot.message_handler(
-    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(message.from_user.id)
+    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
+        message.from_user.id
+    )
     == UserStates.AWAITING_MONOTOKEN
 )
-def mono_token_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)):
+def mono_token_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
     handle_mono_token(message=message, redis=redis, dsn=config.dsn)
 
 
 @bot.message_handler(
-    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(message.from_user.id)
+    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
+        message.from_user.id
+    )
     == UserStates.AWAITING_WALLETAPP_USERNAME
 )
-def walletapp_username_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)):
+def walletapp_username_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
     handle_walletapp_username(message=message, redis=redis)
 
 
 @bot.message_handler(
-    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(message.from_user.id)
+    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
+        message.from_user.id
+    )
     == UserStates.AWAITING_WALLETAPP_PASSWORD
 )
-def walletapp_password_handler(message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)):
+def walletapp_password_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
     handle_walletapp_password(message=message, redis=redis)
+
+
+@bot.message_handler(commands=["reset_token", "reset_password"])
+def ask_reset_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
+    handle_ask_reset(message=message, redis=redis)
+
+
+@bot.message_handler(
+    func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
+        message.from_user.id
+    )
+    in {UserStates.RESET_WALLETAPP_PASSWORD, UserStates.RESET_MONOTOKEN}
+)
+def reset_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
+    handle_reset(message=message, redis=redis, dsn=config.dsn)

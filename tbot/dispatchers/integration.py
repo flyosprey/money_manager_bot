@@ -1,18 +1,18 @@
 import structlog
-from requests import RequestException
-from telebot.apihelper import ApiTelegramException
+from selenium.common.exceptions import WebDriverException
 from telebot.types import Message
 
 from money_manager.config import config
-from tbot.controllers.integrity import (
-    absolute_endpoint_path,
-    check_mono_token,
-    is_integration_exist,
-    save_all_credentials,
+from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
+from tbot.controllers.integration import (
+    check_monobank,
+    check_walletapp_credentials,
 )
 from tbot.dependencies.redis import RedisWrapper
-from tbot.dto.users.type import CredentialType, UserStates
+from tbot.dto.users.type import UserStates
+from tbot.utils import delete_message, normalize_credential
 from tbot_base.bot import tbot as bot
+from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 logger = structlog.get_logger()
@@ -26,27 +26,11 @@ WEB_WALLETAPP_URL = "https://budgetbakers.com/"
 MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
-def delete_message(message: Message):
-    try:
-        bot.delete_message(
-            chat_id=message.chat.id,
-            message_id=message.message_id,
-        )
-    except ApiTelegramException as e:
-        if (
-            e.result.status_code == 400
-            and "message to delete not found" in e.result.text
-        ):
-            logger.debug("Attempted to delete not founded message.")
-
-
-def normalize_credential(credential: str):
-    return credential.strip()
-
-
 def handle_integration(message: Message, redis: RedisWrapper):
-    if is_integration_exist(user_id=message.from_user.id):
-        bot.send_message(chat_id=message.chat.id, text="Integration is already exist.")
+    if UserIntegrationRepository.select(user_id=message.from_user.id):  # TODO test it
+        bot.send_message(
+            chat_id=message.chat.id, text="Інтеграцію вже було активовано."
+        )
         return
 
     bot.send_message(
@@ -60,23 +44,22 @@ def handle_integration(message: Message, redis: RedisWrapper):
 def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     mono_token = normalize_credential(credential=message.text)
     delete_message(message)
-    webhook_url = absolute_endpoint_path(dsn=dsn, view_name="handle_mono_webhook", args=[message.chat.id])
-    try:
-        check_mono_token(
-            mono_token=mono_token,
-            base_url=config.monobank.base_url,
-            webhook_url=webhook_url,
-        )
-    except RequestException:
+    if not check_monobank(
+        dsn=dsn,
+        mono_token=mono_token,
+        message=message,
+        base_url=config.monobank.base_url,
+    ):
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
         redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)
         return
 
-    redis.set_credential(
-        credential_type=CredentialType.MONO_TOKEN,
-        value=EncryptManager(secret_key=config.secret_key).encrypt_key(mono_token),
+    UserIntegrationRepository.upsert(
         user_id=message.from_user.id,
-    )
+        monobank_token=EncryptManager(secret_key=config.secret_key).encrypt_key(
+            mono_token
+        ),
+    ).save()
 
     bot.send_message(
         chat_id=message.chat.id,
@@ -92,14 +75,12 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
 
 
 def handle_walletapp_username(message: Message, redis: RedisWrapper):
-    encryptor = EncryptManager(secret_key=config.secret_key)
-    redis.set_credential(
-        credential_type=CredentialType.WALLETAPP_USERNAME,
-        value=encryptor.encrypt_key(
+    UserIntegrationRepository.upsert(
+        user_id=message.from_user.id,
+        wallet_app_login=EncryptManager(secret_key=config.secret_key).encrypt_key(
             normalize_credential(credential=message.text)
         ),
-        user_id=message.from_user.id,
-    )
+    ).save()
     delete_message(message)
     bot.send_message(
         chat_id=message.chat.id, text="Введіть ваш пароль для WalletApp.\n"
@@ -111,40 +92,83 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
 
 def handle_walletapp_password(message: Message, redis: RedisWrapper):
     walletapp_password = normalize_credential(credential=message.text)
+    repository = UserIntegrationRepository()
     delete_message(message)
-    walletapp_username = redis.get_credential(
-        credential_type=CredentialType.WALLETAPP_USERNAME,
-        user_id=message.from_user.id,
-    )
+    integration = repository.select(user_id=message.from_user.id)
     encryptor = EncryptManager(secret_key=config.secret_key)
-    # try:
-    #     check_walletapp_credentials(
-    #         username=encryptor.decrypt_key(walletapp_username),
-    #         password=walletapp_password,
-    #         base_url=config.walletapp.base_url,
-    #         user_id=message.from_user.id,
-    #         redis=redis,
-    #     )
-    # except InvalidCredentialsError as e:
-    #     logger.error(e)
-    #     bot.send_message(
-    #         chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!🚫"
-    #     )
-    #     return
-    # except WebDriverException as e:
-    #     logger.error(e.msg)
-    #     bot.send_message(
-    #         chat_id=message.chat.id,
-    #         text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
-    #     )
-    #     return
+    try:
+        check_walletapp_credentials(
+            username=encryptor.decrypt_key(integration.wallet_app_login),
+            password=walletapp_password,
+            base_url=config.walletapp.base_url,
+            user_id=message.from_user.id,
+            redis=redis,
+        )
+    except InvalidCredentialsError as e:
+        logger.error(e)
+        bot.send_message(
+            chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!🚫"
+        )
+        return
+    except WebDriverException as e:
+        logger.error(e.msg)
+        bot.send_message(
+            chat_id=message.chat.id,
+            text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
+        )
+        return
 
-    save_all_credentials(
+    UserIntegrationRepository.upsert(
         user_id=message.from_user.id,
-        mono_token=redis.get_credential(
-            credential_type=CredentialType.MONO_TOKEN, user_id=message.from_user.id
-        ),
         walletapp_password=encryptor.encrypt_key(walletapp_password),
-        walletapp_username=walletapp_username,
-    )
+    ).save()
     bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано! 👍")
+
+
+def handle_ask_reset(message: Message, redis: RedisWrapper):
+    command = message.text
+    credential_type_msg = (
+        "токен Монобанку" if "reset_token" in command else "пароль до WalletApp"
+    )
+
+    bot.send_message(
+        chat_id=message.chat.id, text=f"Введіть новий {credential_type_msg}"
+    )
+    redis.set_user_state(
+        user_id=message.from_user.id,
+        state=(
+            UserStates.RESET_MONOTOKEN
+            if "reset_token" in command
+            else UserStates.RESET_WALLETAPP_PASSWORD
+        ),
+    )
+
+
+def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
+    user_state = redis.get_user_state(message.from_user.id)
+    mono_token = normalize_credential(credential=message.text)
+    delete_message(message)
+    encrypted_credential = EncryptManager(secret_key=config.secret_key).encrypt_key(
+        mono_token
+    )
+    if user_state == UserStates.RESET_WALLETAPP_PASSWORD:
+        UserIntegrationRepository.upsert(
+            user_id=message.from_user.id,
+            walletapp_password=encrypted_credential,
+        )
+    else:
+        if not check_monobank(
+            dsn=dsn,
+            mono_token=mono_token,
+            message=message,
+            base_url=config.monobank.base_url,
+        ):
+            bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
+            return
+
+        UserIntegrationRepository.upsert(
+            user_id=message.from_user.id,
+            monobank_token=encrypted_credential,
+        )
+
+    redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)

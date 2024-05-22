@@ -13,6 +13,8 @@ def menu(bot):
         [
             types.BotCommand("/start", "start"),
             types.BotCommand("/integrate", "integrate"),
+            types.BotCommand("/reset_token", "reset_token"),
+            types.BotCommand("/reset_password", "reset_password"),
             types.BotCommand("/help", "help"),
         ]
     )
@@ -20,8 +22,8 @@ def menu(bot):
 
 
 def transaction_menu(
-        accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
-        rejected_data: TransactionStatus = TransactionStatus.REJECTED,
+    accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
+    rejected_data: TransactionStatus = TransactionStatus.REJECTED,
 ):
     add_transaction = types.InlineKeyboardButton(
         "Записати", callback_data=accepted_data

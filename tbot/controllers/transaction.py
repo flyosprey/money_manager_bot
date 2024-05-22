@@ -1,15 +1,15 @@
 from pydantic import SecretStr
 
-from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.clients.walletapp.manager.manager import MoneyManager
 from tbot.dto.transactions.payload import SimpleTransaction
+from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.utils import (
     convert_datetime_to_timestamp,
     convert_money,
     convert_timestamp_to_datetime,
     get_field_value_from_text,
 )
-from tbot_base.models import BotUsers
+from tbot_base.repository.bot_user import BotUserRepository
 from tbot_base.security.encrypting import EncryptManager
 
 
@@ -39,7 +39,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, base_url: str, secret_key: SecretStr
 ):
-    user = BotUsers.objects.get(user_id=user_id)
+    user = BotUserRepository.select(user_id=user_id, first=True)[0]
     integration = user.integration
     with MoneyManager(
         username=integration.wallet_app_login,

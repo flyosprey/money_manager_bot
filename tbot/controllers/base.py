@@ -1,9 +1,10 @@
-from tbot_base.models import BotUsers
+from tbot_base.repository.bot_user import BotUserRepository
 
 
 def register_user(message):
-    if BotUsers.objects.filter(user_id=message.from_user.id).exists():
+    if BotUserRepository.select(user_id=message.from_user.id, first=True):
         return
+
     user_id, user_name, first_name = (
         message.from_user.id,
         message.from_user.username,
@@ -14,4 +15,12 @@ def register_user(message):
     first_name = "" if first_name is None else first_name
     last_name = "" if last_name is None else last_name
     user_name = "" if user_name is None else user_name
-    BotUsers(user_id, chat_id, user_name, first_name, last_name, is_bot).save()
+
+    BotUserRepository.upsert(
+        user_id=user_id,
+        chat_id=chat_id,
+        user_name=user_name,
+        first_name=first_name,
+        last_name=last_name,
+        is_bot=is_bot,
+    ).save()

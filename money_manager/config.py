@@ -1,5 +1,9 @@
 from pydantic import Field, SecretStr
+import pytz
 from pydantic_settings import BaseSettings
+
+TIMEZONE_KYIV = pytz.timezone("Europe/Kyiv")  # MoneyManager handle only UTC time!
+TIMEZONE_UTC = pytz.timezone("UTC")
 
 
 class MonoConfig(BaseSettings):

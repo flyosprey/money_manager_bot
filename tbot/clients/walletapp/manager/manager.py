@@ -12,7 +12,7 @@ from tbot.dto.walletapp.type import Category, RecordType, SubCategoryFood
 
 
 class MoneyManager(MoneyManagerBase):
-    def login_request(self):
+    def login_request(self) -> None:
         self.driver.get(self.base_url + "/login")
 
     def login(self) -> None:
@@ -39,7 +39,7 @@ class MoneyManager(MoneyManagerBase):
         else:
             raise InvalidCredentialsError("Username or password are invalid")
 
-    def select_record_type(self, record_type: RecordType):
+    def select_record_type(self, record_type: RecordType) -> None:
         record_type_button = self.driver.find_element(
             By.XPATH,
             f".//a[contains(@class, 'item') and contains(text(), '{record_type.value}')]",
@@ -86,30 +86,43 @@ class MoneyManager(MoneyManagerBase):
         add_record.click()
         time.sleep(1)
 
-    def set_date(self, date: datetime):
+    def set_date(self, date_time: datetime) -> None:
         date_input = self.driver.find_element(
             By.XPATH,
             "(.//div[@class='equal width fields']//div[@class='react-datepicker__input-container']//input)[1]",
         )
         self.scroll_into_view(date_input)
-        date_input.send_keys(date.strftime("%a %-d, %Y"))
+        date_input.click()
+        date_ = self.driver.find_element(
+            By.XPATH,
+            f".//div[@class='react-datepicker__month-container']//div[@aria-label='day-{date_time.day}']",
+        )
+        self.scroll_into_view(date_)
+        date_.click()
 
-    def set_time(self, date: datetime):
+    def set_time(self, date_time: datetime) -> None:
         time_input = self.driver.find_element(
             By.XPATH,
             "(.//div[@class='equal width fields']//div[@class='react-datepicker__input-container']//input)[2]",
         )
         self.scroll_into_view(time_input)
-        time_input.send_keys(date.strftime("%-I:%M %p"))
+        time_input.click()
+        time_= self.driver.find_element(
+            By.XPATH,
+            ".//div[@class='react-datepicker__time']"
+            f"//li[text()='{self.get_appropriate_time(date_time).strftime('%I:%M %p')}']",
+        )
+        self.scroll_into_view(time_)
+        time_.click()
 
-    def set_contractor(self, contractor: str):
+    def set_contractor(self, contractor: str) -> None:
         contractor_input = self.driver.find_element(
             By.XPATH, ".//input[@name='cGF5ZWU=']"
         )
         self.scroll_into_view(contractor_input)
         contractor_input.send_keys(contractor)
 
-    def set_payment(self, payment_type: str):
+    def set_payment(self, payment_type: str) -> None:
         payment_input = self.driver.find_element(
             By.XPATH, ".//div[@name='paymentType']"
         )

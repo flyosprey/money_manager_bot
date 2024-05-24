@@ -2,11 +2,13 @@ import re
 import time
 from datetime import datetime
 
+import pytz
 import structlog
 from django.urls import reverse
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, Message
 
+from money_manager.config import TIMEZONE_UTC
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
@@ -60,8 +62,8 @@ def convert_money(money_in_cents: int) -> float:
     return float(money_in_cents / 100)
 
 
-def convert_timestamp_to_datetime(timestamp: int) -> datetime:
-    return datetime.fromtimestamp(timestamp)
+def convert_timestamp_to_datetime(timestamp: int, timezone: pytz.timezone = TIMEZONE_UTC) -> datetime:
+    return pytz.utc.localize(datetime.fromtimestamp(timestamp)).astimezone(timezone)
 
 
 def convert_datetime_to_timestamp(

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -42,7 +42,7 @@ class MoneyManagerBase(ABC):
         amount: float,
         category: MCCTransactionCategoryT,
         note: str,
-        date: datetime,
+        date_time: datetime,
         contractor: str,
         payment_type: str = "Debit card",
     ):
@@ -51,7 +51,7 @@ class MoneyManagerBase(ABC):
             amount=amount,
             note=note,
             category=category,
-            date=date,
+            date_time=date_time,
             payment_type=payment_type,
             contractor=contractor,
         )
@@ -62,7 +62,7 @@ class MoneyManagerBase(ABC):
         amount: float,
         category: MCCTransactionCategoryT,
         note: str,
-        date: datetime,
+        date_time: datetime,
         payment_type: str,
         contractor: str,
     ):
@@ -72,19 +72,19 @@ class MoneyManagerBase(ABC):
         self.set_category(category=category)
         self.set_note(note=note)
         self.set_contractor(contractor=contractor)
-        self.set_date(date=date)
-        self.set_time(date=date)
+        self.set_date(date_time=date_time)
+        self.set_time(date_time=date_time)
 
     @abstractmethod
     def set_contractor(self, contractor: str):
         pass
 
     @abstractmethod
-    def set_date(self, date: datetime):
+    def set_date(self, date_time: datetime):
         pass
 
     @abstractmethod
-    def set_time(self, date: datetime):
+    def set_time(self, date_time: datetime):
         pass
 
     @abstractmethod
@@ -127,3 +127,13 @@ class MoneyManagerBase(ABC):
         if amount > 0:
             return RecordType.INCOME
         return RecordType.EXPENSE
+
+    @staticmethod
+    def get_appropriate_time(date_time: datetime, round_to=15 * 60) -> datetime:
+        if date_time.tzinfo is None:
+            date_time = date_time.replace(tzinfo=datetime.now().astimezone().tzinfo)
+
+        seconds = (date_time.replace(second=0, microsecond=0) - date_time.replace(hour=0, minute=0, second=0, microsecond=0)).seconds
+        rounding = (seconds // round_to) * round_to
+        return date_time.replace(second=0, microsecond=0) - timedelta(seconds=(seconds - rounding))
+

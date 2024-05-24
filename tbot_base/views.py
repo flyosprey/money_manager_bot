@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from money_manager.config import TIMEZONE_KYIV
 from tbot.dto.monobank.payload import Transaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
@@ -58,7 +59,7 @@ class MonobankWebhookView(View):
                 f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
                 f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
                 f"Коментар - {transaction.comment or 'відсутній'}\n"
-                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time)}\n"
+                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time, timezone=TIMEZONE_KYIV)}\n"
                 f"MCC - {transaction.mcc}",
                 reply_markup=transaction_menu(),
             )

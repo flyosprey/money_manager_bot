@@ -40,18 +40,16 @@ def add_transaction(
     transaction: SimpleTransaction, user_id: int, base_url: str, secret_key: SecretStr
 ):
     user = BotUserRepository.select(user_id=user_id, first=True)[0]
-    integration = user.integration
+    encrypter = EncryptManager(secret_key=secret_key)
     with MoneyManager(
-        username=integration.wallet_app_login,
-        password=EncryptManager(secret_key=secret_key).decrypt_key(
-            integration.wallet_app_password
-        ),
+        username=encrypter.decrypt_key(user.integration.wallet_app_login),
+        password=encrypter.decrypt_key(user.integration.wallet_app_password),
         base_url=base_url,
     ) as manager:
         manager.create_transaction(
             amount=convert_money(money_in_cents=transaction.amount),
             note=transaction.note,
             category=MCCCodeCategory[transaction.mcc],
-            date=convert_timestamp_to_datetime(timestamp=transaction.time),
+            date_time=convert_timestamp_to_datetime(timestamp=transaction.time),
             contractor=transaction.contractor,
         )

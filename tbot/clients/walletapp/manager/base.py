@@ -133,7 +133,11 @@ class MoneyManagerBase(ABC):
         if date_time.tzinfo is None:
             date_time = date_time.replace(tzinfo=datetime.now().astimezone().tzinfo)
 
-        seconds = (date_time.replace(second=0, microsecond=0) - date_time.replace(hour=0, minute=0, second=0, microsecond=0)).seconds
+        seconds = (
+            date_time.replace(second=0, microsecond=0)
+            - date_time.replace(hour=0, minute=0, second=0, microsecond=0)
+        ).seconds
         rounding = (seconds // round_to) * round_to
-        return date_time.replace(second=0, microsecond=0) - timedelta(seconds=(seconds - rounding))
-
+        return date_time.replace(second=0, microsecond=0) - timedelta(
+            seconds=(seconds - rounding)
+        )

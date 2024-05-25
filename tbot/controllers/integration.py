@@ -13,9 +13,11 @@ def set_monobank_webhook(mono_token: str, base_url: str, webhook_url: str):
     client.set_webhook(token=mono_token, webhook_url=webhook_url)
 
 
-def check_monobank(dsn: str, mono_token: str, message: Message, base_url: str) -> bool:
+def check_monobank(
+    dsn: str, mono_token: str, chat_id: int, encrypted_user_id: str, base_url: str
+) -> bool:
     webhook_url = absolute_endpoint_path(
-        dsn=dsn, view_name="handle_mono_webhook", args=[message.chat.id]
+        dsn=dsn, view_name="handle_mono_webhook", args=[chat_id, encrypted_user_id]
     )
     try:
         set_monobank_webhook(

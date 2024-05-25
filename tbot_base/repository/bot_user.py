@@ -8,7 +8,8 @@ class BotUserRepository(Repository):
     @classmethod
     def select(cls, first: bool, **kwargs) -> list[BotUsers] | None:
         if first:
-            return [BotUsers.objects.filter(**kwargs).first()]
+            result = BotUsers.objects.filter(**kwargs).first()
+            return [result] if result else []
 
         return BotUsers.objects.filter(**kwargs).all()
 

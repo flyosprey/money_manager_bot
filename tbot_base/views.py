@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -7,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from money_manager.config import TIMEZONE_KYIV
+from money_manager.config import TIMEZONE_KYIV, config
 from tbot.dto.monobank.payload import Transaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
@@ -17,6 +18,8 @@ from tbot.utils import (
 )
 
 from .bot import tbot
+from .repository.bot_user import BotUserRepository
+from .security.encrypting import EncryptManager
 
 for module in settings.BOT_HANDLERS:
     __import__(module)
@@ -36,10 +39,12 @@ class TelegramWebhookView(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class MonobankWebhookView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, chat_id: int, encrypted_user_id: str, *args, **kwargs):
+        self.check_signature(encrypted_user_id=encrypted_user_id)
         return HttpResponse(status=200)
 
-    def post(self, request, chat_id: int, *args, **kwargs):
+    def post(self, request, chat_id: int, encrypted_user_id: str, *args, **kwargs):
+        self.check_signature(encrypted_user_id=encrypted_user_id)
         if request.META["CONTENT_TYPE"] == "application/json":
             try:
                 payload = json.loads(request.body)
@@ -51,18 +56,35 @@ class MonobankWebhookView(View):
             except ValidationError as e:
                 return JsonResponse({"error": e.error_dict}, status=422)
 
-            tbot.send_message(
-                chat_id=chat_id,
-                text=f"Опис - {transaction.description}\n"
-                f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
-                f"{convert_money(transaction.amount)}\n"
-                f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
-                f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
-                f"Коментар - {transaction.comment or 'відсутній'}\n"
-                f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time, timezone=TIMEZONE_KYIV)}\n"
-                f"MCC - {transaction.mcc}",
-                reply_markup=transaction_menu(),
-            )
+            if not self.skip_transaction(transaction=transaction):
+                tbot.send_message(
+                    chat_id=chat_id,
+                    text=f"Опис - {transaction.description}\n"
+                    f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
+                    f"{convert_money(transaction.amount)}\n"
+                    f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
+                    f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
+                    f"Коментар - {transaction.comment or 'відсутній'}\n"
+                    f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time, timezone=TIMEZONE_KYIV)}\n"
+                    f"MCC - {transaction.mcc}",
+                    reply_markup=transaction_menu(),
+                )
 
             return HttpResponse(status=200)
         raise PermissionDenied
+
+    @staticmethod
+    def check_signature(encrypted_user_id: str) -> None:
+        try:
+            encrypt_manager = EncryptManager(secret_key=config.secret_key)
+            user_id = int(encrypt_manager.decrypt_key(encrypted_user_id))
+        except Exception:  # noqa
+            raise PermissionDenied
+
+        if not BotUserRepository.select(user_id=user_id, first=True):
+            raise PermissionDenied
+
+    @staticmethod
+    def skip_transaction(transaction: Transaction) -> bool:
+        if re.search(r"з \w+ картки", transaction.description.lower()):
+            return True

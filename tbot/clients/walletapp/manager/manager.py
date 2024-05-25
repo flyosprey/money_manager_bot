@@ -107,7 +107,7 @@ class MoneyManager(MoneyManagerBase):
         )
         self.scroll_into_view(time_input)
         time_input.click()
-        time_= self.driver.find_element(
+        time_ = self.driver.find_element(
             By.XPATH,
             ".//div[@class='react-datepicker__time']"
             f"//li[text()='{self.get_appropriate_time(date_time).strftime('%I:%M %p')}']",

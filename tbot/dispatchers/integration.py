@@ -27,7 +27,7 @@ MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
-    if UserIntegrationRepository.select(user_id=message.from_user.id):  # TODO test it
+    if UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
         bot.send_message(
             chat_id=message.chat.id, text="Інтеграцію вже було активовано."
         )
@@ -43,11 +43,13 @@ def handle_integration(message: Message, redis: RedisWrapper):
 
 def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     mono_token = normalize_credential(credential=message.text)
+    encrypt_manager = EncryptManager(secret_key=config.secret_key)
     delete_message(message)
     if not check_monobank(
         dsn=dsn,
         mono_token=mono_token,
-        message=message,
+        chat_id=message.chat.id,
+        encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
         base_url=config.monobank.base_url,
     ):
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
@@ -56,10 +58,8 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
 
     UserIntegrationRepository.upsert(
         user_id=message.from_user.id,
-        monobank_token=EncryptManager(secret_key=config.secret_key).encrypt_key(
-            mono_token
-        ),
-    ).save()
+        monobank_token=encrypt_manager.encrypt_key(mono_token),
+    )
 
     bot.send_message(
         chat_id=message.chat.id,
@@ -80,7 +80,7 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
         wallet_app_login=EncryptManager(secret_key=config.secret_key).encrypt_key(
             normalize_credential(credential=message.text)
         ),
-    ).save()
+    )
     delete_message(message)
     bot.send_message(
         chat_id=message.chat.id, text="Введіть ваш пароль для WalletApp.\n"
@@ -94,11 +94,11 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     walletapp_password = normalize_credential(credential=message.text)
     repository = UserIntegrationRepository()
     delete_message(message)
-    integration = repository.select(user_id=message.from_user.id)
-    encryptor = EncryptManager(secret_key=config.secret_key)
+    integration = repository.select(user_id=message.from_user.id, first=True)[0]
+    encrypt_manager = EncryptManager(secret_key=config.secret_key)
     try:
         check_walletapp_credentials(
-            username=encryptor.decrypt_key(integration.wallet_app_login),
+            username=encrypt_manager.decrypt_key(integration.wallet_app_login),
             password=walletapp_password,
             base_url=config.walletapp.base_url,
             user_id=message.from_user.id,
@@ -120,8 +120,8 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
 
     UserIntegrationRepository.upsert(
         user_id=message.from_user.id,
-        walletapp_password=encryptor.encrypt_key(walletapp_password),
-    ).save()
+        wallet_app_password=encrypt_manager.encrypt_key(walletapp_password),
+    )
     bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано! 👍")
 
 
@@ -145,12 +145,18 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
 
 
 def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
-    user_state = redis.get_user_state(message.from_user.id)
+    if not UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
+        bot.send_message(
+            chat_id=message.chat.id, text="Інтеграцію ще не було активовано."
+        )
+        return
+
     mono_token = normalize_credential(credential=message.text)
     delete_message(message)
-    encrypted_credential = EncryptManager(secret_key=config.secret_key).encrypt_key(
-        mono_token
-    )
+
+    user_state = redis.get_user_state(message.from_user.id)
+    encrypt_manager = EncryptManager(secret_key=config.secret_key)
+    encrypted_credential = encrypt_manager.encrypt_key(mono_token)
     if user_state == UserStates.RESET_WALLETAPP_PASSWORD:
         UserIntegrationRepository.upsert(
             user_id=message.from_user.id,
@@ -160,7 +166,8 @@ def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
         if not check_monobank(
             dsn=dsn,
             mono_token=mono_token,
-            message=message,
+            chat_id=message.chat.id,
+            encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
             base_url=config.monobank.base_url,
         ):
             bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
@@ -171,4 +178,8 @@ def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
             monobank_token=encrypted_credential,
         )
 
+    bot.send_message(
+        chat_id=message.chat.id,
+        text=f"{'Токен Монобанку' if user_state == UserStates.RESET_MONOTOKEN else 'Пароль до WalletApp'} оновлено",
+    )
     redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)

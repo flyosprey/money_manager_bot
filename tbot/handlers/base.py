@@ -24,23 +24,17 @@ def help_handler(message: Message):
 
 
 @bot.message_handler(commands=["test"])
-def test_handler(
-    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
-):
-    message = bot.send_message(
-        chat_id=message.chat.id,
-        text="TESTING TRANS KEYWORD AND CALLBACK",
-        reply_markup=transaction_menu(),
-    )
-    add_transaction(
-        user_id=message.from_user.id,
-        base_url=config.walletapp.base_url,
-        secret_key=config.secret_key,
-        transaction=SimpleTransaction(
-            mcc=5411,
-            amount=15000,
-            note="Weekly grocery shopping",
-            time=get_unix_time(),
-            contractor="ATБ",
-        ),
-    )
+def test_handler(message: Message):
+    if config.is_test:
+        add_transaction(
+            user_id=message.chat.id,
+            base_url=config.walletapp.base_url,
+            secret_key=config.secret_key,
+            transaction=SimpleTransaction(
+                mcc=5411,
+                amount=15000,
+                note="Weekly grocery shopping",
+                time=get_unix_time(),
+                contractor="ATБ",
+            ),
+        )

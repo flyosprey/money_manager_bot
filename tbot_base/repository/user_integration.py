@@ -6,8 +6,12 @@ from tbot_base.repository.base import Repository
 
 class UserIntegrationRepository(Repository):
     @classmethod
-    def select(cls, **kwargs) -> UserIntegrations | None:
-        return UserIntegrations.objects.filter(**kwargs).first()
+    def select(cls, first: bool, **kwargs) -> [UserIntegrations]:
+        if first:
+            result = UserIntegrations.objects.filter(**kwargs).first()
+            return [result] if result else []
+
+        return UserIntegrations.objects.filter(**kwargs).all()
 
     @classmethod
     def upsert(cls, **kwargs) -> UserIntegrations:

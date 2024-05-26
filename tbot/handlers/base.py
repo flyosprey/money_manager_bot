@@ -2,13 +2,11 @@ from telebot.types import Message
 
 from money_manager.config import config
 from tbot.controllers.transaction import add_transaction
-from tbot.dependencies.redis import RedisWrapper
 from tbot.dispatchers.base import (
     handle_help,
     handle_start,
 )
 from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.keyboards import transaction_menu
 from tbot.utils import get_unix_time
 from tbot_base.bot import tbot as bot
 

@@ -57,15 +57,31 @@ class MonobankWebhookView(View):
                 return JsonResponse({"error": e.error_dict}, status=422)
 
             if not self.skip_transaction(transaction=transaction):
+                currency = {
+                    convert_currency_number_to_symbol(transaction.currency_code)
+                }
+                cashback = (
+                    f"{convert_money(transaction.cashback_amount)}{currency}"
+                    if transaction.cashback_amount
+                    else "відсутня"
+                )
+                commission = (
+                    f"{convert_money(transaction.commission_rate)}{currency}"
+                    if transaction.commission_rate
+                    else "відсутній"
+                )
+                amount = f"{convert_money(transaction.amount)}{currency}"
+                date_ = convert_timestamp_to_datetime(
+                    timestamp=transaction.time, timezone=TIMEZONE_KYIV
+                ).replace(tzinfo=None)
                 tbot.send_message(
                     chat_id=chat_id,
                     text=f"Опис - {transaction.description}\n"
-                    f"Сума - {convert_currency_number_to_symbol(transaction.currency_code)}"
-                    f"{convert_money(transaction.amount)}\n"
-                    f"Комісія - {convert_money(transaction.commission_rate) or 'відсутня'}\n"
-                    f"Кешбек - {transaction.cashback_amount or 'відсутній'}\n"
+                    f"Сума - {amount}\n"
+                    f"Комісія - {commission}\n"
+                    f"Кешбек - {cashback}\n"
                     f"Коментар - {transaction.comment or 'відсутній'}\n"
-                    f"Дата - {convert_timestamp_to_datetime(timestamp=transaction.time, timezone=TIMEZONE_KYIV)}\n"
+                    f"Дата - {date_}\n"
                     f"MCC - {transaction.mcc}",
                     reply_markup=transaction_menu(),
                 )
@@ -78,13 +94,12 @@ class MonobankWebhookView(View):
         try:
             encrypt_manager = EncryptManager(secret_key=config.secret_key)
             user_id = int(encrypt_manager.decrypt_key(encrypted_user_id))
-        except Exception:  # noqa
-            raise PermissionDenied
+        except Exception:
+            raise PermissionDenied from None
 
         if not BotUserRepository.select(user_id=user_id, first=True):
             raise PermissionDenied
 
     @staticmethod
-    def skip_transaction(transaction: Transaction) -> bool:
-        if re.search(r"з \w+ картки", transaction.description.lower()):
-            return True
+    def skip_transaction(transaction: Transaction) -> bool | None:
+        return bool(re.search(r"з \w+ картки", transaction.description.lower()))

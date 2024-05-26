@@ -2,6 +2,7 @@ import re
 import time
 from datetime import datetime
 
+import dateutil.parser
 import pytz
 import structlog
 from django.urls import reverse
@@ -68,11 +69,9 @@ def convert_timestamp_to_datetime(
     return pytz.utc.localize(datetime.fromtimestamp(timestamp)).astimezone(timezone)
 
 
-def convert_datetime_to_timestamp(
-    time_: str | datetime, format_: str = "%Y-%m-%d %H:%M:%S"
-) -> int:
+def convert_datetime_to_timestamp(time_: str | datetime) -> int:
     converted = (
-        datetime.strptime(time_, format_).timestamp()
+        dateutil.parser.parse(time_).timestamp()
         if isinstance(time_, str)
         else time_.timestamp()
     )

@@ -1,5 +1,4 @@
 from requests.exceptions import RequestException
-from telebot.types import Message
 
 from tbot.clients.monobank.mono_client import MonobankClient, MonoExceptionError
 from tbot.clients.walletapp.manager.manager import MoneyManager

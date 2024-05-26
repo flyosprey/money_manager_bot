@@ -17,11 +17,9 @@ class RedisWrapper:
         )
 
     def get_user_state(self, user_id: int) -> UserStates:
-        state = self.redis.get(
-            name=USER_STATE_TEMPLATE.format(user_id=user_id)
-        ).decode()
+        state = self.redis.get(name=USER_STATE_TEMPLATE.format(user_id=user_id))
 
         if not state:
             return UserStates.IDLE
 
-        return UserStates(int(state))
+        return UserStates(int(state.decode()))

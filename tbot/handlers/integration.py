@@ -21,11 +21,18 @@ def integrate_handler(
     handle_integration(message=message, redis=redis)
 
 
+@bot.message_handler(commands=["additional_monobank_token"])
+def additional_mono_token_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
+    handle_integration(message=message, redis=redis)
+
+
 @bot.message_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
         message.from_user.id
     )
-    == UserStates.AWAITING_MONOTOKEN
+    in {UserStates.AWAITING_MONOTOKEN, UserStates.AWAITING_ADDITIONAL_MONOTOKEN}
 )
 def mono_token_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)

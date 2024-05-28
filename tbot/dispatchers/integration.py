@@ -27,7 +27,10 @@ MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
-    if UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
+    if (
+        UserIntegrationRepository.select(user_id=message.from_user.id, first=True)
+        and message.text != "/additional_monobank_token"
+    ):
         bot.send_message(
             chat_id=message.chat.id, text="Інтеграцію вже було активовано."
         )
@@ -38,7 +41,12 @@ def handle_integration(message: Message, redis: RedisWrapper):
         text="Введіть ваш токен Monobank.\n"
         f"Його можна знайти за посиланням відсканувавши QR {MONOBANK_URL}",
     )
-    redis.set_user_state(message.from_user.id, state=UserStates.AWAITING_MONOTOKEN)
+    user_state = (
+        UserStates.AWAITING_MONOTOKEN
+        if message.text != "additional_monobank_token"
+        else UserStates.AWAITING_ADDITIONAL_MONOTOKEN
+    )
+    redis.set_user_state(message.from_user.id, state=user_state)
 
 
 def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
@@ -60,6 +68,12 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         user_id=message.from_user.id,
         monobank_token=encrypt_manager.encrypt_key(mono_token),
     )
+    if redis.get_user_state(message.from_user.id) == UserStates.AWAITING_MONOTOKEN:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text="Додатковий токен монобанку додано!",
+        )
+        return
 
     bot.send_message(
         chat_id=message.chat.id,

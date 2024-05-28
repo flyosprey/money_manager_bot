@@ -9,24 +9,22 @@ from tbot.utils import (
     convert_timestamp_to_datetime,
     get_field_value_from_text,
 )
-from tbot_base.repository.bot_user import BotUserRepository
+from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 
 def get_transaction_from_message(text: str) -> SimpleTransaction:
     description = get_field_value_from_text(
-        text=text, pattern=r"Опис - (.+?)\n", group_index=1
+        text=text, pattern=r"Опис: (.+?)\n", group_index=1
     )
     amount = get_field_value_from_text(
-        text=text, pattern=r"Сума - .(.+?)\n", group_index=1
+        text=text, pattern=r"Сума: (.+?).\n", group_index=1
     )
-    mcc = get_field_value_from_text(text=text, pattern=r"MCC - (.+)", group_index=1)
+    mcc = get_field_value_from_text(text=text, pattern=r"MCC: (.+)", group_index=1)
     comment = get_field_value_from_text(
-        text=text, pattern=r"Коментар - (.+?)\n", group_index=1
+        text=text, pattern=r"Коментар: (.+?)\n", group_index=1
     )
-    time = get_field_value_from_text(
-        text=text, pattern=r"Дата - (.+?)\n", group_index=1
-    )
+    time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_index=1)
     return SimpleTransaction(
         mcc=int(mcc),
         amount=int(float(amount) * 100),
@@ -39,11 +37,16 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, base_url: str, secret_key: SecretStr
 ):
-    user = BotUserRepository.select(user_id=user_id, first=True)[0]
+    integration = UserIntegrationRepository.select(
+        user_id=user_id,
+        wallet_app_password__isnull=False,
+        wallet_app_login__isnull=False,
+        first=True,
+    )[0]
     encrypter = EncryptManager(secret_key=secret_key)
     with MoneyManager(
-        username=encrypter.decrypt_key(user.integration.wallet_app_login),
-        password=encrypter.decrypt_key(user.integration.wallet_app_password),
+        username=encrypter.decrypt_key(integration.wallet_app_login),
+        password=encrypter.decrypt_key(integration.wallet_app_password),
         base_url=base_url,
     ) as manager:
         manager.create_transaction(

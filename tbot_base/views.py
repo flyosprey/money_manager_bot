@@ -47,19 +47,18 @@ class MonobankWebhookView(View):
         self.check_signature(encrypted_user_id=encrypted_user_id)
         if request.META["CONTENT_TYPE"] == "application/json":
             try:
-                payload = json.loads(request.body)
                 transaction = Transaction(
-                    **payload.get("data", {}).get("statementItem", {})
+                    **json.loads(request.body).get("data", {}).get("statementItem", {})
                 )
             except json.JSONDecodeError:
                 return JsonResponse({"error": "Invalid JSON"}, status=400)
             except ValidationError as e:
                 return JsonResponse({"error": e.error_dict}, status=422)
-
+            print(transaction.counter_name)
+            print(transaction.counter_edrpou)
+            print(transaction.counter_iban)
             if not self.skip_transaction(transaction=transaction):
-                currency = {
-                    convert_currency_number_to_symbol(transaction.currency_code)
-                }
+                currency = convert_currency_number_to_symbol(transaction.currency_code)
                 cashback = (
                     f"{convert_money(transaction.cashback_amount)}{currency}"
                     if transaction.cashback_amount
@@ -76,13 +75,13 @@ class MonobankWebhookView(View):
                 ).replace(tzinfo=None)
                 tbot.send_message(
                     chat_id=chat_id,
-                    text=f"Опис - {transaction.description}\n"
-                    f"Сума - {amount}\n"
-                    f"Комісія - {commission}\n"
-                    f"Кешбек - {cashback}\n"
-                    f"Коментар - {transaction.comment or 'відсутній'}\n"
-                    f"Дата - {date_}\n"
-                    f"MCC - {transaction.mcc}",
+                    text=f"Опис: {transaction.description}\n"
+                    f"Сума: {amount}\n"
+                    f"Комісія: {commission}\n"
+                    f"Кешбек: {cashback}\n"
+                    f"Коментар: {transaction.comment or 'відсутній'}\n"
+                    f"Дата: {date_}\n"
+                    f"MCC: {transaction.mcc}",
                     reply_markup=transaction_menu(),
                 )
 

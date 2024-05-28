@@ -166,11 +166,11 @@ class UserPayments(models.Model):
 
 
 class UserIntegrations(models.Model):
-    user = models.OneToOneField(
-        BotUsers,
+    user = models.ForeignKey(
+        "BotUsers",
         on_delete=models.CASCADE,
         verbose_name="User",
-        related_name="integration",
+        related_name="integrations",
         default=None,
         null=True,
     )
@@ -180,6 +180,7 @@ class UserIntegrations(models.Model):
         blank=True,
         editable=True,
         null=True,
+        unique=True,
     )
     wallet_app_password = models.CharField(
         verbose_name="WalletApp Password",

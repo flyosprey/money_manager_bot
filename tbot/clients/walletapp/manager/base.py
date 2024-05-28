@@ -28,7 +28,7 @@ class MoneyManagerBase(ABC):
 
     def __enter__(self):
         self.driver = webdriver.Firefox(
-            options=self.__set_options(), service=self.__set_service()
+            options=self.__set_options()  # , service=self.__set_service()
         )
         self.login()
         return self

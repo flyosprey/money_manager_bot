@@ -26,6 +26,7 @@ def handle_help(message: Message):
          /additional_monobank_token - Додати трекінг додаткового аккаунту Monobank.
          /reset_password - Замінити пароль WalletApp.
          /reset_token - Замінити токен Monobank.
-         /help - Подивитися всі доступні команди.
+         //refresh_monobank - Оновити звʼязок з Monobank.
+         /help - Доступні команди.
          """,
     )

@@ -20,7 +20,7 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=f"{call.message.text}\n\nЗаписано ✅",
-        reply_markup=transaction_menu()
+        reply_markup=transaction_menu(),
     )
 
 
@@ -29,5 +29,5 @@ def handle_reject_transaction(call: CallbackQuery):
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=f"{call.message.text}\n\nВідхилено 🚫",
-        reply_markup=transaction_menu()
+        reply_markup=transaction_menu(),
     )

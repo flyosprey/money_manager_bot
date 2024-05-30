@@ -183,6 +183,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 BOT_HANDLERS = [
     "tbot.handlers.base",
+    "tbot.handlers.helper",
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
 ]

@@ -11,11 +11,16 @@ def menu(bot):
     )
     bot.set_my_commands(
         [
-            types.BotCommand("/start", "start"),
-            types.BotCommand("/integrate", "integrate"),
-            types.BotCommand("/reset_token", "reset_token"),
-            types.BotCommand("/reset_password", "reset_password"),
-            types.BotCommand("/help", "help"),
+            types.BotCommand("/start", "Розпочати бота"),
+            types.BotCommand("/integrate", "Розпочати інтеграцію"),
+            types.BotCommand(
+                "/additional_monobank_token",
+                "Додати трекінг додаткового аккаунту Monobank",
+            ),
+            types.BotCommand("/reset_token", "Замінити токен Monobank"),
+            types.BotCommand("/reset_password", "Замінити пароль WalletApp"),
+            types.BotCommand("/refresh_monobank", "Оновити звʼязок з Monobank"),
+            types.BotCommand("/help", "Доступні команди"),
         ]
     )
     return keyboard

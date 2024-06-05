@@ -8,6 +8,15 @@ class Category(str, enum.Enum):
     VEHICLE = "Vehicle"
     COMMUNICATION_PC = "Communication, PC"
     FINANCIAL_EXPENSES = "Financial expenses"
+    TRANSPORTATION = "Transportation"
+
+
+class SubCategoryTransportation(str, enum.Enum):
+    TRANSPORTATION = "Transportation"
+    BUSINESS_TRIP = "Business trips"
+    LONG_DISTANCE = "Long distance"
+    PUBLIC_TRANSPORT = "Public transport"
+    TAXI = "Taxi"
 
 
 class SubCategoryFinancialExpenses(str, enum.Enum):

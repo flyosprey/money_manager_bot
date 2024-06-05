@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="integration",
                 to="tbot_base.botusers",
-                verbose_name="User"
+                verbose_name="User",
             ),
         ),
         migrations.AddField(
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="payments",
                 to="tbot_base.botusers",
-                verbose_name="User"
+                verbose_name="User",
             ),
         ),
         migrations.AlterField(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 primary_key=True,
                 serialize=False,
                 unique=True,
-                verbose_name="User id"
+                verbose_name="User id",
             ),
         ),
     ]

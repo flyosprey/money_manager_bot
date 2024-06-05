@@ -27,6 +27,9 @@ psycopg2 = "^2.9.9"
 django-heroku = "^0.3.1"
 webdriver-manager = "^4.0.1"
 structlog = "^24.1.0"
+black = "^24.4.2"
+pytz = "^2024.1"
+dateutils = "^0.6.12"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"
@@ -75,6 +78,7 @@ select = [
     "RUF", # Ruff
 ]
 ignore = [
+    "RUF012",
     "S603",
     "A003",
     "N813",

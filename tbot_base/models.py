@@ -166,26 +166,40 @@ class UserPayments(models.Model):
 
 
 class UserIntegrations(models.Model):
-    user = models.OneToOneField(
-        BotUsers,
+    user = models.ForeignKey(
+        "BotUsers",
         on_delete=models.CASCADE,
         verbose_name="User",
-        related_name="integration",
+        related_name="integrations",
         default=None,
         null=True,
     )
     monobank_token = models.CharField(
-        verbose_name="Monobank Token", max_length=256, blank=False, editable=True
+        verbose_name="Monobank Token",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
+        unique=True,
     )
     wallet_app_password = models.CharField(
-        verbose_name="WalletApp Password", max_length=256, blank=False, editable=True
+        verbose_name="WalletApp Password",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
     )
     wallet_app_login = models.CharField(
-        verbose_name="WalletApp Login", max_length=256, blank=False, editable=True
+        verbose_name="WalletApp Login",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
+        unique=True,
     )
 
     def __str__(self):
-        return f"Integration for {self.user.user_name}"
+        return f"Integration for {self.user.user_name} {self.user.user_id}"
 
     class Meta:
         verbose_name = "User Integrations"

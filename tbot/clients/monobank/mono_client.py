@@ -7,6 +7,7 @@ import structlog
 from requests import RequestException, Session
 
 from tbot.dto.monobank.payload import ClientInfoPayload, Transaction
+from tbot.errors import MonoExceptionError
 from tbot.utils import get_unix_time
 
 logger = structlog.get_logger()
@@ -32,7 +33,9 @@ class MonobankClient:
         self.max_retries = max_retries
         self.session = Session()
 
-    def _request(self, uri: str, method: str, access_token: str, **kwargs: Any) -> dict[str, Any]:
+    def _request(
+        self, uri: str, method: str, access_token: str, **kwargs: Any
+    ) -> dict[str, Any]:
         headers = kwargs.pop("headers", {})
         headers["X-Token"] = access_token
         try:
@@ -52,7 +55,9 @@ class MonobankClient:
                     **kwargs,
                 )
             logger.info(
-                "Monobank response status=%s, content=%s.", response.status_code, response.text,
+                "Monobank response status=%s, content=%s.",
+                response.status_code,
+                response.text,
                 request={"method": method, "uri": uri, **kwargs},
             )
         except RequestException as e:
@@ -66,7 +71,9 @@ class MonobankClient:
         except RequestException as e:
             raise MonoExceptionError(f"Unsuccessful request to Monobank: {e}") from e
 
-    def retry(self, uri: str, method: str, access_token: str, **kwargs: Any) -> dict[str, Any]:
+    def retry(
+        self, uri: str, method: str, access_token: str, **kwargs: Any
+    ) -> dict[str, Any]:
         if self.retry_count < self.max_retries:
             self.retry_count += 1
             sleep(self.sleep_time)
@@ -127,7 +134,3 @@ class MonobankClient:
                 transactions.append(Transaction.model_validate(transaction))
 
         return transactions
-
-
-class MonoExceptionError(Exception):
-    pass

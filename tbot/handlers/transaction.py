@@ -6,7 +6,7 @@ from tbot.dispatchers.transaction import (
     handle_reject_transaction,
 )
 from tbot.dto.transactions.type import TransactionStatus
-from tbot.utils import exception_handler
+from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 

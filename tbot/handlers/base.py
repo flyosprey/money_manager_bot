@@ -1,4 +1,3 @@
-import structlog
 from telebot.types import Message
 
 from money_manager.config import config
@@ -8,10 +7,9 @@ from tbot.dispatchers.base import (
     handle_start,
 )
 from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.utils import exception_handler, get_unix_time
+from tbot.errors import exception_handler
+from tbot.utils import get_unix_time
 from tbot_base.bot import tbot as bot
-
-logger = structlog.get_logger()
 
 
 @bot.message_handler(commands=["start"])

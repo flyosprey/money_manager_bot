@@ -1,4 +1,3 @@
-import structlog
 from telebot.types import Message
 
 from money_manager.config import config
@@ -12,9 +11,6 @@ from tbot.utils import delete_message, normalize_credential
 from tbot_base.bot import tbot as bot
 from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
-
-logger = structlog.get_logger()
-
 
 IOS_WALLETAPP_URL = (
     "https://apps.apple.com/us/app/wallet-daily-budget-profit/id1032467659"

@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import pathlib
 
 import dj_database_url
 import django_heroku
 
 from money_manager.config import config
-from money_manager.logging import setup_logging
+from money_manager.logging.setup import setup_logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,6 +34,7 @@ DEBUG = config.is_test
 
 ALLOWED_HOSTS = ["*"]
 
+PROJECT_PATH = pathlib.Path(__file__).parent.parent.absolute()
 
 # Application definition
 
@@ -118,7 +120,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-setup_logging()
+setup_logging(path_=PROJECT_PATH)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/

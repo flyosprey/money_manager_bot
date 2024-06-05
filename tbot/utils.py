@@ -34,7 +34,7 @@ def exception_handler():
             if isinstance(msg, CallbackQuery):
                 chat_id, user_id = msg.message.chat.id, msg.message.from_user.id
             else:
-                chat_id, user_id = msg.chat_id, msg.from_user.id
+                chat_id, user_id = msg.chat.id, msg.from_user.id
             try:
                 return func(*args, **kwargs)
             except IncorrectMCCCodeError as e:

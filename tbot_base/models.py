@@ -199,7 +199,7 @@ class UserIntegrations(models.Model):
     )
 
     def __str__(self):
-        return f"Integration for {self.user.user_name}"
+        return f"Integration for {self.user.user_name} {self.user.user_id}"
 
     class Meta:
         verbose_name = "User Integrations"

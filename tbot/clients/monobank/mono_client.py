@@ -7,6 +7,7 @@ import structlog
 from requests import RequestException, Session
 
 from tbot.dto.monobank.payload import ClientInfoPayload, Transaction
+from tbot.errors import MonoExceptionError
 from tbot.utils import get_unix_time
 
 logger = structlog.get_logger()
@@ -133,7 +134,3 @@ class MonobankClient:
                 transactions.append(Transaction.model_validate(transaction))
 
         return transactions
-
-
-class MonoExceptionError(Exception):
-    pass

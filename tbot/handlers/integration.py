@@ -11,6 +11,7 @@ from tbot.dispatchers.integration import (
     handle_walletapp_username,
 )
 from tbot.dto.users.type import UserStates
+from tbot.utils import exception_handler
 from tbot_base.bot import tbot as bot
 
 
@@ -65,6 +66,7 @@ def walletapp_password_handler(
 
 
 @bot.message_handler(commands=["reset_token", "reset_password"])
+@exception_handler()
 def ask_reset_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
@@ -77,6 +79,7 @@ def ask_reset_handler(
     )
     in {UserStates.RESET_WALLETAPP_PASSWORD, UserStates.RESET_MONOTOKEN}
 )
+@exception_handler()
 def reset_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):

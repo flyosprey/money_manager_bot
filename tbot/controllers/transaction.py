@@ -3,6 +3,7 @@ from pydantic import SecretStr
 from tbot.clients.walletapp.manager.manager import MoneyManager
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
+from tbot.errors import IncorrectMCCCodeError
 from tbot.utils import (
     convert_datetime_to_timestamp,
     convert_money,
@@ -37,6 +38,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, base_url: str, secret_key: SecretStr
 ):
+    validate_transaction_to_add(transaction)
     integration = UserIntegrationRepository.select(
         user_id=user_id,
         wallet_app_password__isnull=False,
@@ -55,4 +57,11 @@ def add_transaction(
             category=MCCCodeCategory[transaction.mcc],
             date_time=convert_timestamp_to_datetime(timestamp=transaction.time),
             contractor=transaction.contractor,
+        )
+
+
+def validate_transaction_to_add(transaction: SimpleTransaction):
+    if isinstance(MCCCodeCategory[transaction.mcc], str):
+        raise IncorrectMCCCodeError(
+            message="MCC code is not supported yet", mcc_code=transaction.mcc
         )

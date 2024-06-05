@@ -1,9 +1,7 @@
 import structlog
-from selenium.common.exceptions import WebDriverException
 from telebot.types import Message
 
 from money_manager.config import config
-from tbot.clients.walletapp.manager.manager import InvalidCredentialsError
 from tbot.controllers.integration import (
     check_monobank,
     check_walletapp_credentials,
@@ -68,7 +66,10 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         user_id=message.from_user.id,
         monobank_token=encrypt_manager.encrypt_key(mono_token),
     )
-    if redis.get_user_state(message.from_user.id) == UserStates.AWAITING_MONOTOKEN:
+    if (
+        redis.get_user_state(message.from_user.id)
+        == UserStates.AWAITING_ADDITIONAL_MONOTOKEN
+    ):
         bot.send_message(
             chat_id=message.chat.id,
             text="Додатковий токен монобанку додано!",
@@ -110,27 +111,14 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     delete_message(message)
     integration = repository.select(user_id=message.from_user.id, first=True)[0]
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
-    try:
-        check_walletapp_credentials(
-            username=encrypt_manager.decrypt_key(integration.wallet_app_login),
-            password=walletapp_password,
-            base_url=config.walletapp.base_url,
-            user_id=message.from_user.id,
-            redis=redis,
-        )
-    except InvalidCredentialsError as e:
-        logger.error(e)
-        bot.send_message(
-            chat_id=message.chat.id, text="Невірні облікові дані для WalletApp!🚫"
-        )
-        return
-    except WebDriverException as e:
-        logger.error(e.msg)
-        bot.send_message(
-            chat_id=message.chat.id,
-            text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
-        )
-        return
+
+    check_walletapp_credentials(
+        username=encrypt_manager.decrypt_key(integration.wallet_app_login),
+        password=walletapp_password,
+        base_url=config.walletapp.base_url,
+        user_id=message.from_user.id,
+        redis=redis,
+    )
 
     UserIntegrationRepository.upsert(
         user_id=message.from_user.id,

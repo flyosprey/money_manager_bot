@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tbot.clients.walletapp.manager.base import MoneyManagerBase
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryT
 from tbot.dto.walletapp.type import Category, RecordType, SubCategoryFood
+from tbot.errors import InvalidCredentialsError
 
 
 class MoneyManager(MoneyManagerBase):
@@ -147,7 +148,3 @@ class MoneyManager(MoneyManagerBase):
         )
         self.scroll_into_view(category_category)
         category_category.click()
-
-
-class InvalidCredentialsError(Exception):
-    pass

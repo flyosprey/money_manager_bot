@@ -14,9 +14,9 @@ import os
 
 import dj_database_url
 import django_heroku
-import structlog
 
 from money_manager.config import config
+from money_manager.logging import setup_logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config.secret_key.get_secret_value()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.is_test
 
 ALLOWED_HOSTS = ["*"]
 
@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tbot_base",
-    "django_celery_beat",
-    "money_manager.celery",
 ]
 
 MIDDLEWARE = [
@@ -82,12 +80,6 @@ WSGI_APPLICATION = "money_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     "default": dj_database_url.config(default=config.postgres.url),
 }
@@ -126,56 +118,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json_formatter": {
-            "()": structlog.stdlib.ProcessorFormatter,
-            "processor": structlog.processors.JSONRenderer(),
-        },
-    },
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "json_formatter",
-        },
-        "file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": "logs/django.log",
-            "formatter": "json_formatter",
-            "maxBytes": 1024 * 1024 * 5,
-            "backupCount": 2,
-        },
-    },
-    "loggers": {
-        "": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-    },
-}
-
-structlog.configure(
-    processors=[
-        structlog.stdlib.filter_by_level,
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-        structlog.processors.JSONRenderer(),
-    ],
-    context_class=dict,
-    logger_factory=structlog.stdlib.LoggerFactory(),
-    wrapper_class=structlog.stdlib.BoundLogger,
-    cache_logger_on_first_use=True,
-)
-
+setup_logging()
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -185,14 +128,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 BOT_HANDLERS = [
     "tbot.handlers.base",
+    "tbot.handlers.helper",
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
 ]
-
-CELERY_BROKER_URL = config.redis.url
-CELERY_RESULT_BACKEND = config.redis.url
-
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
 
 django_heroku.settings(locals())

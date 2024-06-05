@@ -30,7 +30,7 @@ class BotPaymentsAdmin(admin.ModelAdmin):
     search_fields = ("id", "user_id", "amount")
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
 
 
 @admin.register(UserIntegrations)
@@ -45,4 +45,4 @@ class UserIntegrationsAdmin(admin.ModelAdmin):
     search_fields = ("user_id",)
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True

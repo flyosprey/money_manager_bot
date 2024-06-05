@@ -9,17 +9,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from orjson import orjson
 from pydantic import SecretStr
 
-
-class EncryptManagerError(Exception):
-    pass
-
-
-class EncodeExceptionError(EncryptManagerError):
-    pass
-
-
-class DecodeExceptionError(EncryptManagerError):
-    pass
+from tbot.errors import DecodeExceptionError, EncodeExceptionError
 
 
 class EncryptManager:
@@ -57,8 +47,8 @@ class EncryptManager:
             json_data = {"iv": iv_64, "data": encrypted_64}
 
             return base64.b64encode(orjson.dumps(json_data)).decode("utf-8")
+
         except (TypeError, UnicodeEncodeError, binascii.Error) as e:
-            # logger.error("{} {}, error {}", err_message, data, error)
             raise EncodeExceptionError("Failed encode key.") from e
 
     def decrypt_key(self, data: str) -> str:
@@ -79,6 +69,7 @@ class EncryptManager:
             decryptor = cipher.decryptor()
 
             decrypt_data = decryptor.update(encrypted_data) + decryptor.finalize()
+
             return base64.b64decode(decrypt_data).decode("utf-8")
         except (
             TypeError,

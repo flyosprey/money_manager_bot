@@ -1,12 +1,13 @@
 from typing import TypeVar
 
-from tbot.clients.walletapp.dto.type import (
+from tbot.dto.walletapp.type import (
     Category,
     SubCategoryCommunicationPC,
     SubCategoryFinancialExpenses,
     SubCategoryFood,
     SubCategoryLifeAndEntertainment,
     SubCategoryOthers,
+    SubCategoryTransportation,
     SubCategoryVehicle,
 )
 
@@ -17,9 +18,14 @@ MCCCodeCategory = {
     5813: (Category.FOOD, SubCategoryFood.BAR_CAFE),
     7523: (Category.VEHICLE, SubCategoryVehicle.PARKING),
     4829: (Category.OTHERS, SubCategoryOthers.OTHERS),
+    4121: (Category.TRANSPORTATION, SubCategoryTransportation.TAXI),
     5734: (Category.COMMUNICATION_PC, SubCategoryCommunicationPC.SOFTWARE_APPS_GAMES),
-    5993: (Category.LIFE_AND_ENTERTAINMENT, SubCategoryLifeAndEntertainment.ALCOHOL_AND_TOBACCO),
+    5993: (
+        Category.LIFE_AND_ENTERTAINMENT,
+        SubCategoryLifeAndEntertainment.ALCOHOL_AND_TOBACCO,
+    ),
     8999: (Category.FINANCIAL_EXPENSES, SubCategoryFinancialExpenses.CHARGES_FEES),
+    7399: (Category.COMMUNICATION_PC, SubCategoryCommunicationPC.POSTAL_SERVICES),
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -721,7 +727,6 @@ MCCCodeCategory = {
     4111: "LOCAL_SUBURBAN_COMMUTER_PASSENGER",
     4112: "PASSENGER_RAILWAYS",
     4119: "AMBULANCE_SERVICES",
-    4121: "TAXICABS_AND_LIMOUSINES",
     4131: "BUS_LINES_INCLUDING",
     4214: "MOTOR_FREIGHT_CARRIERS",
     4215: "COURIER_SERVICES",
@@ -914,7 +919,6 @@ MCCCodeCategory = {
     7393: "PROTECTIVE_AND_SECURITY",
     7394: "EQUIPMENT_RENTAL_AND",
     7395: "PHOTOFINISHING_LABORATORIES_PHOTO",
-    7399: "BUSINESS_SERVICES_NOT",
     7511: "TRUCK_STOP",
     7512: "CAR_RENTAL_COMPANIES",
     7513: "TRUCK_AND_UTILITY",

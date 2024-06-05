@@ -11,17 +11,24 @@ def menu(bot):
     )
     bot.set_my_commands(
         [
-            types.BotCommand("/start", "start"),
-            types.BotCommand("/integrate", "integrate"),
-            types.BotCommand("/help", "help"),
+            types.BotCommand("/start", "Розпочати бота"),
+            types.BotCommand("/integrate", "Розпочати інтеграцію"),
+            types.BotCommand(
+                "/additional_monobank_token",
+                "Додати трекінг додаткового аккаунту Monobank",
+            ),
+            types.BotCommand("/reset_token", "Замінити токен Monobank"),
+            types.BotCommand("/reset_password", "Замінити пароль WalletApp"),
+            types.BotCommand("/refresh_monobank", "Оновити звʼязок з Monobank"),
+            types.BotCommand("/help", "Доступні команди"),
         ]
     )
     return keyboard
 
 
 def transaction_menu(
-        accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
-        rejected_data: TransactionStatus = TransactionStatus.REJECTED,
+    accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
+    rejected_data: TransactionStatus = TransactionStatus.REJECTED,
 ):
     add_transaction = types.InlineKeyboardButton(
         "Записати", callback_data=accepted_data

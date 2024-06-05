@@ -1,5 +1,5 @@
-from redis.client import Redis
-from tbot.dto.users.type import UserStates
+from redis.client import Redis  # noqa
+from tbot.dto.users.type import UserStates  # noqa
 
 USER_STATE_TEMPLATE = "{user_id}_state"
 USER_STATUS_TTL = 604800  # 7 days

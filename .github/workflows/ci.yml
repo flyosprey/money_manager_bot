@@ -38,7 +38,7 @@ jobs:
         run: poetry install
 
       - name: Run Ruff Linter
-        run: poetry run ruff check . --fix
+        run: poetry run ruff check .
 
       - name: Run Black Linter
         run: poetry run black --check .

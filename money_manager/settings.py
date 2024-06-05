@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config.secret_key.get_secret_value()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.is_test
 
 ALLOWED_HOSTS = ["*"]
 
@@ -80,12 +80,6 @@ WSGI_APPLICATION = "money_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     "default": dj_database_url.config(default=config.postgres.url),
 }
@@ -138,11 +132,5 @@ BOT_HANDLERS = [
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
 ]
-
-CELERY_BROKER_URL = config.redis.url
-CELERY_RESULT_BACKEND = config.redis.url
-
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
 
 django_heroku.settings(locals())

@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Environment
-        uses: ./.github/actions/setup-env/action.yml
+        uses: ./.github/actions/setup-env/
         with:
           python-version: '3.11'
 
@@ -45,7 +45,7 @@ jobs:
 #    needs: build
 #    steps:
 #      - name: Setup Environment
-#        uses: ./.github/actions/setup-env
+#        uses: ./.github/actions/setup-env/
 #        with:
 #          python-version: '3.11'
 #

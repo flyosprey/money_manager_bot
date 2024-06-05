@@ -11,7 +11,7 @@ from tbot.dispatchers.integration import (
     handle_walletapp_username,
 )
 from tbot.dto.users.type import UserStates
-from tbot.utils import exception_handler
+from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 

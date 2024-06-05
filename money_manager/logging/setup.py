@@ -1,58 +1,53 @@
 import logging
 import os
+import pathlib
+from datetime import UTC, datetime
 
 import structlog
 
+from money_manager.logging.formatter import ConsoleFormatter, FileFormatter
 
-def setup_logging():
-    log_directory = "logs"
+
+def setup_logging(path_: pathlib.Path):
+    log_directory = os.path.join(path_, "logs")
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
-
-    timestamper = structlog.processors.TimeStamper(fmt="iso", utc=True)
-    pre_chain = [
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.add_logger_name,
-        timestamper,
-    ]
 
     logging.config.dictConfig(
         {
             "version": 1,
             "disable_existing_loggers": False,
             "formatters": {
-                "plain": {
-                    "()": structlog.stdlib.ProcessorFormatter,
-                    "processor": structlog.dev.ConsoleRenderer(),
-                    "foreign_pre_chain": pre_chain,
+                "file": {
+                    "()": FileFormatter,
                 },
-                "json": {
-                    "()": structlog.stdlib.ProcessorFormatter,
-                    "processor": structlog.processors.JSONRenderer(),
-                    "foreign_pre_chain": pre_chain,
+                "console": {
+                    "()": ConsoleFormatter,
                 },
             },
             "handlers": {
-                "default": {
-                    "level": "DEBUG",
-                    "class": "logging.StreamHandler",
-                    "formatter": "plain",
-                },
-                "json_file": {
+                "file": {
                     "level": "DEBUG",
                     "class": "logging.FileHandler",
-                    "filename": os.path.join(log_directory, "app.log"),
-                    "formatter": "json",
+                    "filename": os.path.join(
+                        log_directory, f"{datetime.now(tz=UTC).date()}.log"
+                    ),
+                    "formatter": "file",
+                },
+                "console": {
+                    "level": "DEBUG",
+                    "class": "logging.StreamHandler",
+                    "formatter": "console",
                 },
             },
             "loggers": {
                 "": {
-                    "handlers": ["default", "json_file"],
+                    "handlers": ["console", "file"],
                     "level": "DEBUG",
                     "propagate": True,
                 },
                 "django": {
-                    "handlers": ["default", "json_file"],
+                    "handlers": ["console", "file"],
                     "level": "INFO",
                     "propagate": False,
                 },

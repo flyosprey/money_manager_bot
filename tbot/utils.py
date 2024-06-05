@@ -2,18 +2,15 @@ import re
 import time
 from contextlib import suppress
 from datetime import datetime
-from functools import wraps
 
 import dateutil.parser
 import pytz
 import structlog
 from django.urls import reverse
-from selenium.common.exceptions import WebDriverException
 from telebot.apihelper import ApiTelegramException
-from telebot.types import CallbackQuery, InlineKeyboardMarkup, Message
+from telebot.types import InlineKeyboardMarkup, Message
 
 from money_manager.config import TIMEZONE_UTC
-from tbot.errors import IncorrectMCCCodeError, InvalidCredentialsError
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
@@ -24,51 +21,6 @@ CURRENCY_NUMBERS = {
     840: {"code": "USD", "symbol": "$"},
     978: {"code": "EUR", "symbol": "€"},
 }
-
-
-def exception_handler():
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            msg = args[0]
-            if isinstance(msg, CallbackQuery):
-                chat_id, user_id = msg.message.chat.id, msg.message.from_user.id
-            else:
-                chat_id, user_id = msg.chat.id, msg.from_user.id
-            try:
-                return func(*args, **kwargs)
-            except IncorrectMCCCodeError as e:
-                logger.error(e, user_id=user_id)
-                bot.send_message(
-                    chat_id=chat_id,
-                    text="Категорія транзакції наразі не підтримується! Спробуйте пізніше.",
-                )
-                return
-            except InvalidCredentialsError as e:
-                logger.error(e, user_id=user_id)
-                bot.send_message(
-                    chat_id=chat_id,
-                    text="Невірні облікові дані для WalletApp!🚫",
-                )
-                return
-            except WebDriverException as e:
-                logger.error(e.msg, user_id=user_id)
-                bot.send_message(
-                    chat_id=chat_id,
-                    text="Виникла помилка перевірки облікових даних!🤷‍♂️ Спробуйте знову /integrate.",
-                )
-                return
-            except Exception as e:
-                logger.error(str(e), user_id=user_id)
-                bot.send_message(
-                    chat_id=chat_id,
-                    text="Щось пішло не так! Спробуйте пізніше.",
-                )
-                return
-
-        return wrapper
-
-    return decorator
 
 
 def absolute_endpoint_path(dsn: str, view_name: str, args: list) -> str:

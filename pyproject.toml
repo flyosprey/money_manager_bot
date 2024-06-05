@@ -30,6 +30,7 @@ structlog = "^24.1.0"
 black = "^24.4.2"
 pytz = "^2024.1"
 dateutils = "^0.6.12"
+colorama = "^0.4.6"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"

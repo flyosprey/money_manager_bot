@@ -1,4 +1,8 @@
+import structlog
+
 from tbot_base.repository.bot_user import BotUserRepository
+
+logger = structlog.get_logger(__name__)
 
 
 def register_user(message):
@@ -24,3 +28,4 @@ def register_user(message):
         last_name=last_name,
         is_bot=is_bot,
     ).save()
+    logger.info("Registered user", user_id=user_id)

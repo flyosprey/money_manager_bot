@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 
 import structlog
 
-from money_manager.logging.formatter import ConsoleFormatter, FileFormatter
+from money_manager.logger.formatter import ConsoleFormatter, FileFormatter
 
 
 def setup_logging(path_: pathlib.Path):

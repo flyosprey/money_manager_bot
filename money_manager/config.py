@@ -8,9 +8,6 @@ TIMEZONE_UTC = pytz.timezone("UTC")
 
 class MonoConfig(BaseSettings):
     base_url: str = Field(..., description="Monobank base url")
-    transaction_period: int = Field(
-        7200, description="Period for get transaction til now"
-    )
 
 
 class WalletAppConfig(BaseSettings):

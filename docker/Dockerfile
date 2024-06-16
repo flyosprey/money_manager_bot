@@ -22,7 +22,18 @@ ENV VIRTUAL_ENV=/opt/money_manager_bot/.venv \
 
 WORKDIR /opt/money_manager_bot/
 
-COPY . /opt/money_manager_bot/
+#COPY . /opt/money_manager_bot/
+
+COPY .venv /opt/money_manager_bot/.venv
+COPY money_manager /opt/money_manager_bot/money_manager
+COPY tbot /opt/money_manager_bot/tbot
+COPY tbot_base /opt/money_manager_bot/tbot_base
+COPY .env.dev /opt/money_manager_bot/.env.dev
+COPY manage.py /opt/money_manager_bot/manage.py
+COPY poetry.lock /opt/money_manager_bot/poetry.lock
+COPY poetry.toml /opt/money_manager_bot/poetry.toml
+COPY pyproject.toml /opt/money_manager_bot/pyproject.toml
+COPY start.sh /opt/money_manager_bot/start.sh
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi

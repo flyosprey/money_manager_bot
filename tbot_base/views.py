@@ -12,9 +12,8 @@ from money_manager.config import TIMEZONE_KYIV, config
 from tbot.dto.monobank.payload import Transaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
-    convert_currency_number_to_symbol,
     convert_money,
-    convert_timestamp_to_datetime,
+    convert_timestamp_to_datetime, convert_currency_number_to_code,
 )
 
 from .bot import tbot
@@ -40,12 +39,12 @@ class TelegramWebhookView(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class MonobankWebhookView(View):
-    def get(self, request, chat_id: int, encrypted_user_id: str, *args, **kwargs):
+    def get(self, request, encrypted_user_id: str, *args, **kwargs):
         self.check_signature(encrypted_user_id=encrypted_user_id)
         return HttpResponse(status=200)
 
-    def post(self, request, chat_id: int, encrypted_user_id: str, *args, **kwargs):
-        self.check_signature(encrypted_user_id=encrypted_user_id)
+    def post(self, request, encrypted_user_id: str, *args, **kwargs):
+        user_id = self.check_signature(encrypted_user_id=encrypted_user_id)
         if request.META["CONTENT_TYPE"] != "application/json":
             raise PermissionDenied
 
@@ -59,24 +58,25 @@ class MonobankWebhookView(View):
             return JsonResponse({"error": e.error_dict}, status=422)
 
         if not self.skip_transaction(transaction=transaction):
-            currency = convert_currency_number_to_symbol(transaction.currency_code)
+            currency = convert_currency_number_to_code(transaction.currency_code)
             cashback = (
-                f"{convert_money(transaction.cashback_amount)}{currency}"
+                f"{convert_money(transaction.cashback_amount)}₴"
                 if transaction.cashback_amount
-                else "відсутня"
-            )
-            commission = (
-                f"{convert_money(transaction.commission_rate)}{currency}"
-                if transaction.commission_rate
                 else "відсутній"
             )
-            amount = f"{convert_money(transaction.amount)}{currency}"
+            commission = (
+                f"{convert_money(transaction.commission_rate)}₴"
+                if transaction.commission_rate
+                else "відсутня"
+            )
+            amount = f"{convert_money(transaction.amount)}₴"
             date_ = convert_timestamp_to_datetime(
                 timestamp=transaction.time, timezone=TIMEZONE_KYIV
             ).replace(tzinfo=None)
             tbot.send_message(
-                chat_id=chat_id,
-                text=f"Опис: {transaction.description}\n"
+                chat_id=user_id,
+                text=f"Рахунок: {currency}\n"
+                f"Опис: {transaction.description}\n"
                 f"Сума: {amount}\n"
                 f"Комісія: {commission}\n"
                 f"Кешбек: {cashback}\n"
@@ -89,7 +89,7 @@ class MonobankWebhookView(View):
         return HttpResponse(status=200)
 
     @staticmethod
-    def check_signature(encrypted_user_id: str) -> None:
+    def check_signature(encrypted_user_id: str) -> int:
         try:
             encrypt_manager = EncryptManager(secret_key=config.secret_key)
             user_id = int(encrypt_manager.decrypt_key(encrypted_user_id))
@@ -99,6 +99,8 @@ class MonobankWebhookView(View):
         if not BotUserRepository.select(user_id=user_id, first=True):
             raise PermissionDenied
 
+        return user_id
+
     @staticmethod
-    def skip_transaction(transaction: Transaction) -> bool | None:
+    def skip_transaction(transaction: Transaction) -> bool:
         return bool(re.search(r"з \w+ картки", transaction.description.lower()))

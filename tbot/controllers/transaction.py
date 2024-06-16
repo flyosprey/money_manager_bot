@@ -25,11 +25,14 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
     comment = get_field_value_from_text(
         text=text, pattern=r"Коментар: (.+?)\n", group_index=1
     )
+    commission = get_field_value_from_text(text=text, pattern=r"Комісія: (.+)", group_index=1)
+    cashback = get_field_value_from_text(text=text, pattern=r"Кешбек: (.+)", group_index=1)
     time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_index=1)
+
     return SimpleTransaction(
         mcc=int(mcc),
         amount=int(float(amount) * 100),
-        note=comment if comment != "відсутній" else None,
+        note=f"Коментар: {comment}. Кешбек: {cashback}. Комісія: {commission}",
         time=convert_datetime_to_timestamp(time_=time),
         contractor=description,
     )

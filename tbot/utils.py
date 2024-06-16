@@ -41,12 +41,13 @@ def normalize_credential(credential: str) -> str:
 
 def get_field_value_from_text(
     text: str, pattern: str, group_index: int = 0
-) -> str | None:
+) -> str:
     value = re.search(pattern, text)
     if value:
         return value[group_index].strip()
 
-    return None
+    logger.error(f"Cannot to fetch date from text! Pattern {pattern} | text {text}")
+    raise ValueError(f"Cannot to fetch date from text! Pattern {pattern} | text {text}")
 
 
 def get_unix_time(seconds: int = 0) -> int:

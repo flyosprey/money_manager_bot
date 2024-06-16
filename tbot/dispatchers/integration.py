@@ -50,7 +50,6 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     if not check_monobank(
         dsn=dsn,
         mono_token=mono_token,
-        chat_id=message.chat.id,
         encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
         base_url=config.monobank.base_url,
     ):
@@ -164,7 +163,6 @@ def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
         if not check_monobank(
             dsn=dsn,
             mono_token=mono_token,
-            chat_id=message.chat.id,
             encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
             base_url=config.monobank.base_url,
         ):

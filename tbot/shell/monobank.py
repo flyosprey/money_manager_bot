@@ -22,7 +22,6 @@ def refresh_monobank_webhooks(dsn: str) -> None:
             if not check_monobank(
                 dsn=dsn,
                 mono_token=encrypt_manager.decrypt_key(integration.monobank_token),
-                chat_id=int(user.user_id),
                 encrypted_user_id=encrypt_manager.encrypt_key(str(user.user_id)),
                 base_url=config.monobank.base_url,
             ):

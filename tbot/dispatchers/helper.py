@@ -15,7 +15,6 @@ def handle_refresh_monobank(message: Message, dsn: str):
         if not check_monobank(
             dsn=dsn,
             mono_token=encrypt_manager.decrypt_key(integration.monobank_token),
-            chat_id=message.chat.id,
             encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
             base_url=config.monobank.base_url,
         ):

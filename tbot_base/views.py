@@ -12,8 +12,9 @@ from money_manager.config import TIMEZONE_KYIV, config
 from tbot.dto.monobank.payload import Transaction
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
+    convert_currency_number_to_code,
     convert_money,
-    convert_timestamp_to_datetime, convert_currency_number_to_code,
+    convert_timestamp_to_datetime,
 )
 
 from .bot import tbot

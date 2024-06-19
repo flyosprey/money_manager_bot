@@ -7,6 +7,8 @@ import dateutil.parser
 import pytz
 import structlog
 from django.urls import reverse
+from random_user_agent.params import OperatingSystem, SoftwareName
+from random_user_agent.user_agent import UserAgent
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, Message
 
@@ -93,3 +95,18 @@ def edit_message(
         bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
         )
+
+
+def get_random_user_agent() -> (str, str):
+    software_names = [SoftwareName.CHROME.value]
+    operating_systems = [OperatingSystem.WINDOWS.value]
+    user_agent_rotator = UserAgent(
+        software_names=software_names, operating_systems=operating_systems, limit=100
+    )
+    while True:
+        user_agent = user_agent_rotator.get_random_user_agent()
+        chrome_version = re.search(r"Chrome/(\d+)?\.", user_agent)
+        chrome_version = chrome_version[1] if chrome_version else chrome_version
+
+        if chrome_version:
+            return user_agent, chrome_version

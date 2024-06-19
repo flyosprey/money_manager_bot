@@ -51,7 +51,6 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         dsn=dsn,
         mono_token=mono_token,
         encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
-        base_url=config.monobank.base_url,
     ):
         bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
         redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)
@@ -110,7 +109,6 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     check_walletapp_credentials(
         username=encrypt_manager.decrypt_key(integration.wallet_app_login),
         password=walletapp_password,
-        base_url=config.walletapp.base_url,
         user_id=message.from_user.id,
         redis=redis,
     )
@@ -157,14 +155,13 @@ def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
     if user_state == UserStates.RESET_WALLETAPP_PASSWORD:
         UserIntegrationRepository.upsert(
             user_id=message.from_user.id,
-            walletapp_password=encrypted_credential,
+            wallet_app_password=encrypted_credential,
         )
     else:
         if not check_monobank(
             dsn=dsn,
             mono_token=mono_token,
             encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
-            base_url=config.monobank.base_url,
         ):
             bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
             return

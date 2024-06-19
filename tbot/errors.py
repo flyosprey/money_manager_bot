@@ -67,6 +67,10 @@ class MonoExceptionError(Exception):
     pass
 
 
+class RetryExceededError(Exception):
+    pass
+
+
 class InvalidCredentialsError(Exception):
     pass
 

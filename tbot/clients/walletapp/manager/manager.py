@@ -77,7 +77,7 @@ class MoneyManager(MoneyManagerBase):
 
         note_input = self.driver.find_element(By.XPATH, ".//textarea[@name='note']")
         self.scroll_into_view(note_input)
-        note_input.send_keys("Testing note")
+        note_input.send_keys(note)
 
     def press_add_record(self) -> None:
         add_record = self.driver.find_element(

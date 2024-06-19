@@ -23,7 +23,6 @@ def refresh_monobank_webhooks(dsn: str) -> None:
                 dsn=dsn,
                 mono_token=encrypt_manager.decrypt_key(integration.monobank_token),
                 encrypted_user_id=encrypt_manager.encrypt_key(str(user.user_id)),
-                base_url=config.monobank.base_url,
             ):
                 logger.warning(
                     "Failed to refresh monobank webhooks", user_id=user.user_id

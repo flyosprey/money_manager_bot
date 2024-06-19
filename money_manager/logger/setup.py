@@ -43,13 +43,8 @@ def setup_logging(path_: pathlib.Path):
             "loggers": {
                 "": {
                     "handlers": ["console", "file"],
-                    "level": "DEBUG",
-                    "propagate": True,
-                },
-                "django": {
-                    "handlers": ["console", "file"],
                     "level": "INFO",
-                    "propagate": False,
+                    "propagate": True,
                 },
             },
         }

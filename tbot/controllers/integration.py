@@ -12,7 +12,9 @@ def set_monobank_webhook(mono_token: str, webhook_url: str):
 
 
 def check_monobank(
-    dsn: str, mono_token: str, encrypted_user_id: str,
+    dsn: str,
+    mono_token: str,
+    encrypted_user_id: str,
 ) -> bool:
     webhook_url = absolute_endpoint_path(
         dsn=dsn, view_name="handle_mono_webhook", args=[encrypted_user_id]

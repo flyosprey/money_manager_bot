@@ -1,6 +1,8 @@
+from requests.exceptions import RequestException
 from telebot.types import Message
 
 from money_manager.config import config
+from tbot.clients.walletapp.client import WalletAppClient
 from tbot.controllers.integration import (
     check_monobank,
     check_walletapp_credentials,
@@ -139,40 +141,84 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
     )
 
 
-def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
+def handle_reset(
+    message: Message, redis: RedisWrapper, dsn: str
+):
     if not UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
         bot.send_message(
             chat_id=message.chat.id, text="Інтеграцію ще не було активовано."
         )
         return
 
-    mono_token = normalize_credential(credential=message.text)
+    credential = normalize_credential(credential=message.text)
     delete_message(message)
 
-    user_state = redis.get_user_state(message.from_user.id)
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
-    encrypted_credential = encrypt_manager.encrypt_key(mono_token)
-    if user_state == UserStates.RESET_WALLETAPP_PASSWORD:
-        UserIntegrationRepository.upsert(
-            user_id=message.from_user.id,
-            wallet_app_password=encrypted_credential,
-        )
-    else:
-        if not check_monobank(
-            dsn=dsn,
-            mono_token=mono_token,
-            encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
-        ):
-            bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
-            return
 
-        UserIntegrationRepository.upsert(
-            user_id=message.from_user.id,
-            monobank_token=encrypted_credential,
+    reset_handler = (
+        handle_monobank_handler
+        if redis.get_user_state(message.from_user.id) == UserStates.RESET_MONOTOKEN
+        else handle_walletapp_reset
+    )
+
+    reset_handler(message, credential, encrypt_manager, dsn=dsn)
+
+    redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)
+
+
+def handle_walletapp_reset(
+    message: Message, password: str, encrypt_manager: EncryptManager, **kwargs
+):
+    integration = UserIntegrationRepository.select(
+        user_id=message.from_user.id,
+        wallet_app_password__isnull=False,
+        wallet_app_login__isnull=False,
+        first=True,
+    )[0]
+
+    try:
+        WalletAppClient().login(
+            username=encrypt_manager.decrypt_key(integration.wallet_app_login),
+            password=password,
         )
+    except RequestException:
+        bot.send_message(
+            chat_id=message.from_user.id, text="Невірний пароль для WalletApp!"
+        )
+        return
+
+    UserIntegrationRepository.upsert(
+        user_id=message.from_user.id,
+        wallet_app_password=encrypt_manager.encrypt_key(password),
+    )
+
+    bot.send_message(
+        chat_id=message.from_user.id,
+        text="Пароль до WalletApp оновлено",
+    )
+
+
+def handle_monobank_handler(
+    message: Message,
+    mono_token: str,
+    encrypt_manager: EncryptManager,
+    dsn: str,
+    **kwargs,
+):
+    if not check_monobank(
+        dsn=dsn,
+        mono_token=mono_token,
+        encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
+    ):
+        bot.send_message(chat_id=message.chat.id, text="Невірний токен Monobank!")
+        return
+
+    UserIntegrationRepository.upsert(
+        user_id=message.from_user.id,
+        monobank_token=encrypt_manager.encrypt_key(mono_token),
+    )
 
     bot.send_message(
         chat_id=message.chat.id,
-        text=f"{'Токен Монобанку' if user_state == UserStates.RESET_MONOTOKEN else 'Пароль до WalletApp'} оновлено",
+        text="Токен Монобанку оновлено",
     )
-    redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)

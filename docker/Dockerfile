@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     POETRY_HOME='/usr/local'
 
 RUN apt-get update && \
-    apt-get install -y curl libpq-dev gcc && \
+    apt-get install -y curl libpq-dev gcc cron && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
@@ -26,9 +26,9 @@ COPY tbot /opt/money_manager_bot/tbot
 COPY tbot_base /opt/money_manager_bot/tbot_base
 COPY manage.py /opt/money_manager_bot/manage.py
 COPY poetry.lock /opt/money_manager_bot/poetry.lock
-COPY poetry.toml /opt/money_manager_bot/poetry.toml
 COPY pyproject.toml /opt/money_manager_bot/pyproject.toml
 COPY start.sh /opt/money_manager_bot/start.sh
+COPY cleanup_logs.sh /opt/money_manager_bot/cleanup_logs.sh
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi

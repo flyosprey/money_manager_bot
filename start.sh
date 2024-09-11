@@ -1,4 +1,9 @@
 #!/bin/bash
+
+echo "Setting logs cleaner..."
+chmod +x cleanup_logs.sh
+(crontab -l 2>/dev/null; echo "0 0 * * * /usr/local/bin/cleanup_logs.sh") | crontab -
+
 echo "Makemigrations..."
 python manage.py makemigrations
 
@@ -16,9 +21,12 @@ EOF
 echo "Starting Django server..."
 python manage.py runserver 0.0.0.0:8000 &
 
-sleep 10
+sleep 20
 
 echo "Executing tbot.shell.main monobank refresh..."
-python -m tbot.shell.main monobank refresh
+python -m tbot.shell.main monobank refresh &
+
+echo "Executing cron for cleaning logs..."
+cron -f
 
 wait

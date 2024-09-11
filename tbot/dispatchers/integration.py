@@ -141,9 +141,7 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
     )
 
 
-def handle_reset(
-    message: Message, redis: RedisWrapper, dsn: str
-):
+def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
     if not UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
         bot.send_message(
             chat_id=message.chat.id, text="Інтеграцію ще не було активовано."

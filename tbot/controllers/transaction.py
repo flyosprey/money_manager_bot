@@ -62,7 +62,7 @@ def add_transaction(
 
 
 def validate_transaction_to_add(transaction: SimpleTransaction):
-    if isinstance(MCCCodeCategory[transaction.mcc], str):
+    if not MCCCodeCategory[transaction.mcc].startswith("-Category_"):
         raise IncorrectMCCCodeError(
             message="MCC code is not supported yet", mcc_code=transaction.mcc
         )

@@ -32,4 +32,4 @@ class Config(BaseSettings):
         extra = "ignore"
 
 
-config = Config(_env_file=".env")
+config = Config()

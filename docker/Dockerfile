@@ -6,29 +6,24 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONHASHSEED=random \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_HOME='/usr/local'
 
 RUN apt-get update && \
-    apt-get install -y curl libpq-dev gcc firefox-esr && \
+    apt-get install -y curl libpq-dev gcc && \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python - && \
-    ln -s /opt/poetry/bin/poetry /usr/local/bin && \
-    poetry config virtualenvs.in-project true && \
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    poetry config virtualenvs.in-project false && \
     poetry config installer.max-workers 10
-
-ENV VIRTUAL_ENV=/opt/money_manager_bot/.venv \
-    PATH="/opt/money_manager_bot/.venv/bin:$PATH"
 
 WORKDIR /opt/money_manager_bot/
 
-#COPY . /opt/money_manager_bot/
-
-COPY .venv /opt/money_manager_bot/.venv
 COPY money_manager /opt/money_manager_bot/money_manager
 COPY tbot /opt/money_manager_bot/tbot
 COPY tbot_base /opt/money_manager_bot/tbot_base
-COPY .env.dev /opt/money_manager_bot/.env.dev
 COPY manage.py /opt/money_manager_bot/manage.py
 COPY poetry.lock /opt/money_manager_bot/poetry.lock
 COPY poetry.toml /opt/money_manager_bot/poetry.toml
@@ -37,9 +32,5 @@ COPY start.sh /opt/money_manager_bot/start.sh
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
-
-RUN curl -sSLo /tmp/geckodriver.tar.gz "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz" && \
-    tar -xzf /tmp/geckodriver.tar.gz -C /usr/local/bin && \
-    rm /tmp/geckodriver.tar.gz
 
 CMD ["/opt/money_manager_bot/start.sh"]

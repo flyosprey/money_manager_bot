@@ -9,6 +9,11 @@ class Category(str, enum.Enum):
     COMMUNICATION_PC = "Communication, PC"
     FINANCIAL_EXPENSES = "Financial expenses"
     TRANSPORTATION = "Transportation"
+    INCOME = "Income"
+
+
+class SubCategoryIncome(str, enum.Enum):
+    INCOME = "Income"
 
 
 class SubCategoryTransportation(str, enum.Enum):

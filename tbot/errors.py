@@ -27,7 +27,7 @@ def exception_handler():
             except IncorrectMCCCodeError as e:
                 logger.error(e, user_id=user_id)
 
-                text = text.relpace(
+                text = text.replace(
                     "Категорія транзакції наразі не підтримується! Спробуйте пізніше.",
                     "",
                 )

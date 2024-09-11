@@ -46,6 +46,11 @@ def setup_logging(path_: pathlib.Path):
                     "level": "INFO",
                     "propagate": True,
                 },
+                "django_heroku.core": {
+                    "handlers": ["console"],
+                    "level": "WARNING",
+                    "propagate": False,
+                },
             },
         }
     )

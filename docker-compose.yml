@@ -6,14 +6,12 @@ services:
     image: postgres:12-alpine
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB-db}
-      POSTGRES_USER: ${POSTGRES_USER-user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+    env_file:
+      - .env.prod
     expose:
       - 5432
     ports:
-      - ${POSTGRES_PORT-54322}:5432
+      - ${POSTGRES_PORT-5432}:5432
 
   web:
     expose:
@@ -22,15 +20,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     env_file:
-      - .env.dev
-    environment:
-      APP_POSTGRES__URL: ${APP_POSTGRES__URL}
-      APP_DSN: ${APP_DSN}
-      APP_SECRET_KEY: ${APP_SECRET_KEY}
-      APP_MONOBANK__BASE_URL: ${APP_MONOBANK__BASE_URL}
-      APP_WALLETAPP__BASE_URL: ${APP_WALLETAPP__BASE_URL}
-      APP_BOT_CONF__DEFAULT_TOKEN: ${APP_BOT_CONF__DEFAULT_TOKEN}
-      APP_REDIS__URL: ${APP_REDIS__URL}
+      - .env.prod
     ports:
       - "8000:8000"
     depends_on:

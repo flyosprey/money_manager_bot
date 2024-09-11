@@ -1,4 +1,4 @@
-from redis.client import Redis  # noqa
+from redis.client import Redis
 from tbot.dto.users.type import UserStates
 
 USER_STATE_TEMPLATE = "{user_id}_state"

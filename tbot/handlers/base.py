@@ -30,11 +30,10 @@ def test_handler(message: Message):
     if config.is_test:
         add_transaction(
             user_id=message.chat.id,
-            base_url=config.walletapp.base_url,
             secret_key=config.secret_key,
             transaction=SimpleTransaction(
                 mcc=5411,
-                amount=15000,
+                amount=-15000,
                 note="Weekly grocery shopping",
                 time=get_unix_time(),
                 contractor="ATБ",

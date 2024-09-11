@@ -1,5 +1,6 @@
 import os
 
+import click
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "money_manager.settings")
@@ -15,6 +16,18 @@ from tbot_base.security.encrypting import EncryptManager  # noqa
 logger = structlog.get_logger(__name__)
 
 
+@click.group("monobank")
+def run_monobank_refresh():
+    pass
+
+
+@run_monobank_refresh.command("refresh")
+def run():
+    logger.info("Start refresh_monobank_webhooks")
+    refresh_monobank_webhooks(dsn=config.dsn)
+    logger.info("Finished refresh_monobank_webhooks")
+
+
 def refresh_monobank_webhooks(dsn: str) -> None:
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
     for user in BotUserRepository.select(first=False):
@@ -23,18 +36,7 @@ def refresh_monobank_webhooks(dsn: str) -> None:
                 dsn=dsn,
                 mono_token=encrypt_manager.decrypt_key(integration.monobank_token),
                 encrypted_user_id=encrypt_manager.encrypt_key(str(user.user_id)),
-                base_url=config.monobank.base_url,
             ):
                 logger.warning(
                     "Failed to refresh monobank webhooks", user_id=user.user_id
                 )
-
-
-def run():
-    logger.info("Start refresh_monobank_webhooks")
-    refresh_monobank_webhooks(dsn=config.dsn)
-    logger.info("Finished refresh_monobank_webhooks")
-
-
-if __name__ == "__main__":
-    run()

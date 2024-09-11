@@ -14,7 +14,6 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
 
     add_transaction(
         user_id=call.from_user.id,
-        base_url=config.walletapp.base_url,
         secret_key=config.secret_key,
         transaction=transaction,
     )

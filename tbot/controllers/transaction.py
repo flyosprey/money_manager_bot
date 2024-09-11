@@ -1,13 +1,11 @@
 from pydantic import SecretStr
 
-from tbot.clients.walletapp.manager.manager import MoneyManager
+from tbot.clients.walletapp.client import CloudWalletAppClient, WalletAppClient
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError
 from tbot.utils import (
     convert_datetime_to_timestamp,
-    convert_money,
-    convert_timestamp_to_datetime,
     get_field_value_from_text,
 )
 from tbot_base.repository.user_integration import UserIntegrationRepository
@@ -43,7 +41,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 
 
 def add_transaction(
-    transaction: SimpleTransaction, user_id: int, base_url: str, secret_key: SecretStr
+    transaction: SimpleTransaction, user_id: int, secret_key: SecretStr
 ):
     validate_transaction_to_add(transaction)
     integration = UserIntegrationRepository.select(
@@ -53,22 +51,18 @@ def add_transaction(
         first=True,
     )[0]
     encrypter = EncryptManager(secret_key=secret_key)
-    with MoneyManager(
+
+    owner_id, owner_id_token = WalletAppClient().login(
         username=encrypter.decrypt_key(integration.wallet_app_login),
         password=encrypter.decrypt_key(integration.wallet_app_password),
-        base_url=base_url,
-    ) as manager:
-        manager.create_transaction(
-            amount=convert_money(money_in_cents=transaction.amount),
-            note=transaction.note,
-            category=MCCCodeCategory[transaction.mcc],
-            date_time=convert_timestamp_to_datetime(timestamp=transaction.time),
-            contractor=transaction.contractor,
-        )
+    )
+    CloudWalletAppClient(owner_id=owner_id, owner_id_token=owner_id_token).add_record(
+        transaction=transaction
+    )
 
 
 def validate_transaction_to_add(transaction: SimpleTransaction):
-    if isinstance(MCCCodeCategory[transaction.mcc], str):
+    if not MCCCodeCategory[transaction.mcc].startswith("-Category_"):
         raise IncorrectMCCCodeError(
             message="MCC code is not supported yet", mcc_code=transaction.mcc
         )

@@ -43,12 +43,12 @@ def setup_logging(path_: pathlib.Path):
             "loggers": {
                 "": {
                     "handlers": ["console", "file"],
-                    "level": "DEBUG",
+                    "level": "INFO",
                     "propagate": True,
                 },
-                "django": {
-                    "handlers": ["console", "file"],
-                    "level": "INFO",
+                "django_heroku.core": {
+                    "handlers": ["console"],
+                    "level": "WARNING",
                     "propagate": False,
                 },
             },

@@ -41,14 +41,14 @@ def exception_handler():
                 logger.error(e, user_id=user_id)
                 bot.send_message(
                     chat_id=user_id,
-                    text="Невірні облікові дані для WalletApp!🚫",
+                    text="Невірні облікові дані для WalletApp!🔴",
                 )
                 return
             except Exception as e:
                 logger.error(str(e), user_id=user_id)
                 bot.send_message(
                     chat_id=user_id,
-                    text="Щось пішло не так! Спробуйте пізніше.",
+                    text="Щось пішло не так!🔴 Спробуйте пізніше.🕐",
                 )
                 return
 

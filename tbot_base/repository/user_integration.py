@@ -24,7 +24,6 @@ class UserIntegrationRepository(Repository):
     def update(cls, where: dict, update: dict) -> UserIntegrations:
         return UserIntegrations.objects.filter(**where).update(**update)
 
-
     @classmethod
     def delete(cls, **kwargs) -> tuple[bool, int] | None:
         return UserIntegrations.objects.filter(**kwargs).delete()

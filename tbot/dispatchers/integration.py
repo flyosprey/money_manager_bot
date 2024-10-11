@@ -91,10 +91,8 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
         update={
             "wallet_app_login": EncryptManager(
                 secret_key=config.secret_key
-            ).encrypt_key(
-                normalize_credential(credential=message.text)
-            )
-        }
+            ).encrypt_key(normalize_credential(credential=message.text))
+        },
     )
     delete_message(message)
     bot.send_message(
@@ -121,7 +119,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
 
     repository.update(
         where={"user_id": message.from_user.id},
-        update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)}
+        update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
     bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!🟢")
 

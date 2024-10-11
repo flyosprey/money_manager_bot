@@ -86,11 +86,15 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
 
 
 def handle_walletapp_username(message: Message, redis: RedisWrapper):
-    UserIntegrationRepository.upsert(
-        user_id=message.from_user.id,
-        wallet_app_login=EncryptManager(secret_key=config.secret_key).encrypt_key(
-            normalize_credential(credential=message.text)
-        ),
+    UserIntegrationRepository.update(
+        where={"user_id": message.from_user.id},
+        update={
+            "wallet_app_login": EncryptManager(
+                secret_key=config.secret_key
+            ).encrypt_key(
+                normalize_credential(credential=message.text)
+            )
+        }
     )
     delete_message(message)
     bot.send_message(
@@ -115,9 +119,9 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         redis=redis,
     )
 
-    UserIntegrationRepository.upsert(
-        user_id=message.from_user.id,
-        wallet_app_password=encrypt_manager.encrypt_key(walletapp_password),
+    repository.update(
+        where={"user_id": message.from_user.id},
+        update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)}
     )
     bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!🟢")
 

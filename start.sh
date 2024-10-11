@@ -32,7 +32,7 @@ if not User.objects.filter(username=username).exists():
 EOF
 
 echo "Starting Django server..."
-python manage.py runserver 0.0.0.0:8000 &
+gunicorn --certfile=/etc/ssl/certs/cert.pem --keyfile=/etc/ssl/private/key.pem money_manager.wsgi:application --bind 0.0.0.0:443 &
 
 sleep 20
 

@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     POETRY_HOME='/usr/local'
 
 RUN apt-get update && \
-    apt-get install -y curl libpq-dev gcc cron certbot && \
+    apt-get install -y curl libpq-dev gcc cron && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
@@ -29,14 +29,11 @@ COPY poetry.lock /opt/money_manager_bot/poetry.lock
 COPY pyproject.toml /opt/money_manager_bot/pyproject.toml
 COPY start.sh /opt/money_manager_bot/start.sh
 COPY cleanup_logs.sh /opt/money_manager_bot/cleanup_logs.sh
+COPY selfsigned_cert.pem /etc/ssl/certs/selfsigned_cert.pem
+COPY selfsigned_key.pem /etc/ssl/private/selfsigned_key.pem
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
-
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/selfsigned_key.pem \
-    -out /etc/ssl/certs/selfsigned_cert.pem \
-    -subj "/C=DE/ST=State/L=City/O=Organization/OU=OrgUnit/CN=64.226.109.39"
 
 EXPOSE 443
 EXPOSE 8000

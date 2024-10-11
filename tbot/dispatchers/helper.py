@@ -18,10 +18,10 @@ def handle_refresh_monobank(message: Message, dsn: str):
             encrypted_user_id=encrypt_manager.encrypt_key(str(message.from_user.id)),
         ):
             bot.send_message(
-                chat_id=message.chat.id, text="Не вдалося оновити звʼязок з Monobank!"
+                chat_id=message.chat.id, text="Не вдалося оновити звʼязок з Monobank!🔴"
             )
             return
 
     bot.send_message(
-        chat_id=message.chat.id, text="Звʼязок з Monobank успішно оновлено!"
+        chat_id=message.chat.id, text="Звʼязок з Monobank успішно оновлено!🟢"
     )

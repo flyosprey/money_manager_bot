@@ -47,7 +47,7 @@ class BaseClient:
             )
             if response.status_code == 429:
                 return self.retry(
-                    uri=url,
+                    url=url,
                     method=method,
                     headers=headers,
                     **kwargs,
@@ -69,11 +69,11 @@ class BaseClient:
 
         return response
 
-    def retry(self, uri: str, method: str, **kwargs: Any) -> Response:
+    def retry(self, url: str, method: str, **kwargs: Any) -> Response:
         if self.retry_count < self.max_retries:
             self.retry_count += 1
             sleep(self.sleep_time)
-            result = self._request(uri=uri, method=method, **kwargs)
+            result = self._request(url=url, method=method, **kwargs)
             self.retry_count = 0
             return result
 

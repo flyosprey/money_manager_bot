@@ -16,6 +16,7 @@ from tbot_base.bot import tbot as bot
 
 
 @bot.message_handler(commands=["integrate"])
+@exception_handler()
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
@@ -23,6 +24,7 @@ def integrate_handler(
 
 
 @bot.message_handler(commands=["additional_monobank_token"])
+@exception_handler()
 def additional_mono_token_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
@@ -35,6 +37,7 @@ def additional_mono_token_handler(
     )
     in {UserStates.AWAITING_MONOTOKEN, UserStates.AWAITING_ADDITIONAL_MONOTOKEN}
 )
+@exception_handler()
 def mono_token_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
@@ -47,6 +50,7 @@ def mono_token_handler(
     )
     == UserStates.AWAITING_WALLETAPP_USERNAME
 )
+@exception_handler()
 def walletapp_username_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
@@ -59,6 +63,7 @@ def walletapp_username_handler(
     )
     == UserStates.AWAITING_WALLETAPP_PASSWORD
 )
+@exception_handler()
 def walletapp_password_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):

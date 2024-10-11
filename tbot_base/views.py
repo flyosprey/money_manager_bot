@@ -76,14 +76,14 @@ class MonobankWebhookView(View):
             ).replace(tzinfo=None)
             tbot.send_message(
                 chat_id=user_id,
-                text=f"Рахунок: {currency}\n"
-                f"Опис: {transaction.description}\n"
-                f"Сума: {amount}\n"
-                f"Комісія: {commission}\n"
-                f"Кешбек: {cashback}\n"
-                f"Коментар: {transaction.comment or 'відсутній'}\n"
-                f"Дата: {date_}\n"
-                f"MCC: {transaction.mcc}",
+                text=f"💰Рахунок: {currency}\n"
+                f"🔖Опис: {transaction.description}\n"
+                f"🫰Сума: {amount}\n"
+                f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
+                f"{'🤑' if re.search(r'[0-1]', commission) else '😔'}Кешбек: {cashback}\n"
+                f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"
+                f"📅Дата: {date_}\n"
+                f"❓MCC: {transaction.mcc}",
                 reply_markup=transaction_menu(),
             )
 

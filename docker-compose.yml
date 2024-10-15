@@ -26,8 +26,8 @@ services:
       - "8000:8000"
       - "443:443"
     volumes:
-      - ./selfsigned_cert.pem:/etc/ssl/certs/selfsigned_cert.pem:ro
-      - ./selfsigned_key.pem:/etc/ssl/private/selfsigned_key.pem:ro
+      - /etc/letsencrypt/live/osprey.work.gd/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/osprey.work.gd/privkey.pem:/etc/ssl/private/privkey.pem:ro
     depends_on:
       - db
       - redis

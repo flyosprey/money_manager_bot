@@ -29,13 +29,12 @@ COPY poetry.lock /opt/money_manager_bot/poetry.lock
 COPY pyproject.toml /opt/money_manager_bot/pyproject.toml
 COPY start.sh /opt/money_manager_bot/start.sh
 COPY cleanup_logs.sh /opt/money_manager_bot/cleanup_logs.sh
-COPY selfsigned_cert.pem /etc/ssl/certs/selfsigned_cert.pem
-COPY selfsigned_key.pem /etc/ssl/private/selfsigned_key.pem
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
 
 EXPOSE 443
+EXPOSE 80
 EXPOSE 8000
 
 CMD ["/opt/money_manager_bot/start.sh"]

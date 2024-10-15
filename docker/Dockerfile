@@ -33,4 +33,8 @@ COPY cleanup_logs.sh /opt/money_manager_bot/cleanup_logs.sh
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
 
+EXPOSE 443
+EXPOSE 80
+EXPOSE 8000
+
 CMD ["/opt/money_manager_bot/start.sh"]

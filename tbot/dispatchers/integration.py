@@ -36,7 +36,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
         chat_id=message.chat.id,
         text="🏦**Введіть ваш токен Monobank:**\n"
         f"||Його можна знайти за посиланням відсканувавши або натиснувши на QR👉 {MONOBANK_URL}||",
-        parse_mode='MarkdownV2',
+        parse_mode="MarkdownV2",
     )
     user_state = (
         UserStates.AWAITING_ADDITIONAL_MONOTOKEN
@@ -80,7 +80,7 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         f"- iOS -> {IOS_WALLETAPP_URL}\n"
         f"- Android -> {ANDROID_WALLETAPP_URL}\n"
         f"- Веб-сайт -> {WEB_WALLETAPP_URL}||",
-        parse_mode='MarkdownV2',
+        parse_mode="MarkdownV2",
     )
     redis.set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_USERNAME
@@ -100,7 +100,7 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text="**Введіть ваш пароль для WalletApp.👇**",
-        parse_mode='MarkdownV2',
+        parse_mode="MarkdownV2",
     )
     redis.set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_PASSWORD
@@ -137,7 +137,7 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text=f"**Введіть новий {credential_type_msg}**👇",
-        parse_mode='MarkdownV2',
+        parse_mode="MarkdownV2",
     )
     redis.set_user_state(
         user_id=message.from_user.id,

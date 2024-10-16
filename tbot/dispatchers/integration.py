@@ -15,11 +15,11 @@ from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 IOS_WALLETAPP_URL = (
-    "https://apps.apple.com/us/app/wallet-daily-budget-profit/id1032467659"
+    "https://apps\\.apple\\.com/us/app/wallet-daily-budget-profit/id1032467659"
 )
-ANDROID_WALLETAPP_URL = "https://play.google.com/store/apps/details?id=com.droid4you.application.wallet&referrer=utm_source%3Dhome_page"
-WEB_WALLETAPP_URL = "https://budgetbakers.com/"
-MONOBANK_URL = "https://api.monobank.ua/index.html"
+ANDROID_WALLETAPP_URL = "https://play\\.google\\.com/store/apps/details?id=com\\.droid4you\\.application\\.wallet&referrer=utm_source%3Dhome_page"
+WEB_WALLETAPP_URL = "https://budgetbakers\\.com/"
+MONOBANK_URL = "https://api\\.monobank\\.ua/index\\.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
@@ -99,7 +99,7 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
     delete_message(message)
     bot.send_message(
         chat_id=message.chat.id,
-        text="**Введіть ваш пароль для WalletApp.👇**",
+        text="**Введіть ваш пароль для WalletApp:**👇",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(
@@ -152,7 +152,7 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
 def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
     if not UserIntegrationRepository.select(user_id=message.from_user.id, first=True):
         bot.send_message(
-            chat_id=message.chat.id, text="Інтеграцію ще не було активовано.🤷‍♂️"
+            chat_id=message.chat.id, text="Інтеграцію ще не було активовано🤷‍♂️"
         )
         return
 

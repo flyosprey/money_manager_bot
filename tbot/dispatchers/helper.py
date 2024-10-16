@@ -23,5 +23,5 @@ def handle_refresh_monobank(message: Message, dsn: str):
             return
 
     bot.send_message(
-        chat_id=message.chat.id, text="Звʼязок з Monobank успішно оновлено!🟢"
+        chat_id=message.chat.id, text="Звʼязок з Monobank успішно оновлено!✅"
     )

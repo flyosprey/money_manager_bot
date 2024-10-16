@@ -30,6 +30,9 @@ COPY pyproject.toml /opt/money_manager_bot/pyproject.toml
 COPY start.sh /opt/money_manager_bot/start.sh
 COPY cleanup_logs.sh /opt/money_manager_bot/cleanup_logs.sh
 
+RUN mkdir -p /opt/money_manager_bot/logs && chmod -R 755 /opt/money_manager_bot/logs
+
+
 RUN poetry install --no-interaction --no-ansi --no-root --only main && \
     poetry cache clear -n --no-ansi --all pypi
 

@@ -11,7 +11,8 @@ services:
     expose:
       - 5432
     ports:
-      - ${POSTGRES_PORT-5432}:5432
+      - 127.0.0.1:${POSTGRES_PORT-5432}:5432
+    restart: always
 
   web:
     expose:
@@ -28,6 +29,9 @@ services:
     volumes:
       - /etc/letsencrypt/live/osprey.work.gd/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
       - /etc/letsencrypt/live/osprey.work.gd/privkey.pem:/etc/ssl/private/privkey.pem:ro
+      - ./:/opt/money_manager_bot:ro
+      - ./:/opt/money_manager_bot
+    restart: always
     depends_on:
       - db
       - redis
@@ -40,6 +44,7 @@ services:
       - REDIS_BIND=127.0.0.1
     ports:
         - 127.0.0.1:${REDIS_PORT-6379}:6379
+    restart: always
 
 volumes:
   postgres-data:

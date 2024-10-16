@@ -25,21 +25,22 @@ MONOBANK_URL = "https://api.monobank.ua/index.html"
 def handle_integration(message: Message, redis: RedisWrapper):
     if (
         UserIntegrationRepository.select(user_id=message.from_user.id, first=True)
-        and message.text != "/additional_monobank_token"
+        and message.text != "/add_token"
     ):
         bot.send_message(
-            chat_id=message.chat.id, text="Інтеграцію вже було активовано.🟢"
+            chat_id=message.chat.id, text="Інтеграцію вже було активовано.✅"
         )
         return
 
     bot.send_message(
         chat_id=message.chat.id,
-        text="🏦Введіть ваш токен Monobank.\n"
-        f"Його можна знайти за посиланням відсканувавши QR 👉 {MONOBANK_URL}",
+        text="🏦**Введіть ваш токен Monobank:**\n"
+        f"||Його можна знайти за посиланням відсканувавши або натиснувши на QR👉 {MONOBANK_URL}||",
+        parse_mode='MarkdownV2',
     )
     user_state = (
         UserStates.AWAITING_ADDITIONAL_MONOTOKEN
-        if "additional_monobank_token" in message.text
+        if "add_token" in message.text
         else UserStates.AWAITING_MONOTOKEN
     )
     redis.set_user_state(message.from_user.id, state=user_state)
@@ -68,17 +69,18 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     ):
         bot.send_message(
             chat_id=message.chat.id,
-            text="🏦Додатковий токен Monobank додано!🟢",
+            text="🏦Додатковий токен Monobank додано!✅",
         )
         return
 
     bot.send_message(
         chat_id=message.chat.id,
-        text="Введіть ваш юзернейм для WalletApp:\n"
-        "Створити аккаунт можна за посиланнями: 👇👇\n"
+        text="**Введіть ваш логін WalletApp:**\n"
+        "||Створити аккаунт можна за посиланнями: 👇👇\n"
         f"- iOS -> {IOS_WALLETAPP_URL}\n"
         f"- Android -> {ANDROID_WALLETAPP_URL}\n"
-        f"- Веб-сайт -> {WEB_WALLETAPP_URL}",
+        f"- Веб-сайт -> {WEB_WALLETAPP_URL}||",
+        parse_mode='MarkdownV2',
     )
     redis.set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_USERNAME
@@ -96,7 +98,9 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
     )
     delete_message(message)
     bot.send_message(
-        chat_id=message.chat.id, text="Введіть ваш пароль для WalletApp.👇"
+        chat_id=message.chat.id,
+        text="**Введіть ваш пароль для WalletApp.👇**",
+        parse_mode='MarkdownV2',
     )
     redis.set_user_state(
         user_id=message.from_user.id, state=UserStates.AWAITING_WALLETAPP_PASSWORD
@@ -121,7 +125,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         where={"user_id": message.from_user.id},
         update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
-    bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!🟢")
+    bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!✅")
 
 
 def handle_ask_reset(message: Message, redis: RedisWrapper):
@@ -131,7 +135,9 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
     )
 
     bot.send_message(
-        chat_id=message.chat.id, text=f"Введіть новий {credential_type_msg}👇"
+        chat_id=message.chat.id,
+        text=f"**Введіть новий {credential_type_msg}**👇",
+        parse_mode='MarkdownV2',
     )
     redis.set_user_state(
         user_id=message.from_user.id,
@@ -194,7 +200,7 @@ def handle_walletapp_reset(
 
     bot.send_message(
         chat_id=message.from_user.id,
-        text="Пароль до WalletApp оновлено🟢",
+        text="Пароль до WalletApp оновлено✅",
     )
 
 
@@ -220,5 +226,5 @@ def handle_monobank_handler(
 
     bot.send_message(
         chat_id=message.chat.id,
-        text="🏦Токен Monobank оновлено🟢",
+        text="🏦Токен Monobank оновлено✅",
     )

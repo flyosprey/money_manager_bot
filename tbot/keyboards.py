@@ -2,6 +2,7 @@ from telebot import types
 
 from tbot.dto.transactions.type import TransactionStatus
 
+
 ########################################### KEYBOARDS ##################################################################
 
 
@@ -14,13 +15,16 @@ def menu(bot):
             types.BotCommand("/start", "Розпочати бота"),
             types.BotCommand("/integrate", "Розпочати інтеграцію"),
             types.BotCommand(
-                "/additional_monobank_token",
+                "/add_token",
                 "Додати трекінг додаткового аккаунту Monobank",
             ),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
-            types.BotCommand("/reset_password", "Замінити пароль WalletApp"),
-            types.BotCommand("/refresh_monobank", "Оновити звʼязок з Monobank"),
-            types.BotCommand("/help", "Доступні команди"),
+            types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
+            types.BotCommand(
+                "/refresh_monobank",
+                "Оновити звʼязок з Monobank (на випадок, якщо не надходять "
+                "повідомлення про оплату)",
+            ),
         ]
     )
     return keyboard

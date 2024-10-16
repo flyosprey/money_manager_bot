@@ -23,8 +23,8 @@ def handle_help(message: Message):
         text="""Доступні команди:
          /start - Розпочати бота.
          /integrate - Розпочати інтеграцію.
-         /additional_monobank_token - Додати трекінг додаткового аккаунту Monobank.
-         /reset_password - Замінити пароль WalletApp.
+         /add_token - Додати трекінг додаткового аккаунту Monobank.
+         /reset_pass - Замінити пароль WalletApp.
          /reset_token - Замінити токен Monobank.
          /refresh_monobank - Оновити звʼязок з Monobank.
          /help - Доступні команди.

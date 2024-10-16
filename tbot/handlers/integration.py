@@ -23,7 +23,7 @@ def integrate_handler(
     handle_integration(message=message, redis=redis)
 
 
-@bot.message_handler(commands=["additional_monobank_token"])
+@bot.message_handler(commands=["add_token"])
 @exception_handler()
 def additional_mono_token_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
@@ -70,7 +70,7 @@ def walletapp_password_handler(
     handle_walletapp_password(message=message, redis=redis)
 
 
-@bot.message_handler(commands=["reset_token", "reset_password"])
+@bot.message_handler(commands=["reset_token", "reset_pass"])
 @exception_handler()
 def ask_reset_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)

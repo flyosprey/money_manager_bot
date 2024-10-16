@@ -35,7 +35,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text="🏦**Введіть ваш токен Monobank:**\n"
-        f"\\|\\|Його можна знайти за посиланням відсканувавши або натиснувши на QR👉 {MONOBANK_URL}\\|\\|",
+        f"||Його можна знайти за посиланням відсканувавши або натиснувши на QR👉 {MONOBANK_URL}||",
         parse_mode="MarkdownV2",
     )
     user_state = (
@@ -76,10 +76,10 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     bot.send_message(
         chat_id=message.chat.id,
         text="**Введіть ваш логін WalletApp:**\n"
-        "\\|\\|Створити аккаунт можна за посиланнями: 👇👇\n"
+        "||Створити аккаунт можна за посиланнями:👇👇\n"
         f"- iOS -> {IOS_WALLETAPP_URL}\n"
         f"- Android -> {ANDROID_WALLETAPP_URL}\n"
-        f"- Веб-сайт -> {WEB_WALLETAPP_URL}\\|\\|",
+        f"- Веб-сайт -> {WEB_WALLETAPP_URL}||",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(

@@ -18,6 +18,10 @@ class PostgresConfig(BaseSettings):
     url: str = Field(..., description="Redis url")
 
 
+class BotAdminConfig(BaseSettings):
+    chat_id: int = Field(..., description="Chat id")
+
+
 class Config(BaseSettings):
     dsn: str = Field(..., description="DSN of the application")
     secret_key: SecretStr = Field(..., description="Secret Key")
@@ -25,6 +29,7 @@ class Config(BaseSettings):
     bot_conf: BotConfig = Field(..., description="Bot Config")
     redis: RedisConfig = Field(..., description="Redis Config")
     postgres: PostgresConfig = Field(..., description="Postgres Config")
+    bot_admin: BotAdminConfig = Field(..., description="Bot Admin Config")
 
     class Config:
         env_prefix = "APP_"

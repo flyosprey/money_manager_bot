@@ -3,7 +3,7 @@ from functools import wraps
 import structlog
 from telebot.types import CallbackQuery
 
-from tbot.utils import edit_message, admin_bot_notification
+from tbot.utils import admin_bot_notification, edit_message
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger(__name__)

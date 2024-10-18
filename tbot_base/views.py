@@ -84,7 +84,8 @@ class MonobankWebhookView(View):
                 f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
                 f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"
                 f"📅Дата: {date_}\n"
-                f"🗂️Категорія: {MCCTransactionCategoryName.get(transaction.mcc, 'Поки невідома категорія')} ({transaction.mcc})",
+                "🗂️Категорія: "
+                f"{MCCTransactionCategoryName.get(transaction.mcc, 'Поки невідома категорія')} ({transaction.mcc})",
                 reply_markup=transaction_menu(),
             )
 

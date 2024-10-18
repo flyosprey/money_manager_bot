@@ -31,7 +31,9 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
     cashback = get_field_value_from_text(
         text=text, pattern=r"Кешбек: (.+)", group_indexes=(1,)
     )
-    time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,))
+    time = get_field_value_from_text(
+        text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,)
+    )
 
     return SimpleTransaction(
         mcc=int(mcc),

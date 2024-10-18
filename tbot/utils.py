@@ -41,7 +41,9 @@ def normalize_credential(credential: str) -> str:
     return credential.strip()
 
 
-def get_field_value_from_text(text: str, pattern: str, group_indexes: tuple = (0, )) -> str:
+def get_field_value_from_text(
+    text: str, pattern: str, group_indexes: tuple = (0,)
+) -> str:
     value = re.search(pattern, text)
     if value:
         for group_index in group_indexes:

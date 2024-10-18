@@ -2,7 +2,7 @@ from typing import TypeVar
 
 MCCCodeCategory = {
     5411: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
-    5499: "00",  # GROCERIES
+    5499: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
     5814: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
     5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
     5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
@@ -989,7 +989,7 @@ MCCTransactionCategoryT = TypeVar("MCCTransactionCategoryT", bound=MCCCodeCatego
 
 MCCTransactionCategoryName = {
     5411: "Продукти",
-    # 5499: "Продукти",
+    5499: "Продукти",
     5814: "Фаст-Фуди та Ресторани",
     5811: "Фаст-Фуди та Ресторани",
     5813: "Бар",

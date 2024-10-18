@@ -14,22 +14,26 @@ from tbot_base.security.encrypting import EncryptManager
 
 def get_transaction_from_message(text: str) -> SimpleTransaction:
     description = get_field_value_from_text(
-        text=text, pattern=r"Опис: (.+?)\n", group_index=1
+        text=text, pattern=r"Опис: (.+?)\n", group_indexes=(1,)
     )
     amount = get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?).\n", group_index=1
+        text=text, pattern=r"Сума: (.+?).\n", group_indexes=(1,)
     )
-    mcc = get_field_value_from_text(text=text, pattern=r"MCC: (.+)", group_index=1)
+    mcc = get_field_value_from_text(
+        text=text, pattern=r"Категорія:.+?\((.+?)\)|MCC: (.+)", group_indexes=(1, 2)
+    )
     comment = get_field_value_from_text(
-        text=text, pattern=r"Коментар: (.+?)\n", group_index=1
+        text=text, pattern=r"Коментар: (.+?)\n", group_indexes=(1,)
     )
     commission = get_field_value_from_text(
-        text=text, pattern=r"Комісія: (.+)", group_index=1
+        text=text, pattern=r"Комісія: (.+)", group_indexes=(1,)
     )
     cashback = get_field_value_from_text(
-        text=text, pattern=r"Кешбек: (.+)", group_index=1
+        text=text, pattern=r"Кешбек: (.+)", group_indexes=(1,)
     )
-    time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_index=1)
+    time = get_field_value_from_text(
+        text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,)
+    )
 
     return SimpleTransaction(
         mcc=int(mcc),
@@ -43,7 +47,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, secret_key: SecretStr
 ):
-    validate_transaction_to_add(transaction)
+    validate_transaction_to_add(transaction=transaction)
     integration = UserIntegrationRepository.select(
         user_id=user_id,
         wallet_app_password__isnull=False,
@@ -61,7 +65,7 @@ def add_transaction(
     )
 
 
-def validate_transaction_to_add(transaction: SimpleTransaction):
+def validate_transaction_to_add(transaction: SimpleTransaction) -> None:
     if not MCCCodeCategory[transaction.mcc].startswith("-Category_"):
         raise IncorrectMCCCodeError(
             message="MCC code is not supported yet", mcc_code=transaction.mcc

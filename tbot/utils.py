@@ -12,7 +12,7 @@ from random_user_agent.user_agent import UserAgent
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, Message
 
-from money_manager.config import TIMEZONE_UTC
+from money_manager.config import TIMEZONE_UTC, config
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
@@ -41,10 +41,14 @@ def normalize_credential(credential: str) -> str:
     return credential.strip()
 
 
-def get_field_value_from_text(text: str, pattern: str, group_index: int = 0) -> str:
+def get_field_value_from_text(
+    text: str, pattern: str, group_indexes: tuple = (0,)
+) -> str:
     value = re.search(pattern, text)
     if value:
-        return value[group_index].strip()
+        for group_index in group_indexes:
+            if value[group_index]:
+                return value[group_index].strip()
 
     logger.error("Cannot to fetch date from text! Pattern %s | text %s", pattern, text)
     raise ValueError(f"Cannot to fetch date from text! Pattern {pattern} | text {text}")
@@ -95,6 +99,13 @@ def edit_message(
         bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
         )
+
+
+def admin_bot_notification(message: str):
+    bot.send_message(
+        chat_id=config.bot_admin.chat_id,
+        text=message,
+    )
 
 
 def get_random_user_agent() -> (str, str):

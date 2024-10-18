@@ -15,9 +15,12 @@ from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 IOS_WALLETAPP_URL = (
-    "https://apps\\.apple\\.com/us/app/wallet-daily-budget-profit/id1032467659"
+    "https://apps\\.apple\\.com/us/app/wallet\\-daily\\-budget\\-profit/id1032467659"
 )
-ANDROID_WALLETAPP_URL = "https://play\\.google\\.com/store/apps/details?id=com\\.droid4you\\.application\\.wallet&referrer=utm_source%3Dhome_page"
+ANDROID_WALLETAPP_URL = (
+    "https://play\\.google\\.com/store/apps/details?id\\=com\\.droid4you\\.application\\.wallet"
+    "&referrer\\=utm_source\\%\\3\\Dhome_page"
+)
 WEB_WALLETAPP_URL = "https://budgetbakers\\.com/"
 MONOBANK_URL = "https://api\\.monobank\\.ua/index\\.html"
 
@@ -77,9 +80,9 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         chat_id=message.chat.id,
         text="*Введіть ваш логін WalletApp:*\n"
         "||Створити аккаунт можна за посиланнями:👇👇\n"
-        f"- iOS -> {IOS_WALLETAPP_URL}\n"
-        f"- Android -> {ANDROID_WALLETAPP_URL}\n"
-        f"- Веб-сайт -> {WEB_WALLETAPP_URL}||",
+        f"\\- iOS \\-\\> {IOS_WALLETAPP_URL}\n"
+        f"\\- Android \\-\\> {ANDROID_WALLETAPP_URL}\n"
+        f"\\- Веб\\-сайт \\-\\> {WEB_WALLETAPP_URL}||",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(

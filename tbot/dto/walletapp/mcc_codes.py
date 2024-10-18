@@ -17,6 +17,7 @@ MCCCodeCategory = {
     4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
     5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
     5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
+    4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -732,7 +733,6 @@ MCCCodeCategory = {
     4784: "TOLL_AND_BRIDGE",
     4789: "TRANSPORTATION_SERVICES_NOT",
     4812: "TELECOMMUNICATIONS_EQUIPMENT_INCLUDING",
-    4814: "FAX_SERVICES_TELECOMMUNICATION",
     4815: "VISAPHONE",
     4816: "COMPUTER_NETWORK_SERVICES",
     4821: "TELEGRAPH_SERVICES",
@@ -986,3 +986,26 @@ MCCCodeCategory = {
     9950: "INTRA_COMPANY",
 }
 MCCTransactionCategoryT = TypeVar("MCCTransactionCategoryT", bound=MCCCodeCategory)
+
+MCCTransactionCategoryName = {
+    5411: "Продукти",
+    5499: "Продукти",
+    5814: "Фаст-Фуди та Ресторани",
+    5811: "Фаст-Фуди та Ресторани",
+    5813: "Бар",
+    7523: "Парковка",
+    4829: "Інше",
+    4121: "Таксі",
+    5734: "Ігри та Підписки",
+    5993: "Алкоголь та Тютюн",
+    8999: "Комісії",
+    7399: "Доставка",
+    6536: "Прибуток",
+    4900: "Електроенергія",
+    5211: "Шопінг",
+    5912: "Аптека",
+    4814: "Телекомунікації",
+}
+MCCTransactionCategoryNameT = TypeVar(
+    "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName
+)

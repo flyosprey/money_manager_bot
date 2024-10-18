@@ -3,7 +3,7 @@ from functools import wraps
 import structlog
 from telebot.types import CallbackQuery
 
-from tbot.utils import edit_message
+from tbot.utils import admin_bot_notification, edit_message
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger(__name__)
@@ -26,6 +26,8 @@ def exception_handler():
                 return func(*args, **kwargs)
             except IncorrectMCCCodeError as e:
                 logger.error(e, user_id=user_id)
+
+                admin_bot_notification(message=str(e))
 
                 text = text.replace(
                     "Категорія транзакції наразі не підтримується! Спробуйте пізніше.",
@@ -50,6 +52,8 @@ def exception_handler():
                     chat_id=user_id,
                     text="Щось пішло не так!🔴 Спробуйте пізніше.🕐",
                 )
+
+                admin_bot_notification(message=str(e))
                 return
 
         return wrapper

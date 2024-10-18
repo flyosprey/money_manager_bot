@@ -101,7 +101,7 @@ def edit_message(
 
 def admin_bot_notification(message: str):
     bot.send_message(
-        chat_id=config.bot_chat_id.chat_id,
+        chat_id=config.bot_admin.chat_id,
         text=message,
     )
 

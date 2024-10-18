@@ -1,9 +1,11 @@
+import re
+
 from telebot.types import CallbackQuery
 
 from money_manager.config import config
 from tbot.dispatchers.transaction import (
     handle_accept_transaction,
-    handle_reject_transaction,
+    handle_reject_transaction, handle_select_category_transaction,
 )
 from tbot.dto.transactions.type import TransactionStatus
 from tbot.errors import exception_handler
@@ -20,3 +22,11 @@ def accept_transaction_handler(call: CallbackQuery):
 @exception_handler()
 def reject_transaction_handler(call: CallbackQuery):
     handle_reject_transaction(call=call)
+
+
+@bot.callback_query_handler(func=lambda call: call.data == TransactionStatus.SELECT_CATEGORY or "page_" in call.data)
+@exception_handler()
+def select_category_transaction_handler(call: CallbackQuery):
+    page = re.search(r"page_(\d+)", call.data)
+    page = int(page[1]) if page else 1
+    handle_select_category_transaction(page=page, call=call)

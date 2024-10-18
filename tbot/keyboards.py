@@ -1,6 +1,8 @@
 from telebot import types
 
 from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryPagination
+
 
 ########################################### KEYBOARDS ##################################################################
 
@@ -29,19 +31,49 @@ def menu(bot):
     return keyboard
 
 
-def transaction_menu(
-    accepted_data: TransactionStatus = TransactionStatus.ACCEPTED,
-    rejected_data: TransactionStatus = TransactionStatus.REJECTED,
-):
-    add_transaction = types.InlineKeyboardButton(
-        "Записати", callback_data=accepted_data
-    )
-    reject_transaction = types.InlineKeyboardButton(
-        "Відхилити", callback_data=rejected_data
+def transaction_menu() -> types.InlineKeyboardMarkup:
+    keyboard = types.InlineKeyboardMarkup()
+    set_default_transaction_keyboard(keyboard=keyboard)
+
+    select_category = types.InlineKeyboardButton(
+        "📌Вибрати категорію", callback_data=TransactionStatus.SELECT_CATEGORY
     )
 
-    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(select_category)
+
+    return keyboard
+
+
+def set_default_transaction_keyboard(keyboard: types.InlineKeyboardMarkup) -> types.InlineKeyboardMarkup:
+    add_transaction = types.InlineKeyboardButton(
+        "✍️Записати", callback_data=TransactionStatus.ACCEPTED
+    )
+    reject_transaction = types.InlineKeyboardButton(
+        "🚫Відхилити", callback_data=TransactionStatus.REJECTED
+    )
     keyboard.add(add_transaction)
     keyboard.add(reject_transaction)
+
+    return keyboard
+
+
+def transaction_categories_menu(page: int = 1) -> types.InlineKeyboardMarkup:
+    keyboard = types.InlineKeyboardMarkup()
+    set_default_transaction_keyboard(keyboard=keyboard)
+    generate_categories_keyboard(page=page, keyboard=keyboard)
+
+    return keyboard
+
+
+def generate_categories_keyboard(page: int, keyboard: types.InlineKeyboardMarkup) -> types.InlineKeyboardMarkup:
+    for category in MCCTransactionCategoryPagination[page]:
+        keyboard.add(types.InlineKeyboardButton(
+            category["name"], callback_data=f"{category['name']}_{category['code']}"
+        ))
+
+    if page > 1:
+        keyboard.add(types.InlineKeyboardButton("Previous", callback_data=f"page_{page-1}"))
+    if page < len(MCCTransactionCategoryPagination):
+        keyboard.add(types.InlineKeyboardButton("Next", callback_data=f"page_{page+1}"))
 
     return keyboard

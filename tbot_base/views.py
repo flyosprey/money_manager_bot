@@ -10,6 +10,7 @@ from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
 from tbot.dto.monobank.payload import Transaction
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
     convert_currency_number_to_code,
@@ -80,10 +81,10 @@ class MonobankWebhookView(View):
                 f"🔖Опис: {transaction.description}\n"
                 f"🫰Сума: {amount}\n"
                 f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
-                f"{'🤑' if re.search(r'[0-1]', commission) else '😔'}Кешбек: {cashback}\n"
+                f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
                 f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"
                 f"📅Дата: {date_}\n"
-                f"❓MCC: {transaction.mcc}",
+                f"🗂️Категорія: {MCCTransactionCategoryName.get(transaction.mcc, 'Поки невідома категорія')} ({transaction.mcc})",
                 reply_markup=transaction_menu(),
             )
 
@@ -104,5 +105,4 @@ class MonobankWebhookView(View):
 
     @staticmethod
     def skip_transaction(transaction: Transaction) -> bool:
-        return False
         return bool(re.search(r"з \w+ картки", transaction.description.lower()))

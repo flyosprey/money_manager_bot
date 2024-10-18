@@ -12,7 +12,7 @@ from random_user_agent.user_agent import UserAgent
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, Message
 
-from money_manager.config import TIMEZONE_UTC
+from money_manager.config import TIMEZONE_UTC, config
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
@@ -95,6 +95,13 @@ def edit_message(
         bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
         )
+
+
+def admin_bot_notification(message: str):
+    bot.send_message(
+        chat_id=config.bot_chat_id.chat_id,
+        text=message,
+    )
 
 
 def get_random_user_agent() -> (str, str):

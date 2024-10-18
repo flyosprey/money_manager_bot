@@ -19,7 +19,9 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
     amount = get_field_value_from_text(
         text=text, pattern=r"Сума: (.+?).\n", group_index=1
     )
-    mcc = get_field_value_from_text(text=text, pattern=r"MCC: (.+)", group_index=1)
+    mcc = get_field_value_from_text(
+        text=text, pattern=r"Категорія:.+?\((.+?)\)", group_index=1
+    )
     comment = get_field_value_from_text(
         text=text, pattern=r"Коментар: (.+?)\n", group_index=1
     )
@@ -43,7 +45,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, secret_key: SecretStr
 ):
-    validate_transaction_to_add(transaction)
+    validate_transaction_to_add(transaction=transaction)
     integration = UserIntegrationRepository.select(
         user_id=user_id,
         wallet_app_password__isnull=False,
@@ -61,7 +63,7 @@ def add_transaction(
     )
 
 
-def validate_transaction_to_add(transaction: SimpleTransaction):
+def validate_transaction_to_add(transaction: SimpleTransaction) -> None:
     if not MCCCodeCategory[transaction.mcc].startswith("-Category_"):
         raise IncorrectMCCCodeError(
             message="MCC code is not supported yet", mcc_code=transaction.mcc

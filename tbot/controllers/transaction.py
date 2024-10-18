@@ -14,24 +14,24 @@ from tbot_base.security.encrypting import EncryptManager
 
 def get_transaction_from_message(text: str) -> SimpleTransaction:
     description = get_field_value_from_text(
-        text=text, pattern=r"Опис: (.+?)\n", group_index=1
+        text=text, pattern=r"Опис: (.+?)\n", group_indexes=[1]
     )
     amount = get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?).\n", group_index=1
+        text=text, pattern=r"Сума: (.+?).\n", group_indexes=[1]
     )
     mcc = get_field_value_from_text(
-        text=text, pattern=r"Категорія:.+?\((.+?)\)", group_index=1
+        text=text, pattern=r"Категорія:.+?\((.+?)\)|MCC: (.+)", group_indexes=[1, 2]
     )
     comment = get_field_value_from_text(
-        text=text, pattern=r"Коментар: (.+?)\n", group_index=1
+        text=text, pattern=r"Коментар: (.+?)\n", group_indexes=[1]
     )
     commission = get_field_value_from_text(
-        text=text, pattern=r"Комісія: (.+)", group_index=1
+        text=text, pattern=r"Комісія: (.+)", group_indexes=[1]
     )
     cashback = get_field_value_from_text(
-        text=text, pattern=r"Кешбек: (.+)", group_index=1
+        text=text, pattern=r"Кешбек: (.+)", group_indexes=[1]
     )
-    time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_index=1)
+    time = get_field_value_from_text(text=text, pattern=r"Дата: (.+?)\n", group_indexes=[1])
 
     return SimpleTransaction(
         mcc=int(mcc),

@@ -41,10 +41,12 @@ def normalize_credential(credential: str) -> str:
     return credential.strip()
 
 
-def get_field_value_from_text(text: str, pattern: str, group_index: int = 0) -> str:
+def get_field_value_from_text(text: str, pattern: str, group_indexes: list[int] = 0) -> str:
     value = re.search(pattern, text)
     if value:
-        return value[group_index].strip()
+        for group_index in range(1, group_indexes + 1):
+            if value[group_index]:
+                return value[group_index].strip()
 
     logger.error("Cannot to fetch date from text! Pattern %s | text %s", pattern, text)
     raise ValueError(f"Cannot to fetch date from text! Pattern {pattern} | text {text}")

@@ -3,7 +3,6 @@ from telebot.types import Message
 from money_manager.config import config
 from tbot.controllers.transaction import add_transaction
 from tbot.dispatchers.base import (
-    handle_help,
     handle_start,
 )
 from tbot.dto.transactions.payload import SimpleTransaction
@@ -16,12 +15,6 @@ from tbot_base.bot import tbot as bot
 @exception_handler()
 def start_handler(message: Message):
     handle_start(message=message)
-
-
-@bot.message_handler(commands=["help"])
-@exception_handler()
-def help_handler(message: Message):
-    handle_help(message=message)
 
 
 @bot.message_handler(commands=["test"])

@@ -76,13 +76,17 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
         )
         return
 
+    handle_walletapp_login(message=message, redis=redis)
+
+
+def handle_walletapp_login(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text="*Введіть ваш логін WalletApp:*\n"
-        "||Створити аккаунт можна за посиланнями:👇👇\n"
-        f"\\- iOS \\-\\> {IOS_WALLETAPP_URL}\n"
-        f"\\- Android \\-\\> {ANDROID_WALLETAPP_URL}\n"
-        f"\\- Веб\\-сайт \\-\\> {WEB_WALLETAPP_URL}||",
+             "||Створити аккаунт можна за посиланнями:👇👇\n"
+             f"\\- iOS \\-\\> {IOS_WALLETAPP_URL}\n"
+             f"\\- Android \\-\\> {ANDROID_WALLETAPP_URL}\n"
+             f"\\- Веб\\-сайт \\-\\> {WEB_WALLETAPP_URL}||",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(

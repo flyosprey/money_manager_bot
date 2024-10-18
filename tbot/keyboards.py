@@ -6,9 +6,15 @@ from tbot.dto.transactions.type import TransactionStatus
 
 
 def menu(bot):
-    keyboard = types.ReplyKeyboardMarkup(
-        row_width=1, resize_keyboard=True, one_time_keyboard=False
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(
+        types.KeyboardButton("Розпочати"),
+        types.KeyboardButton("Замінити токен Monobank"),
+        types.KeyboardButton("Замінити пароль WalletApp"),
+        types.KeyboardButton("Оновити звʼязок з Monobank (якщо не приходять транзакції)"),
+        types.KeyboardButton("Змінити аккаунт WalletApp"),
     )
+
     bot.set_my_commands(
         [
             types.BotCommand("/start", "Розпочати бота"),
@@ -24,9 +30,14 @@ def menu(bot):
                 "Оновити звʼязок з Monobank (на випадок, якщо не надходять "
                 "повідомлення про оплату)",
             ),
+            types.BotCommand(
+                "/change_walletapp_account",
+                "Змінити аккаунт WalletApp",
+            ),
         ]
     )
-    return keyboard
+
+    return markup
 
 
 def transaction_menu(

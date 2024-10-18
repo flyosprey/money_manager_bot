@@ -9,13 +9,14 @@ from tbot.dispatchers.integration import (
     handle_reset,
     handle_walletapp_password,
     handle_walletapp_username,
+    handle_walletapp_login,
 )
 from tbot.dto.users.type import UserStates
 from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 
-@bot.message_handler(commands=["integrate"])
+@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/integra"))
 @exception_handler()
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
@@ -23,12 +24,12 @@ def integrate_handler(
     handle_integration(message=message, redis=redis)
 
 
-@bot.message_handler(commands=["add_token"])
-@exception_handler()
-def additional_mono_token_handler(
-    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
-):
-    handle_integration(message=message, redis=redis)
+# @bot.message_handler(commands=["add_token"])
+# @exception_handler()
+# def additional_mono_token_handler(
+#     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+# ):
+#     handle_integration(message=message, redis=redis)
 
 
 @bot.message_handler(
@@ -58,6 +59,16 @@ def walletapp_username_handler(
 
 
 @bot.message_handler(
+    func=lambda message: message.text in ("Змінити аккаунт WalletApp", "/change_walletapp_account")
+)
+@exception_handler()
+def change_walletapp_account_handler(
+    message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
+):
+    handle_walletapp_login(message=message, redis=redis)
+
+
+@bot.message_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
         message.from_user.id
     )
@@ -70,7 +81,14 @@ def walletapp_password_handler(
     handle_walletapp_password(message=message, redis=redis)
 
 
-@bot.message_handler(commands=["reset_token", "reset_pass"])
+@bot.message_handler(
+    func=lambda message: message.text in (
+            "Замінити токен Monobank",
+            "Замінити пароль WalletApp",
+            "/reset_token",
+            "/reset_pass",
+    )
+)
 @exception_handler()
 def ask_reset_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)

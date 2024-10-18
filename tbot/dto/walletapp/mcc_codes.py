@@ -1019,7 +1019,9 @@ def paginate_categories(categories: MCCTransactionCategoryNameT, codes_per_page:
         if category not in unique_categories:
             unique_categories[category] = code
 
-    categories_list = [{"name": key, "code": value} for key, value in unique_categories.items()]
+    categories_list = [
+        {"name": key, "code": value} for key, value in unique_categories.items()
+    ]
     total_pages = (len(categories_list) + codes_per_page - 1) // codes_per_page
     pages = {}
 
@@ -1031,7 +1033,9 @@ def paginate_categories(categories: MCCTransactionCategoryNameT, codes_per_page:
     return pages
 
 
-MCCTransactionCategoryPagination = paginate_categories(MCCTransactionCategoryName, CODES_PER_PAGE)
+MCCTransactionCategoryPagination = paginate_categories(
+    MCCTransactionCategoryName, CODES_PER_PAGE
+)
 MCCTransactionCategoryPaginationT = TypeVar(
     "MCCTransactionCategoryPaginationT", bound=MCCTransactionCategoryPagination
 )

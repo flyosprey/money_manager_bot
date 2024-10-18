@@ -1,3 +1,5 @@
+import re
+
 from telebot.types import CallbackQuery
 
 from money_manager.config import Config
@@ -5,7 +7,8 @@ from tbot.controllers.transaction import (
     add_transaction,
     get_transaction_from_message,
 )
-from tbot.keyboards import transaction_menu, transaction_categories_menu
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
+from tbot.keyboards import transaction_categories_menu, transaction_menu
 from tbot.utils import edit_message
 
 
@@ -35,11 +38,32 @@ def handle_reject_transaction(call: CallbackQuery):
     )
 
 
-def handle_select_category_transaction(page: int, call: CallbackQuery):
+def handle_select_category_transaction(call: CallbackQuery):
+    page = re.search(r"page_(\d+)", call.data)
+    page = int(page[1]) if page else 1
+
     text = call.message.text
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=text,
         reply_markup=transaction_categories_menu(page=page),
+    )
+
+
+def handle_change_category_transaction(call: CallbackQuery):
+    mcc = re.search(r"category_(\d+)", call.data)
+    if not mcc:
+        raise Exception("call.data category error!")
+
+    text = re.sub(
+        r"Категорія:.+",
+        f"Категорія: {MCCTransactionCategoryName[int(mcc[1])]} ({mcc[1]})",
+        call.message.text,
+    )
+    edit_message(
+        chat_id=call.message.chat.id,
+        message_id=call.message.id,
+        text=text,
+        reply_markup=transaction_menu(),
     )

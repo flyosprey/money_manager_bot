@@ -1010,3 +1010,33 @@ MCCTransactionCategoryName = {
 MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName
 )
+
+CODES_PER_PAGE = 5
+
+
+def paginate_categories(categories: MCCTransactionCategoryNameT, codes_per_page: int):
+    unique_categories = {}
+    for code, category in categories.items():
+        if category not in unique_categories:
+            unique_categories[category] = code
+
+    categories_list = [
+        {"name": key, "code": value} for key, value in unique_categories.items()
+    ]
+    total_pages = (len(categories_list) + codes_per_page - 1) // codes_per_page
+    pages = {}
+
+    for page in range(1, total_pages + 1):
+        start_idx = (page - 1) * codes_per_page
+        end_idx = start_idx + codes_per_page
+        pages[page] = categories_list[start_idx:end_idx]
+
+    return pages
+
+
+MCCTransactionCategoryPagination = paginate_categories(
+    MCCTransactionCategoryName, CODES_PER_PAGE
+)
+MCCTransactionCategoryPaginationT = TypeVar(
+    "MCCTransactionCategoryPaginationT", bound=MCCTransactionCategoryPagination
+)

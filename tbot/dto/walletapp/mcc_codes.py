@@ -19,6 +19,7 @@ MCCCodeCategory = {
     5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
     4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
     5921: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
+    5541: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -784,7 +785,6 @@ MCCCodeCategory = {
     5531: "AUTOMOBILE_SUPPLY_STORES",
     5532: "AUTOMOTIVE_TIRE_STORES",
     5533: "AUTOMOTIVE_PARTS_ACCESSORIES",
-    5541: "SERVICE_STATIONS",
     5542: "AUTOMATED_FUEL_DISPENSERS",
     5551: "BOAT_DEALERS",
     5561: "RECREATIONAL_AND_UTILITY",
@@ -1006,6 +1006,7 @@ MCCTransactionCategoryName = {
     5211: "Шопінг🛍",
     5912: "Аптека💊",
     4814: "Телекомунікації📱",
+    5541: "Заправка⛽",
 }
 MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName

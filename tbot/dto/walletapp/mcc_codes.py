@@ -19,7 +19,8 @@ MCCCodeCategory = {
     5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
     4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
     5921: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
-    5541: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
+    5541: "-Category_9874700e-2502-4f51-a127-69ba58e076e2",  # SERVICE_STATIONS
+    8299: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # SCHOOL_AND_EDUCATION
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -962,7 +963,6 @@ MCCCodeCategory = {
     8241: "CORRESPONDENCE_SCHOOLS",
     8244: "BUSINESS_AND_SECRETARIAL",
     8249: "VOCATIONAL_SCHOOLS_AND",
-    8299: "SCHOOLS_AND_EDUCATIONAL",
     8351: "CHILD_CARE_SERVICES",
     8398: "CHARITABLE_AND_SOCIAL",
     8641: "CIVIC_FRATERNAL_AND",
@@ -1007,6 +1007,7 @@ MCCTransactionCategoryName = {
     5912: "Аптека💊",
     4814: "Телекомунікації📱",
     5541: "Заправка⛽",
+    8299: "Навчання🏫",
 }
 MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName

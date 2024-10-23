@@ -119,9 +119,9 @@ class CloudWalletAppClient(BaseClient):
 
     def __prepare_payload(
         self, transaction: SimpleTransaction, record_id: str, rev_id: str
-    ):
+    ) -> dict:
         record_date = convert_timestamp_to_datetime(
-            timestamp=transaction.time, timezone=TIMEZONE_KYIV
+            timestamp=transaction.time
         )
         created_at = (
             datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
@@ -195,7 +195,7 @@ class CloudWalletAppClient(BaseClient):
         transaction: SimpleTransaction,
         record_id: str = None,
         rev_id: str = None,
-    ):
+    ) -> None:
         if record_id is None:
             record_id = str(uuid.uuid4())
         if rev_id is None:
@@ -209,7 +209,7 @@ class CloudWalletAppClient(BaseClient):
 
         self.create_record(payload=payload)
 
-    def get_history_changes(self):
+    def get_history_changes(self) -> dict:
         response = self._request(
             method="GET",
             url=urljoin(

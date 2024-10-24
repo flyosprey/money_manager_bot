@@ -68,7 +68,11 @@ def convert_money(money_in_cents: int) -> float:
 def convert_timestamp_to_datetime(
     timestamp: int, timezone: pytz.timezone = TIMEZONE_UTC
 ) -> datetime:
-    return pytz.utc.localize(datetime.fromtimestamp(timestamp)).astimezone(timezone)
+    datetime_ = pytz.utc.localize(datetime.fromtimestamp(timestamp))
+    if datetime_:
+        datetime_ = datetime_.astimezone(timezone)
+
+    return datetime_
 
 
 def convert_datetime_to_timestamp(time_: str | datetime) -> int:

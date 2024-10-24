@@ -22,6 +22,7 @@ MCCCodeCategory = {
     5541: "-Category_9874700e-2502-4f51-a127-69ba58e076e2",  # SERVICE_STATIONS
     8299: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # SCHOOL_AND_EDUCATION
     5462: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # BAKERIES
+    5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -814,7 +815,6 @@ MCCCodeCategory = {
     5732: "ELECTRONIC_SALES",
     5733: "MUSIC_STORES_MUSICAL",
     5735: "RECORD_SHOPS",
-    5812: "EATING_PLACES_AND",
     5815: "DIGITAL_GOODS_MEDIA",
     5816: "DIGITAL_GOODS_GAMES",
     5817: "DIGITAL_GOODS_APPLICATIONS",
@@ -993,6 +993,7 @@ MCCTransactionCategoryName = {
     5462: "Продукти🥦",
     5814: "Кафе та Ресторани☕",
     5811: "Кафе та Ресторани☕",
+    5812: "Кафе та Ресторани☕",
     5813: "Бар🍺",
     7523: "Парковка🅿️",
     4829: "Інше📎",

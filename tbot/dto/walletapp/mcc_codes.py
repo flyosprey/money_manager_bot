@@ -7,7 +7,7 @@ MCCCodeCategory = {
     5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
     5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
     7523: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # PARKING
-    4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # OTHERS
+    4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
     4121: "-Category_96ee297d-3878-4177-8f69-3cf2c02a07f6",  # TAXI
     5734: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # SOFTWARE_APPS_GAMES
     5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO

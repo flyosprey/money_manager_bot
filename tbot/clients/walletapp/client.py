@@ -2,7 +2,7 @@ import base64
 import json
 import re
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import quote, urljoin
 
 from requests.exceptions import RequestException
@@ -122,7 +122,7 @@ class CloudWalletAppClient(BaseClient):
     ) -> dict:
         record_date = convert_timestamp_to_datetime(
             timestamp=transaction.time
-        )
+        ) - timedelta(hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600 * 2)
         created_at = (
             datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
         )

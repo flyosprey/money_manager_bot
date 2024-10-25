@@ -122,7 +122,7 @@ class CloudWalletAppClient(BaseClient):
     ) -> dict:
         record_date = convert_timestamp_to_datetime(
             timestamp=transaction.time
-        ) - timedelta(hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600 * 2)
+        ) - timedelta(hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600)
         created_at = (
             datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
         )

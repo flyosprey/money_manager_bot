@@ -3,6 +3,7 @@ from typing import TypeVar
 MCCCodeCategory = {
     5411: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
     5499: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
+    5399: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # MISC_GENERAL_MERCHANDISE
     5814: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
     5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
     5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
@@ -778,7 +779,6 @@ MCCCodeCategory = {
     5310: "DISCOUNT_STORES",
     5311: "DEPARTMENT_STORES",
     5331: "VARIETY_STORES",
-    5399: "MISC_GENERAL_MERCHANDISE",
     5422: "MEAT_PROVISIONERS",
     5441: "CANDY_NUT_AND",
     5451: "DAIRY_PRODUCTS_STORES",
@@ -991,6 +991,7 @@ MCCTransactionCategoryName = {
     5411: "Продукти🥦",
     5499: "Продукти🥦",
     5462: "Продукти🥦",
+    5399: "Продукти🥦",
     5814: "Кафе та Ресторани☕",
     5811: "Кафе та Ресторани☕",
     5812: "Кафе та Ресторани☕",

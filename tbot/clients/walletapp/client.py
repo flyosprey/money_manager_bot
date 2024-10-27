@@ -164,7 +164,7 @@ class CloudWalletAppClient(BaseClient):
         account_id = None
 
         for result in data["results"]:
-            if currency_id is None and result["id"].startswith("-Currency_"):
+            if result["id"].startswith("-Currency_"):
                 currency_id = result["id"]
             if account_id is None and result["id"].startswith("-Account_"):
                 account_id = result["id"]

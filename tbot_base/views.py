@@ -12,10 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
-from money_manager.dto.github.payload import (
-    PullRequestWebhook,
-    PushWebhook,
-)
 from tbot.dto.monobank.payload import Transaction
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
@@ -24,6 +20,10 @@ from tbot.utils import (
     convert_money,
     convert_timestamp_to_datetime,
     logger,
+)
+from tbot_base.dto.github.payload import (
+    PullRequestWebhook,
+    PushWebhook,
 )
 
 from .bot import tbot
@@ -123,82 +123,92 @@ class MonobankWebhookView(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class GithubWebhookView(View):
     def post(self, request, *args, **kwargs):
-        check_content_type(content_type=request.META["CONTENT_TYPE"])
-
-        self.verify_signature(
-            payload_body=request.body,
-            signature_header=request.headers.get("X-Hub-Signature-256"),
-            secret_token=config.deployment.github_secret_key.get_secret_value(),
-        )
-
-        if request.headers.get("X-Github-Event") not in {"push", "pull_request"}:
-            raise PermissionDenied
-
         try:
-            if request.headers.get("X-Github-Event") == "push":
-                webhook = PushWebhook(**json.loads(request.body))
-                branch = self.get_branch(webhook=webhook)
-            elif request.headers.get("X-Github-Event") == "pull_request":
-                webhook = PullRequestWebhook(**json.loads(request.body))
-                if webhook.action not in {"opened"}:
-                    pass
-                    # raise PermissionDenied
-                branch = self.get_branch(webhook=webhook.pull_request.base)
-            else:
-                raise PermissionDenied
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
-        except ValidationError as e:
-            return JsonResponse({"error": e.error_dict}, status=422)
-
-        if not self.is_prod_branch(branch=branch):
-            raise PermissionDenied
-
-        try:
-            git_pull = subprocess.run(
-                ["git", "pull", "origin", branch],  # noqa
-                capture_output=True,
-                text=True,
-                cwd=config.deployment.project_path,
+            check_content_type(content_type=request.META["CONTENT_TYPE"])
+            self.verify_signature(
+                payload_body=request.body,
+                signature_header=request.headers.get("X-Hub-Signature-256"),
+                secret_token=config.deployment.github_secret_key.get_secret_value(),
             )
 
-            if git_pull.returncode == 0:
-                return JsonResponse({"status": "success", "output": git_pull.stdout})
-            raise DeployError(f"{git_pull.stderr} {git_pull.stdout}".strip())
+            event_type = request.headers.get("X-Github-Event")
+            if event_type not in {"push", "pull_request"}:
+                raise PermissionDenied("Event type not permitted")
 
+            branch = self.get_branch_from_event(
+                event_type=event_type, raw_body=request.body
+            )
+            if not self.is_prod_branch(branch=branch):
+                raise PermissionDenied("Branch not permitted")
+
+            return self.execute_git_pull(
+                branch=branch, project_path=config.deployment.project_path
+            )
+
+        except (json.JSONDecodeError, ValidationError) as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        except PermissionDenied:
+            return JsonResponse({"error": "Permission denied"}, status=403)
         except Exception as e:
             logger.exception(e)
             return JsonResponse({"status": "failure", "error": str(e)}, status=500)
 
     @staticmethod
-    def is_prod_branch(branch: str) -> bool:
-        return branch in {"beta", "main", "test_github_webhook"}
-
-    @staticmethod
-    def get_branch(webhook) -> str:
-        if "heads" not in webhook.ref:
-            return webhook.ref
-
-        branch = re.search(r"heads/(.+)", webhook.ref)
-        if not branch:
-            logger.exception(
-                "Cannot to get branch from github webhook!", ref=webhook.ref
-            )
-            raise ValueError("Cannot to get branch from github webhook!")
-
-        return branch[1]
-
-    @staticmethod
-    def verify_signature(payload_body, secret_token, signature_header) -> None:
+    def verify_signature(
+        payload_body: bytes, secret_token: str, signature_header: str
+    ) -> None:
         if not signature_header:
-            raise PermissionDenied
+            raise PermissionDenied("Missing signature header")
 
         hash_object = hmac.new(
             secret_token.encode("utf-8"), msg=payload_body, digestmod=hashlib.sha256
         )
-        expected_signature = "sha256=" + hash_object.hexdigest()
-        if not hmac.compare_digest(expected_signature, signature_header):
-            raise PermissionDenied
+        if not hmac.compare_digest(
+            "sha256=" + hash_object.hexdigest(), signature_header
+        ):
+            raise PermissionDenied("Signature verification failed")
+
+    def get_branch_from_event(self, event_type: str, raw_body: bytes) -> str | None:
+        payload = json.loads(raw_body)
+        if event_type == "push":
+            webhook = PushWebhook(**payload)
+            return self.get_branch(webhook=webhook)
+
+        if event_type == "pull_request":
+            webhook = PullRequestWebhook(**payload)
+            if webhook.action not in {"closed"}:
+                raise PermissionDenied("Action not permitted")
+            return webhook.pull_request.base.ref
+
+        return
+
+    @staticmethod
+    def get_branch(webhook) -> str | None:
+        return webhook.ref.split("/")[-1] if webhook.ref else None
+
+    @staticmethod
+    def is_prod_branch(branch: str) -> bool:
+        return branch in {"main", "beta"}
+
+    @staticmethod
+    def execute_git_pull(branch: str, project_path: str) -> JsonResponse:
+        try:
+            git_pull = subprocess.run(
+                ["git", "pull", "origin", branch],  # noqa
+                capture_output=True,
+                text=True,
+                cwd=project_path,
+            )
+
+            if git_pull.returncode == 0:
+                return JsonResponse({"status": "success", "output": git_pull.stdout})
+
+            error_message = f"{git_pull.stderr} {git_pull.stdout}".strip()
+            raise DeployError(error_message)
+
+        except subprocess.SubprocessError as e:
+            logger.exception("Failed to pull the latest code")
+            raise DeployError("Git pull command failed") from e
 
 
 class DeployError(Exception):

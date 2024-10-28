@@ -24,7 +24,9 @@ class BotAdminConfig(BaseSettings):
 
 class DeploymentConfig(BaseSettings):
     github_secret_key: SecretStr = Field(..., description="Secret Key from Github")
-    project_path: str = Field(..., description="Full path to the project in a filesystem")
+    project_path: str = Field(
+        ..., description="Full path to the project in a filesystem"
+    )
 
 
 class Config(BaseSettings):

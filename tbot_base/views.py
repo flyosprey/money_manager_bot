@@ -148,7 +148,7 @@ class GithubWebhookView(View):
         except (json.JSONDecodeError, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
         except PermissionDenied as e:
-            logger.info(e)
+            logger.error(e)
             return JsonResponse({"error": "Permission denied"}, status=403)
         except Exception as e:
             logger.exception(e)

@@ -137,7 +137,6 @@ class GithubWebhookView(View):
         if not self.is_prod_branch(branch=branch) and request.headers.get("X-Github-Event") == "push":
             raise PermissionDenied
 
-
         try:
             git_pull = subprocess.run(
                 [f"git pull origin {branch}"],

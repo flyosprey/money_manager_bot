@@ -36,7 +36,7 @@ for module in settings.BOT_HANDLERS:
 
 def check_content_type(content_type: str) -> None:
     if content_type not in {"application/json"}:
-        raise PermissionDenied
+        raise PermissionDenied("Wrong content type!")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -147,7 +147,8 @@ class GithubWebhookView(View):
 
         except (json.JSONDecodeError, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
-        except PermissionDenied:
+        except PermissionDenied as e:
+            logger.info(e)
             return JsonResponse({"error": "Permission denied"}, status=403)
         except Exception as e:
             logger.exception(e)

@@ -213,6 +213,7 @@ class GithubWebhookView(View):
             )
 
             if git_pull.returncode == 0:
+                logger.info("Deployed successfully")
                 return JsonResponse(
                     {"status": "success", "output": git_pull.stdout}, status=200
                 )

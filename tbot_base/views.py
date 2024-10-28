@@ -19,6 +19,7 @@ from tbot.utils import (
     convert_currency_number_to_code,
     convert_money,
     convert_timestamp_to_datetime,
+    logger,
 )
 
 from .bot import tbot

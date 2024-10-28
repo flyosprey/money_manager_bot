@@ -12,7 +12,9 @@ def menu(bot):
         types.KeyboardButton("Розпочати"),
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
-        types.KeyboardButton("Оновити звʼязок з Monobank (якщо не приходять транзакції)"),
+        types.KeyboardButton(
+            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
+        ),
         types.KeyboardButton("Змінити аккаунт WalletApp"),
     )
 

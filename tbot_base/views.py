@@ -1,5 +1,8 @@
+import hashlib
+import hmac
 import json
 import re
+import subprocess
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -9,6 +12,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
+from money_manager.dto.github.payload import (
+    PullRequestWebhook,
+    PushWebhook,
+)
 from tbot.dto.monobank.payload import Transaction
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
@@ -16,6 +23,7 @@ from tbot.utils import (
     convert_currency_number_to_code,
     convert_money,
     convert_timestamp_to_datetime,
+    logger,
 )
 
 from .bot import tbot
@@ -26,11 +34,15 @@ for module in settings.BOT_HANDLERS:
     __import__(module)
 
 
+def check_content_type(content_type: str) -> None:
+    if content_type not in {"application/json"}:
+        raise PermissionDenied
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class TelegramWebhookView(View):
     def post(self, request, *args, **kwargs):
-        if request.META["CONTENT_TYPE"] != "application/json":
-            raise PermissionDenied
+        check_content_type(content_type=request.META["CONTENT_TYPE"])
 
         json_data = request.body.decode("utf-8")
         update = tbot.update(json_data)
@@ -42,13 +54,12 @@ class TelegramWebhookView(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class MonobankWebhookView(View):
     def get(self, request, encrypted_user_id: str, *args, **kwargs):
-        self.check_signature(encrypted_user_id=encrypted_user_id)
+        self.verify_signature(encrypted_user_id=encrypted_user_id)
         return HttpResponse(status=200)
 
     def post(self, request, encrypted_user_id: str, *args, **kwargs):
-        user_id = self.check_signature(encrypted_user_id=encrypted_user_id)
-        if request.META["CONTENT_TYPE"] != "application/json":
-            raise PermissionDenied
+        check_content_type(content_type=request.META["CONTENT_TYPE"])
+        user_id = self.verify_signature(encrypted_user_id=encrypted_user_id)
 
         try:
             transaction = Transaction(
@@ -92,7 +103,7 @@ class MonobankWebhookView(View):
         return HttpResponse(status=200)
 
     @staticmethod
-    def check_signature(encrypted_user_id: str) -> int:
+    def verify_signature(encrypted_user_id: str) -> int:
         try:
             encrypt_manager = EncryptManager(secret_key=config.secret_key)
             user_id = int(encrypt_manager.decrypt_key(encrypted_user_id))
@@ -107,3 +118,88 @@ class MonobankWebhookView(View):
     @staticmethod
     def skip_transaction(transaction: Transaction) -> bool:
         return bool(re.search(r"з \w+ картки", transaction.description.lower()))
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class GithubWebhookView(View):
+    def post(self, request, *args, **kwargs):
+        check_content_type(content_type=request.META["CONTENT_TYPE"])
+
+        self.verify_signature(
+            payload_body=request.body,
+            signature_header=request.headers.get("X-Hub-Signature-256"),
+            secret_token=config.deployment.github_secret_key.get_secret_value(),
+        )
+
+        if request.headers.get("X-Github-Event") not in {"push", "pull_request"}:
+            raise PermissionDenied
+
+        try:
+            if request.headers.get("X-Github-Event") == "push":
+                webhook = PushWebhook(**json.loads(request.body))
+                branch = self.get_branch(webhook=webhook)
+            elif request.headers.get("X-Github-Event") == "pull_request":
+                webhook = PullRequestWebhook(**json.loads(request.body))
+                if webhook.action not in {"opened"}:
+                    pass
+                    # raise PermissionDenied
+                branch = self.get_branch(webhook=webhook.pull_request.base)
+            else:
+                raise PermissionDenied
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except ValidationError as e:
+            return JsonResponse({"error": e.error_dict}, status=422)
+
+        if not self.is_prod_branch(branch=branch):
+            raise PermissionDenied
+
+        try:
+            git_pull = subprocess.run(
+                ["git", "pull", "origin", branch],  # noqa
+                capture_output=True,
+                text=True,
+                cwd=config.deployment.project_path,
+            )
+
+            if git_pull.returncode == 0:
+                return JsonResponse({"status": "success", "output": git_pull.stdout})
+            raise DeployError(f"{git_pull.stderr} {git_pull.stdout}".strip())
+
+        except Exception as e:
+            logger.exception(e)
+            return JsonResponse({"status": "failure", "error": str(e)}, status=500)
+
+    @staticmethod
+    def is_prod_branch(branch: str) -> bool:
+        return branch in {"beta", "main", "test_github_webhook"}
+
+    @staticmethod
+    def get_branch(webhook) -> str:
+        if "heads" not in webhook.ref:
+            return webhook.ref
+
+        branch = re.search(r"heads/(.+)", webhook.ref)
+        if not branch:
+            logger.exception(
+                "Cannot to get branch from github webhook!", ref=webhook.ref
+            )
+            raise ValueError("Cannot to get branch from github webhook!")
+
+        return branch[1]
+
+    @staticmethod
+    def verify_signature(payload_body, secret_token, signature_header) -> None:
+        if not signature_header:
+            raise PermissionDenied
+
+        hash_object = hmac.new(
+            secret_token.encode("utf-8"), msg=payload_body, digestmod=hashlib.sha256
+        )
+        expected_signature = "sha256=" + hash_object.hexdigest()
+        if not hmac.compare_digest(expected_signature, signature_header):
+            raise PermissionDenied
+
+
+class DeployError(Exception):
+    pass

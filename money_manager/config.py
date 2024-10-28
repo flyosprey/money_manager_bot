@@ -22,6 +22,13 @@ class BotAdminConfig(BaseSettings):
     chat_id: int = Field(..., description="Chat id")
 
 
+class DeploymentConfig(BaseSettings):
+    github_secret_key: SecretStr = Field(..., description="Secret Key from Github")
+    project_path: str = Field(
+        ..., description="Full path to the project in a filesystem"
+    )
+
+
 class Config(BaseSettings):
     dsn: str = Field(..., description="DSN of the application")
     secret_key: SecretStr = Field(..., description="Secret Key")
@@ -30,6 +37,7 @@ class Config(BaseSettings):
     redis: RedisConfig = Field(..., description="Redis Config")
     postgres: PostgresConfig = Field(..., description="Postgres Config")
     bot_admin: BotAdminConfig = Field(..., description="Bot Admin Config")
+    deployment: DeploymentConfig = Field(..., description="Github Admin Config")
 
     class Config:
         env_prefix = "APP_"

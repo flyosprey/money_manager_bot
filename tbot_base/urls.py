@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import MonobankWebhookView, TelegramWebhookView
+from .views import GithubWebhookView, MonobankWebhookView, TelegramWebhookView
 
 urlpatterns = [
     path("get_tel_hook/", TelegramWebhookView.as_view(), name="get_tel_hook"),
@@ -9,4 +9,5 @@ urlpatterns = [
         MonobankWebhookView.as_view(),
         name="handle_mono_webhook",
     ),
+    path("deploy/", GithubWebhookView.as_view(), name="deploy"),
 ]

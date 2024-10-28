@@ -136,5 +136,3 @@ BOT_HANDLERS = [
 ]
 
 django_heroku.settings(locals())
-
-APPEND_SLASH = True

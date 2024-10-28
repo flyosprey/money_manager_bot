@@ -176,7 +176,7 @@ class GithubWebhookView(View):
 
         if event_type == "pull_request":
             webhook = PullRequestWebhook(**payload)
-            if webhook.action != "closed":
+            if webhook.action not in {"closed"}:
                 raise PermissionDenied("Action not permitted")
             return webhook.pull_request.base.ref
 

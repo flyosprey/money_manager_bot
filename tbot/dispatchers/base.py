@@ -11,7 +11,7 @@ def handle_start(message: Message):
     register_user(message=message)
     bot.send_message(
         chat_id=message.chat.id,
-        text="Привіт!👋 Я бот OspreyMoney. Задеплоєно"
+        text="Привіт!👋 Я бот OspreyMoney."
         "\nЯ допоможу тобі автоматично фіксувати прибутки та витрати з твоїх кредитних карток. "
         "💳Наразі я працюю з Monobank і записую всі твої транзакції у додаток BudgetBakers. "
         "Зі мною ти завжди будеш контролювати свій бюджет швидко та зручно!"

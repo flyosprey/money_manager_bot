@@ -59,7 +59,8 @@ def walletapp_username_handler(
 
 
 @bot.message_handler(
-    func=lambda message: message.text in ("Змінити аккаунт WalletApp", "/change_walletapp_account")
+    func=lambda message: message.text
+    in ("Змінити аккаунт WalletApp", "/change_walletapp_account")
 )
 @exception_handler()
 def change_walletapp_account_handler(
@@ -82,11 +83,12 @@ def walletapp_password_handler(
 
 
 @bot.message_handler(
-    func=lambda message: message.text in (
-            "Замінити токен Monobank",
-            "Замінити пароль WalletApp",
-            "/reset_token",
-            "/reset_pass",
+    func=lambda message: message.text
+    in (
+        "Замінити токен Monobank",
+        "Замінити пароль WalletApp",
+        "/reset_token",
+        "/reset_pass",
     )
 )
 @exception_handler()

@@ -9,7 +9,8 @@ from tbot_base.bot import tbot as bot
 
 
 @bot.message_handler(
-    func=lambda message: "Оновити звʼязок з Monobank" in message.text or "refresh_monobank" in message.text
+    func=lambda message: "Оновити звʼязок з Monobank" in message.text
+    or "refresh_monobank" in message.text
 )
 @exception_handler()
 def refresh_monobank_handler(message: Message):

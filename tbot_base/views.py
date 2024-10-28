@@ -58,15 +58,18 @@ class MonobankWebhookView(View):
         return HttpResponse(status=200)
 
     def post(self, request, encrypted_user_id: str, *args, **kwargs):
-        check_content_type(content_type=request.META["CONTENT_TYPE"])
-        user_id = self.verify_signature(encrypted_user_id=encrypted_user_id)
-
         try:
+            check_content_type(content_type=request.META["CONTENT_TYPE"])
+            user_id = self.verify_signature(encrypted_user_id=encrypted_user_id)
+
             transaction = Transaction(
                 **json.loads(request.body).get("data", {}).get("statementItem", {})
             )
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except PermissionDenied as e:
+            logger.error(e)
+            return JsonResponse({"error": "Permission denied"}, status=403)
         except ValidationError as e:
             return JsonResponse({"error": e.error_dict}, status=422)
 

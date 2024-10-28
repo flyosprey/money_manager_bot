@@ -188,7 +188,7 @@ class GithubWebhookView(View):
 
     @staticmethod
     def is_prod_branch(branch: str) -> bool:
-        return branch in {"main", "master"}
+        return branch in {"main", "beta"}
 
     @staticmethod
     def execute_git_pull(branch: str, project_path: str) -> JsonResponse:

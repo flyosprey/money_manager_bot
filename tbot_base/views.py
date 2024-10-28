@@ -1,8 +1,8 @@
+import hashlib
+import hmac
 import json
 import re
 import subprocess
-import hashlib
-import hmac
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -13,8 +13,8 @@ from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
 from money_manager.dto.github.payload import (
-    PushWebhook,
     PullRequestWebhook,
+    PushWebhook,
 )
 from tbot.dto.monobank.payload import Transaction
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
@@ -156,7 +156,7 @@ class GithubWebhookView(View):
 
         try:
             git_pull = subprocess.run(
-                ["git", "pull", "origin", branch],
+                ["git", "pull", "origin", branch],  # noqa
                 capture_output=True,
                 text=True,
                 cwd=config.deployment.project_path,
@@ -164,8 +164,7 @@ class GithubWebhookView(View):
 
             if git_pull.returncode == 0:
                 return JsonResponse({"status": "success", "output": git_pull.stdout})
-            else:
-                raise DeployError(f"{git_pull.stderr} {git_pull.stdout}".strip())
+            raise DeployError(f"{git_pull.stderr} {git_pull.stdout}".strip())
 
         except Exception as e:
             logger.exception(e)

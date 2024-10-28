@@ -202,7 +202,7 @@ class GithubWebhookView(View):
     def execute_git_pull(branch: str, project_path: str) -> JsonResponse:
         try:
             git_pull = subprocess.run(
-                ["git", "pull", "origin", branch],  # noqa
+                ["/usr/bin/git", "pull", "origin", branch],  # noqa
                 capture_output=True,
                 text=True,
                 cwd=project_path,

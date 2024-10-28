@@ -27,6 +27,7 @@ services:
       - "8000:8000"
       - "443:443"
     volumes:
+      - ~/.ssh:/root/.ssh:ro
       - /etc/letsencrypt/live/osprey.work.gd/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
       - /etc/letsencrypt/live/osprey.work.gd/privkey.pem:/etc/ssl/private/privkey.pem:ro
       - ./:/opt/money_manager_bot:ro

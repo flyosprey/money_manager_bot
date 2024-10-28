@@ -7,9 +7,9 @@ from tbot.dispatchers.integration import (
     handle_integration,
     handle_mono_token,
     handle_reset,
+    handle_walletapp_login,
     handle_walletapp_password,
     handle_walletapp_username,
-    handle_walletapp_login,
 )
 from tbot.dto.users.type import UserStates
 from tbot.errors import exception_handler

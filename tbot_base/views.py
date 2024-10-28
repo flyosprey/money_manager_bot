@@ -139,7 +139,7 @@ class GithubWebhookView(View):
 
         try:
             git_pull = subprocess.run(
-                ["git", "pull", "origin", branch],
+                [f"git pull origin {branch}"],
                 capture_output=True, text=True, shell=True
             )
 

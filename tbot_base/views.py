@@ -42,7 +42,11 @@ def check_content_type(content_type: str) -> None:
 @method_decorator(csrf_exempt, name="dispatch")
 class TelegramWebhookView(View):
     def post(self, request, *args, **kwargs):
-        check_content_type(content_type=request.META["CONTENT_TYPE"])
+        try:
+            check_content_type(content_type=request.META["CONTENT_TYPE"])
+        except PermissionDenied as e:
+            logger.error(e)
+            return JsonResponse({"error": "Permission denied"}, status=403)
 
         json_data = request.body.decode("utf-8")
         update = tbot.update(json_data)

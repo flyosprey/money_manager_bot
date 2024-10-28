@@ -12,10 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
-from tbot_base.dto.github.payload import (
-    PullRequestWebhook,
-    PushWebhook,
-)
 from tbot.dto.monobank.payload import Transaction
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
@@ -24,6 +20,10 @@ from tbot.utils import (
     convert_money,
     convert_timestamp_to_datetime,
     logger,
+)
+from tbot_base.dto.github.payload import (
+    PullRequestWebhook,
+    PushWebhook,
 )
 
 from .bot import tbot

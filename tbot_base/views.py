@@ -47,11 +47,11 @@ class TelegramWebhookView(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class MonobankWebhookView(View):
     def get(self, request, encrypted_user_id: str, *args, **kwargs):
-        self.check_signature(encrypted_user_id=encrypted_user_id)
+        self.verify_signature(encrypted_user_id=encrypted_user_id)
         return HttpResponse(status=200)
 
     def post(self, request, encrypted_user_id: str, *args, **kwargs):
-        user_id = self.check_signature(encrypted_user_id=encrypted_user_id)
+        user_id = self.verify_signature(encrypted_user_id=encrypted_user_id)
         if request.META["CONTENT_TYPE"] != "application/json":
             raise PermissionDenied
 
@@ -97,7 +97,7 @@ class MonobankWebhookView(View):
         return HttpResponse(status=200)
 
     @staticmethod
-    def check_signature(encrypted_user_id: str) -> int:
+    def verify_signature(encrypted_user_id: str) -> int:
         try:
             encrypt_manager = EncryptManager(secret_key=config.secret_key)
             user_id = int(encrypt_manager.decrypt_key(encrypted_user_id))

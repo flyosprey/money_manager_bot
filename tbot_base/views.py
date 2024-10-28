@@ -213,7 +213,9 @@ class GithubWebhookView(View):
             )
 
             if git_pull.returncode == 0:
-                return JsonResponse({"status": "success", "output": git_pull.stdout}, status=200)
+                return JsonResponse(
+                    {"status": "success", "output": git_pull.stdout}, status=200
+                )
 
             error_message = f"{git_pull.stderr} {git_pull.stdout}".strip()
             raise DeployError(error_message)

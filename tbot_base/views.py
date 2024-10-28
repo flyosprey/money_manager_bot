@@ -112,3 +112,75 @@ class MonobankWebhookView(View):
     @staticmethod
     def skip_transaction(transaction: Transaction) -> bool:
         return bool(re.search(r"з \w+ картки", transaction.description.lower()))
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class GithubWebhookView(View):
+    def post(self, request, *args, **kwargs):
+        if request.META["CONTENT_TYPE"] != "application/json":
+            raise PermissionDenied
+
+        self.verify_signature(
+            payload_body=request.body,
+            signature_header=request.headers.get("X-Hub-Signature-256"),
+            secret_token=config.github.secret_key.get_secret_value(),
+        )
+
+        try:
+            webhook = GithubWebhook(**json.loads(request.body))
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except ValidationError as e:
+            return JsonResponse({"error": e.error_dict}, status=422)
+
+        branch = self.get_branch(webhook=webhook)
+        if not self.is_prod_branch(branch=branch) and request.headers.get("X-Github-Event") == "push":
+            raise PermissionDenied
+
+        try:
+            git_pull = subprocess.run(
+                ["git", "pull", "origin", branch],
+                capture_output=True, text=True, shell=True
+            )
+
+            if git_pull.returncode == 0:
+                return JsonResponse({
+                    "status": "success",
+                    "output": git_pull.stdout
+                })
+            else:
+                raise DeployError(git_pull.stderr)
+
+        except Exception as e:
+            logger.exception(e)
+            return JsonResponse({
+                "status": "failure",
+                "error": str(e)
+            }, status=500)
+
+    @staticmethod
+    def is_prod_branch(branch: str) -> bool:
+        return branch in {"beta", "main", "test_github_webhook"}
+
+    @staticmethod
+    def get_branch(webhook: GithubWebhook) -> str:
+        branch = re.search(r"heads/(.+)", webhook.ref)
+        if not branch:
+            logger.exception("Cannot to get branch from github webhook!", ref=webhook.ref)
+            raise ValueError("Cannot to get branch from github webhook!")
+
+        return branch[1]
+
+    @staticmethod
+    def verify_signature(payload_body, secret_token, signature_header) -> None:
+        if not signature_header:
+            raise PermissionDenied
+
+        hash_object = hmac.new(secret_token.encode('utf-8'), msg=payload_body, digestmod=hashlib.sha256)
+        expected_signature = "sha256=" + hash_object.hexdigest()
+        if not hmac.compare_digest(expected_signature, signature_header):
+            raise PermissionDenied
+
+
+class DeployError(Exception):
+    pass

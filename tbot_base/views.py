@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
-from money_manager.dto.github.payload import (
+from tbot_base.dto.github.payload import (
     PullRequestWebhook,
     PushWebhook,
 )

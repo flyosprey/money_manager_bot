@@ -143,7 +143,7 @@ def handle_ask_reset(message: Message, redis: RedisWrapper):
 
     bot.send_message(
         chat_id=message.chat.id,
-        text=f"Введіть новий {credential_type_msg}*👇",
+        text=f"*Введіть новий {credential_type_msg}*👇",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(

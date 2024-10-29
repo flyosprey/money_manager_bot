@@ -16,7 +16,7 @@ from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 
-@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/integra"))
+@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/integrate"))
 @exception_handler()
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)

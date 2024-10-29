@@ -138,7 +138,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
 def handle_ask_reset(message: Message, redis: RedisWrapper):
     command = message.text
     credential_type_msg = (
-        "токен Monobank" if "reset_token" in command else "пароль до WalletApp"
+        "токен Monobank" if "reset_token" in command or "Monobank" in command else "пароль до WalletApp"
     )
 
     bot.send_message(

@@ -25,7 +25,7 @@ MCCCodeCategory = {
     5462: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # BAKERIES
     5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
     5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
-    5331: "-Category_e6894313-ac21-42ac-8175-efdf0dce67e3",  # VARIETY_STORES
+    5331: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # VARIETY_STORES
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -1012,6 +1012,7 @@ MCCTransactionCategoryName = {
     5541: "Заправка⛽",
     8299: "Навчання🏫",
     5511: "Обслуговування авто🚗",
+    5331: "Побут🏠",
 }
 MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName

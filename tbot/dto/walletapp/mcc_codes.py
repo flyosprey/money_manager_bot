@@ -26,6 +26,7 @@ MCCCodeCategory = {
     5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
     5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
     5331: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # VARIETY_STORES
+    8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -946,7 +947,6 @@ MCCCodeCategory = {
     7998: "AQUARIUMS_SEA_AQUARIUMS",
     7999: "RECREATION_SERVICES_NOT",
     8011: "DOCTORS_AND_PHYSICIANS",
-    8021: "DENTISTS_AND_ORTHODONTISTS",
     8031: "OSTEOPATHS",
     8041: "CHIROPRACTORS",
     8042: "OPTOMETRISTS_AND_OPHTHALMOLOGISTS",
@@ -996,6 +996,7 @@ MCCTransactionCategoryName = {
     5811: "Кафе та Ресторани☕",
     5812: "Кафе та Ресторани☕",
     5813: "Бар🍺",
+    8021: "Лікування🏥",
     7523: "Парковка🅿️",
     4829: "Інше📎",
     4121: "Таксі🚕",

@@ -30,5 +30,6 @@ def test_handler(message: Message):
                 note="Weekly grocery shopping",
                 time=get_unix_time(),
                 contractor="ATБ",
+                type="-",
             ),
         )

@@ -43,11 +43,14 @@ def handle_select_category_transaction(call: CallbackQuery):
     page = int(page[1]) if page else 1
 
     text = call.message.text
+    transaction = get_transaction_from_message(text)
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=text,
-        reply_markup=transaction_categories_menu(page=page),
+        reply_markup=transaction_categories_menu(
+            page=page, transaction_type=transaction.type
+        ),
     )
 
 
@@ -56,9 +59,10 @@ def handle_change_category_transaction(call: CallbackQuery):
     if not mcc:
         raise Exception("call.data category error!")
 
+    transaction = get_transaction_from_message(call.message.text)
     text = re.sub(
         r"Категорія:.+",
-        f"Категорія: {MCCTransactionCategoryName[int(mcc[1])]} ({mcc[1]})",
+        f"Категорія: {MCCTransactionCategoryName[transaction.type][int(mcc[1])]} ({mcc[1]})",
         call.message.text,
     )
     edit_message(

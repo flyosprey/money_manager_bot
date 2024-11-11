@@ -148,7 +148,7 @@ class CloudWalletAppClient(BaseClient):
                     "labels": [],
                     "currencyId": currency_id,
                     "accountId": account_id,
-                    "categoryId": MCCCodeCategory[transaction.mcc],
+                    "categoryId": MCCCodeCategory[transaction.type][transaction.mcc],
                     "payee": transaction.contractor,
                     "note": transaction.note,
                     "refAmount": transaction.amount,

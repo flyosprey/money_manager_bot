@@ -93,21 +93,22 @@ class MonobankWebhookView(View):
                 if transaction.commission_rate
                 else "відсутня"
             )
-            amount = f"{convert_money(transaction.amount)}₴"
             date_ = convert_timestamp_to_datetime(
                 timestamp=transaction.time, timezone=TIMEZONE_KYIV
             ).replace(tzinfo=None)
+            transaction_type = "+" if transaction.amount > 0 else "-"
             tbot.send_message(
                 chat_id=user_id,
                 text=f"💰Рахунок: {currency}\n"
                 f"🔖Опис: {transaction.description}\n"
-                f"🫰Сума: {amount}\n"
+                f"🫰Сума: {convert_money(transaction.amount)}₴\n"
                 f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
                 f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
                 f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"
                 f"📅Дата: {date_}\n"
                 "🗂️Категорія: "
-                f"{MCCTransactionCategoryName.get(transaction.mcc, 'Поки невідома категорія')} ({transaction.mcc})",
+                f"{MCCTransactionCategoryName[transaction_type].get(transaction.mcc, 'Поки невідома категорія')} "
+                     f"({transaction.mcc})",
                 reply_markup=transaction_menu(),
             )
 
@@ -206,7 +207,7 @@ class GithubWebhookView(View):
     def execute_git_pull(branch: str, project_path: str) -> JsonResponse:
         try:
             git_pull = subprocess.run(
-                ["/usr/bin/git", "pull", "origin", branch],  # noqa
+                ["/usr/bin/git", "pull", "origin", branch],
                 capture_output=True,
                 text=True,
                 cwd=project_path,

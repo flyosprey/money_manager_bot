@@ -7,3 +7,4 @@ class SimpleTransaction(BaseModel):
     note: str | None = None
     time: int
     contractor: str
+    type: str

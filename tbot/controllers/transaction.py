@@ -35,12 +35,15 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
         text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,)
     )
 
+    amount = int(float(amount) * 100)
+
     return SimpleTransaction(
         mcc=int(mcc),
-        amount=int(float(amount) * 100),
+        amount=amount,
         note=f"Коментар: {comment}. Кешбек: {cashback}. Комісія: {commission}",
         time=convert_datetime_to_timestamp(time_=time),
         contractor=description,
+        type="+" if amount > 0 else "-",
     )
 
 
@@ -66,7 +69,7 @@ def add_transaction(
 
 
 def validate_transaction_to_add(transaction: SimpleTransaction) -> None:
-    if not MCCCodeCategory[transaction.mcc].startswith("-Category_"):
+    if not MCCCodeCategory[transaction.type][transaction.mcc].startswith("-Category_"):
         raise IncorrectMCCCodeError(
             message="MCC code is not supported yet", mcc_code=transaction.mcc
         )

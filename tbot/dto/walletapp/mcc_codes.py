@@ -29,14 +29,15 @@ MCCCodeCategory = {
         5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
         5331: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # VARIETY_STORES
         8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS,
-        4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Gifts,
+        4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
+        5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
     },
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         4830: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
         4831: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
         4832: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
-        4833: "-Category_5d87cfd3-d117-45d1-bdef-fc27e1cd0f3d",  # Gifts
+        4833: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts
     },
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
@@ -867,7 +868,6 @@ MCCCodeCategory = {
     5977: "COSMETIC_STORES",
     5978: "TYPEWRITER_STORES",
     5983: "FUEL_FUEL",
-    5992: "FLORISTS",
     5994: "NEWS_DEALERS_AND",
     5995: "PET_SHOPS_PET",
     5996: "SWIMMING_POOLS",
@@ -1025,7 +1025,8 @@ MCCTransactionCategoryName = {
         8299: "Навчання🏫",
         5511: "Обслуговування авто🚗",
         5331: "Побут🏠",
-        4833: "Подарунки та благодійність🎁",
+        4833: "Благодійність🫴",
+        5992: "Подарунки🎁",
     },
     "+": {
         4829: "Зарплата💰",
@@ -1033,7 +1034,7 @@ MCCTransactionCategoryName = {
         4830: "Продаж📦",
         4831: "Дивіденди🏦",
         4832: "Повернення коштів🔙",
-        4833: "Подарунки🎁",
+        5992: "Подарунки🎁",
     },
 }
 MCCTransactionCategoryNameT = TypeVar(

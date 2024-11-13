@@ -100,7 +100,7 @@ class MonobankWebhookView(View):
             transaction_type = "+" if transaction.amount > 0 else "-"
             tbot.send_message(
                 chat_id=user_id,
-                text=f"💰Рахунок: {currency}\n"
+                text=f"💰Валюта платежу: {currency}\n"
                 f"🔖Опис: {transaction.description}\n"
                 f"🫰Сума: {convert_money(transaction.amount)}₴\n"
                 f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"

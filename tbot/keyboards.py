@@ -9,7 +9,7 @@ from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryPagination
 def menu(bot):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
 
-    # markup.add(types.KeyboardButton("Розпочати"))
+    markup.add(types.KeyboardButton("Розпочати"))
 
     markup.add(
         types.KeyboardButton("Замінити токен Monobank"),

@@ -11,7 +11,7 @@ def menu(bot):
 
     markup.add(types.KeyboardButton("Розпочати"))
 
-    markup.row(
+    markup.add(
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
         types.KeyboardButton("Змінити аккаунт WalletApp")

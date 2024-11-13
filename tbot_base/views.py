@@ -20,6 +20,7 @@ from tbot.utils import (
     convert_money,
     convert_timestamp_to_datetime,
     logger,
+    admin_bot_notification,
 )
 from tbot_base.dto.github.payload import (
     PullRequestWebhook,
@@ -153,15 +154,23 @@ class GithubWebhookView(View):
             if not self.is_prod_branch(branch=branch):
                 raise PermissionDenied("Branch not permitted")
 
-            return self.execute_git_pull(
+            output = self.execute_git_pull(
                 branch=branch, project_path=config.deployment.project_path
             )
+            admin_bot_notification(message="New version deployed successfully!✅")
+
+            return JsonResponse(
+                    {"status": "success", "output": output}, status=200
+                )
 
         except (json.JSONDecodeError, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
         except PermissionDenied as e:
             logger.error(e)
             return JsonResponse({"error": "Permission denied"}, status=403)
+        except DeployError as e:
+            admin_bot_notification(message=f"Failed to deploy new version!🔴\n{e}")
+            return JsonResponse({"status": "failure", "error": str(e)}, status=500)
         except Exception as e:
             logger.exception(e)
             return JsonResponse({"status": "failure", "error": str(e)}, status=500)
@@ -204,7 +213,7 @@ class GithubWebhookView(View):
         return branch in {"main", "beta"}
 
     @staticmethod
-    def execute_git_pull(branch: str, project_path: str) -> JsonResponse:
+    def execute_git_pull(branch: str, project_path: str) -> str:
         try:
             git_pull = subprocess.run(
                 ["/usr/bin/git", "pull", "origin", branch],
@@ -215,9 +224,7 @@ class GithubWebhookView(View):
 
             if git_pull.returncode == 0:
                 logger.info("Deployed successfully")
-                return JsonResponse(
-                    {"status": "success", "output": git_pull.stdout}, status=200
-                )
+                return git_pull.stdout
 
             error_message = f"{git_pull.stderr} {git_pull.stdout}".strip()
             raise DeployError(error_message)

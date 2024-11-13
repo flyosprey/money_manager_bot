@@ -17,7 +17,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
         text=text, pattern=r"Опис: (.+?)\n", group_indexes=(1,)
     )
     amount = get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?).\n", group_indexes=(1,)
+        text=text, pattern=r"Сума: (.+?\d+?\.(\d+)?)", group_indexes=(1,)
     )
     mcc = get_field_value_from_text(
         text=text, pattern=r"Категорія:.+?\((.+?)\)|MCC: (.+)", group_indexes=(1, 2)

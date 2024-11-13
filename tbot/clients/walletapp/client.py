@@ -125,9 +125,7 @@ class CloudWalletAppClient(BaseClient):
         ) - timedelta(
             hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600
         )
-        created_at = (
-            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
-        )
+        created_at = datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
         currency_id, account_id = self.__find_account_currency_id(
             data=self.get_history_changes()
         )

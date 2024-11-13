@@ -9,15 +9,15 @@ from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryPagination
 def menu(bot):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
 
-    markup.row(types.KeyboardButton("Розпочати!!"))
+    # markup.add(types.KeyboardButton("Розпочати"))
 
-    markup.row(
+    markup.add(
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
         types.KeyboardButton("Змінити аккаунт WalletApp")
     )
 
-    markup.row(types.KeyboardButton("Оновити звʼязок з Monobank (якщо не приходять транзакції)"))
+    markup.add(types.KeyboardButton("Оновити звʼязок з Monobank (якщо не приходять транзакції)"))
 
     bot.set_my_commands(
         [

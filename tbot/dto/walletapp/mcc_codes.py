@@ -31,14 +31,14 @@ MCCCodeCategory = {
         8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS,
         4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
-        -1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
-        -2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
+        1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
+        2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
     },
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
-        -1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
-        -2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
-        -3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
+        1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
+        2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
+        3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts
     },
     742: "VETERINARY_SERVICES",
@@ -1029,15 +1029,15 @@ MCCTransactionCategoryName = {
         5331: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
-        -1: "Комунальні послуги🧾",
-        -2: "Оздоровчі процедури та краса❤️",
+        1: "Комунальні послуги🧾",
+        2: "Оздоровчі процедури та краса❤️",
     },
     "+": {
         4829: "Зарплата💰",
         6536: "Зарплата💰",
-        -1: "Продаж📦",
-        -2: "Дивіденди🏦",
-        -3: "Повернення коштів🔙",
+        1: "Продаж📦",
+        2: "Дивіденди🏦",
+        3: "Повернення коштів🔙",
         5992: "Подарунки🎁",
     },
 }

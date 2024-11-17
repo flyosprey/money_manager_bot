@@ -16,11 +16,11 @@ from tbot.dto.monobank.payload import Transaction
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
+    admin_bot_notification,
     convert_currency_number_to_code,
     convert_money,
     convert_timestamp_to_datetime,
     logger,
-    admin_bot_notification,
 )
 from tbot_base.dto.github.payload import (
     PullRequestWebhook,
@@ -109,7 +109,7 @@ class MonobankWebhookView(View):
                 f"📅Дата: {date_}\n"
                 "🗂️Категорія: "
                 f"{MCCTransactionCategoryName[transaction_type].get(transaction.mcc, 'Поки невідома категорія')} "
-                     f"({transaction.mcc})",
+                f"({transaction.mcc})",
                 reply_markup=transaction_menu(),
             )
 
@@ -159,9 +159,7 @@ class GithubWebhookView(View):
             )
             admin_bot_notification(message="New version deployed successfully!✅")
 
-            return JsonResponse(
-                    {"status": "success", "output": output}, status=200
-                )
+            return JsonResponse({"status": "success", "output": output}, status=200)
 
         except (json.JSONDecodeError, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)

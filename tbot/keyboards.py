@@ -14,10 +14,14 @@ def menu(bot):
     markup.add(
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
-        types.KeyboardButton("Змінити аккаунт WalletApp")
+        types.KeyboardButton("Змінити аккаунт WalletApp"),
     )
 
-    markup.add(types.KeyboardButton("Оновити звʼязок з Monobank (якщо не приходять транзакції)"))
+    markup.add(
+        types.KeyboardButton(
+            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
+        )
+    )
 
     bot.set_my_commands(
         [

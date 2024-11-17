@@ -25,8 +25,8 @@ def test_handler(message: Message):
             user_id=message.chat.id,
             secret_key=config.secret_key,
             transaction=SimpleTransaction(
-                mcc=5411,
-                amount=-15000,
+                mcc=5499,
+                amount=-15000000,
                 note="Weekly grocery shopping",
                 time=get_unix_time(),
                 contractor="ATБ",

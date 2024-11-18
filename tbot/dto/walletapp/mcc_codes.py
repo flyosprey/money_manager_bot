@@ -11,6 +11,7 @@ MCCCodeCategory = {
         5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
         7523: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # PARKING
         4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
+        6538: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
         4121: "-Category_96ee297d-3878-4177-8f69-3cf2c02a07f6",  # TAXI
         5734: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # SOFTWARE_APPS_GAMES
         5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
@@ -36,6 +37,7 @@ MCCCodeCategory = {
     },
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
         2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
         3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
@@ -1013,6 +1015,7 @@ MCCTransactionCategoryName = {
         8021: "Лікування🏥",
         7523: "Парковка🅿️",
         4829: "Інше📎",
+        6538: "Інше📎",
         4121: "Таксі🚕",
         5734: "Ігри та Підписки🕹",
         5993: "Алкоголь та Тютюн🍷",
@@ -1035,6 +1038,7 @@ MCCTransactionCategoryName = {
     "+": {
         4829: "Зарплата💰",
         6536: "Зарплата💰",
+        6538: "Зарплата💰",
         1: "Продаж📦",
         2: "Дивіденди🏦",
         3: "Повернення коштів🔙",

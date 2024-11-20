@@ -34,7 +34,7 @@ MCCCodeCategory = {
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
-        3: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
+        4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
     },
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
@@ -1035,7 +1035,7 @@ MCCTransactionCategoryName = {
         5992: "Подарунки🎉",
         1: "Комунальні послуги🧾",
         2: "Оздоровчі процедури та краса❤️",
-        3: "Консультації🗣",
+        4: "Консультації🗣",
     },
     "+": {
         4829: "Зарплата💰",

@@ -72,16 +72,28 @@ def handle_awaiting_update_price_transaction(call: CallbackQuery, redis: RedisWr
 
 
 def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
+    def send_error_message(chat_id, text):
+        bot.send_message(chat_id=chat_id, text=text)
+        redis.set_transaction_status(
+            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        )
+
     transaction_data = redis.get_transaction_status(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
+    text = message.text.strip()
+    if not text:
+        send_error_message(
+            message.chat.id, "Коментар не може бути пустим!"
+        )
+
     if get_comment(text=transaction_text) == "відсутній":
         transaction_text = re.sub(
-            r"Коментар: відсутній", f"Коментар: {message.text}", transaction_text
+            r"Коментар: відсутній", f"Коментар: {text}", transaction_text
         )
     else:
         previous_comment = re.search(r"Коментар: (.+?)\n", transaction_text)[1]
         transaction_text = transaction_text.replace(
-            previous_comment, f"{previous_comment}. {message.text}"
+            previous_comment, f"{previous_comment}. {text}"
         )
 
     finish_edit_transaction(
@@ -93,25 +105,33 @@ def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
 
 
 def handle_update_price_transaction(message: Message, redis: RedisWrapper):
-    try:
-        amount = float(message.text)
-    except ValueError:
-        bot.send_message(
-            chat_id=message.chat.id,
-            text="Неправильна сума. Має бути в форматі 00.00/-00.00",
-        )
+    def send_error_message(chat_id, text):
+        bot.send_message(chat_id=chat_id, text=text)
         redis.set_transaction_status(
             user_id=message.from_user.id, status=TransactionStatus.IDLE
         )
+
+    try:
+        amount = float(message.text.strip())
+    except ValueError:
+        send_error_message(
+            message.chat.id, "Неправильна сума. Має бути в форматі 10.00/-10.00"
+        )
+        return
+
+    if amount == 0:
+        send_error_message(message.chat.id, "Сума не може бути 0")
         return
 
     transaction_data = redis.get_transaction_status(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     previous_amount = get_amount(text=transaction_text)
-    transaction_text = transaction_text.replace(previous_amount, f"{amount:.2f}")
+    updated_transaction_text = transaction_text.replace(
+        previous_amount, f"{amount:.2f}"
+    )
 
     finish_edit_transaction(
-        transaction_text=transaction_text,
+        transaction_text=updated_transaction_text,
         transaction_message_id=transaction_data["message_id"],
         message=message,
         redis=redis,

@@ -1,10 +1,10 @@
 from telebot.types import Message
 
 from money_manager.config import config
+from tbot.decorators import exception_handler
 from tbot.dispatchers.helper import (
     handle_refresh_monobank,
 )
-from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 

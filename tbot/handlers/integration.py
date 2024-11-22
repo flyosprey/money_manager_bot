@@ -1,6 +1,7 @@
 from telebot.types import Message
 
 from money_manager.config import config
+from tbot.decorators import exception_handler
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dispatchers.integration import (
     handle_ask_reset,
@@ -12,7 +13,6 @@ from tbot.dispatchers.integration import (
     handle_walletapp_username,
 )
 from tbot.dto.users.type import UserStates
-from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 

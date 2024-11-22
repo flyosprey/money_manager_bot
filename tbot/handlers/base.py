@@ -2,11 +2,11 @@ from telebot.types import Message
 
 from money_manager.config import config
 from tbot.controllers.transaction import add_transaction
+from tbot.decorators import exception_handler
 from tbot.dispatchers.base import (
     handle_start,
 )
 from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.errors import exception_handler
 from tbot.utils import get_unix_time
 from tbot_base.bot import tbot as bot
 

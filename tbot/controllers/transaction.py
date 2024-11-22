@@ -20,7 +20,7 @@ def get_comment(text: str) -> str:
 
 def get_amount(text: str) -> str:
     return get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?\d+?\.(\d+)?)", group_indexes=(1,)
+        text=text, pattern=r"Сума: ([\d.]+)", group_indexes=(1,)
     )
 
 

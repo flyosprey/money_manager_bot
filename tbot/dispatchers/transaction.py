@@ -84,6 +84,7 @@ def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
         message_id=transaction_data["message_id"],
         text=transaction_text,
         reply_markup=transaction_menu(),
+        ignore_errors=False,
     )
 
     redis.set_transaction_status(
@@ -121,6 +122,7 @@ def handle_update_price_transaction(message: Message, redis: RedisWrapper):
         message_id=transaction_data["message_id"],
         text=transaction_text,
         reply_markup=transaction_menu(),
+        ignore_errors=False,
     )
 
     bot.send_message(

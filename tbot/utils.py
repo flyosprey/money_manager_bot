@@ -98,7 +98,14 @@ def edit_message(
     message_id: int,
     text: str,
     reply_markup: InlineKeyboardMarkup | None = None,
+    ignore_errors: bool = True,
 ):
+    if ignore_errors:
+        bot.edit_message_text(
+            chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
+        )
+        return
+
     with suppress(ApiTelegramException):
         bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup

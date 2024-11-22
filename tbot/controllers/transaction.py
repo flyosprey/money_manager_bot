@@ -12,28 +12,56 @@ from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 
-def get_transaction_from_message(text: str) -> SimpleTransaction:
-    description = get_field_value_from_text(
-        text=text, pattern=r"Опис: (.+?)\n", group_indexes=(1,)
-    )
-    amount = get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?\d+?\.(\d+)?)", group_indexes=(1,)
-    )
-    mcc = get_field_value_from_text(
-        text=text, pattern=r"Категорія:.+?\((.+?)\)|MCC: (.+)", group_indexes=(1, 2)
-    )
-    comment = get_field_value_from_text(
+def get_comment(text: str) -> str:
+    return get_field_value_from_text(
         text=text, pattern=r"Коментар: (.+?)\n", group_indexes=(1,)
     )
-    commission = get_field_value_from_text(
+
+
+def get_amount(text: str) -> str:
+    return get_field_value_from_text(
+        text=text, pattern=r"Сума: (.+?\d+?\.(\d+)?)", group_indexes=(1,)
+    )
+
+
+def get_description(text: str) -> str:
+    return get_field_value_from_text(
+        text=text, pattern=r"Опис: (.+?)\n", group_indexes=(1,)
+    )
+
+
+def get_mcc(text: str) -> str:
+    return get_field_value_from_text(
+        text=text, pattern=r"Категорія:.+?\((.+?)\)|MCC: (.+)", group_indexes=(1, 2)
+    )
+
+
+def get_commission(text: str) -> str:
+    return get_field_value_from_text(
         text=text, pattern=r"Комісія: (.+)", group_indexes=(1,)
     )
-    cashback = get_field_value_from_text(
+
+
+def get_cashback(text: str) -> str:
+    return  get_field_value_from_text(
         text=text, pattern=r"Кешбек: (.+)", group_indexes=(1,)
     )
-    time = get_field_value_from_text(
+
+
+def get_time(text: str) -> str:
+    return  get_field_value_from_text(
         text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,)
     )
+
+
+def get_transaction_from_message(text: str) -> SimpleTransaction:
+    comment = get_comment(text=text)
+    amount = get_amount(text=text)
+    description = get_description(text=text)
+    mcc = get_mcc(text=text)
+    commission = get_commission(text=text)
+    cashback = get_cashback(text=text)
+    time = get_time(text=text)
 
     amount = int(float(amount) * 100)
 

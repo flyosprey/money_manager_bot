@@ -70,8 +70,16 @@ def set_default_transaction_keyboard(
     reject_transaction = types.InlineKeyboardButton(
         "Відхилити🚫", callback_data=TransactionStatus.REJECTED
     )
+    add_comment = types.InlineKeyboardButton(
+        "Додати коментар💬", callback_data=TransactionStatus.AWAITING_ADD_COMMENT
+    )
+    update_price = types.InlineKeyboardButton(
+        "Змінити ціну🫰", callback_data=TransactionStatus.AWAITING_UPDATE_PRICE
+    )
     keyboard.add(add_transaction)
     keyboard.add(reject_transaction)
+    keyboard.add(add_comment)
+    keyboard.add(update_price)
 
     return keyboard
 

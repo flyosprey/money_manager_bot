@@ -10,7 +10,7 @@ from django.urls import reverse
 from random_user_agent.params import OperatingSystem, SoftwareName
 from random_user_agent.user_agent import UserAgent
 from telebot.apihelper import ApiTelegramException
-from telebot.types import InlineKeyboardMarkup, Message
+from telebot.types import InlineKeyboardMarkup
 
 from money_manager.config import TIMEZONE_UTC, config
 from tbot_base.bot import tbot as bot
@@ -29,11 +29,17 @@ def absolute_endpoint_path(dsn: str, view_name: str, args: list) -> str:
     return f"{dsn}{reverse(view_name, args=args)}"
 
 
-def delete_message(message: Message):
+def delete_message(chat_id: int, message_id: int, ignore_errors: bool = True):
+    if not ignore_errors:
+        bot.delete_message(
+            chat_id=chat_id,
+            message_id=message_id,
+        )
+
     with suppress(ApiTelegramException):
         bot.delete_message(
-            chat_id=message.chat.id,
-            message_id=message.message_id,
+            chat_id=chat_id,
+            message_id=message_id,
         )
 
 
@@ -100,7 +106,7 @@ def edit_message(
     reply_markup: InlineKeyboardMarkup | None = None,
     ignore_errors: bool = True,
 ):
-    if ignore_errors:
+    if not ignore_errors:
         bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=reply_markup
         )

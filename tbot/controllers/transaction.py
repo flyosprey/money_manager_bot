@@ -20,7 +20,7 @@ def get_comment(text: str) -> str:
 
 def get_amount(text: str) -> str:
     return get_field_value_from_text(
-        text=text, pattern=r"Сума: (.+?\d+?\.(\d+)?)", group_indexes=(1,)
+        text=text, pattern=r"Сума: (.+?\d+(\.\d+)?)", group_indexes=(1,)
     )
 
 
@@ -43,7 +43,7 @@ def get_commission(text: str) -> str:
 
 
 def get_cashback(text: str) -> str:
-    return  get_field_value_from_text(
+    return get_field_value_from_text(
         text=text, pattern=r"Кешбек: (.+)", group_indexes=(1,)
     )
 

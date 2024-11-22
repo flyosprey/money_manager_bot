@@ -30,10 +30,18 @@ class RedisWrapper:
 
         return UserStates(int(state.decode()))
 
-    def set_transaction_status(self, user_id: int, status: TransactionStatus, text: str | None = None, message_id: int | None = None):
+    def set_transaction_status(
+        self,
+        user_id: int,
+        status: TransactionStatus,
+        text: str | None = None,
+        message_id: int | None = None,
+    ):
         self.redis.set(
             name=TRANSACTION_STATE_TEMPLATE.format(user_id=user_id),
-            value=json.dumps({"status": status.value, "message_id": message_id, "text": text}),
+            value=json.dumps(
+                {"status": status.value, "message_id": message_id, "text": text}
+            ),
             ex=TRANSACTION_STATUS_TTL,
         )
 

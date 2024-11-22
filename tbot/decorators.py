@@ -102,7 +102,6 @@ def unknown_category_message_handler():
                     message_id=msg_id,
                     text=text,
                 )
-                return
 
         return wrapper
 

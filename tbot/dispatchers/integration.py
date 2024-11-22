@@ -52,7 +52,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
 def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
     mono_token = normalize_credential(credential=message.text)
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
-    delete_message(message)
+    delete_message(chat_id=message.chat.id, message_id=message.message_id)
     if not check_monobank(
         dsn=dsn,
         mono_token=mono_token,
@@ -103,7 +103,7 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
             ).encrypt_key(normalize_credential(credential=message.text))
         },
     )
-    delete_message(message)
+    delete_message(chat_id=message.chat.id, message_id=message.message_id)
     bot.send_message(
         chat_id=message.chat.id,
         text="*Введіть ваш пароль для WalletApp:*👇",
@@ -117,7 +117,7 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
 def handle_walletapp_password(message: Message, redis: RedisWrapper):
     walletapp_password = normalize_credential(credential=message.text)
     repository = UserIntegrationRepository()
-    delete_message(message)
+    delete_message(chat_id=message.chat.id, message_id=message.message_id)
     integration = repository.select(user_id=message.from_user.id, first=True)[0]
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
 
@@ -166,7 +166,7 @@ def handle_reset(message: Message, redis: RedisWrapper, dsn: str):
         return
 
     credential = normalize_credential(credential=message.text)
-    delete_message(message)
+    delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
 

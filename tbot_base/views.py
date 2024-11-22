@@ -85,12 +85,12 @@ class MonobankWebhookView(View):
         if not self.skip_transaction(transaction=transaction):
             currency = convert_currency_number_to_code(transaction.currency_code)
             cashback = (
-                f"{convert_money(transaction.cashback_amount)}₴"
+                f"{convert_money(transaction.cashback_amount):.2f}₴"
                 if transaction.cashback_amount
                 else "відсутній"
             )
             commission = (
-                f"{convert_money(transaction.commission_rate)}₴"
+                f"{convert_money(transaction.commission_rate):.2f}₴"
                 if transaction.commission_rate
                 else "відсутня"
             )
@@ -102,7 +102,7 @@ class MonobankWebhookView(View):
                 chat_id=user_id,
                 text=f"💰Валюта платежу: {currency}\n"
                 f"🔖Опис: {transaction.description}\n"
-                f"🫰Сума: {convert_money(transaction.amount)}₴\n"
+                f"🫰Сума: {convert_money(transaction.amount):.2f}₴\n"
                 f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
                 f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
                 f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"

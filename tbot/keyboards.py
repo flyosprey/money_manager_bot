@@ -3,6 +3,8 @@ from telebot import types
 from tbot.dto.transactions.type import TransactionStatus
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryPagination
 
+COlUMN_OF_CATEGORY_BUTTONS = 2
+
 ########################################### KEYBOARDS ##################################################################
 
 
@@ -51,6 +53,7 @@ def menu(bot):
 def transaction_menu() -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
     set_default_transaction_keyboard(keyboard=keyboard)
+    set_editable_menu(keyboard=keyboard)
 
     select_category = types.InlineKeyboardButton(
         "Вибрати категорію📌", callback_data="page_1"
@@ -70,14 +73,21 @@ def set_default_transaction_keyboard(
     reject_transaction = types.InlineKeyboardButton(
         "Відхилити🚫", callback_data=TransactionStatus.REJECTED
     )
+    keyboard.add(add_transaction)
+    keyboard.add(reject_transaction)
+
+    return keyboard
+
+
+def set_editable_menu(
+    keyboard: types.InlineKeyboardMarkup,
+) -> types.InlineKeyboardMarkup:
     add_comment = types.InlineKeyboardButton(
         "Додати коментар💬", callback_data=TransactionStatus.AWAITING_ADD_COMMENT
     )
     update_price = types.InlineKeyboardButton(
         "Змінити ціну🫰", callback_data=TransactionStatus.AWAITING_UPDATE_PRICE
     )
-    keyboard.add(add_transaction)
-    keyboard.add(reject_transaction)
     keyboard.add(add_comment)
     keyboard.add(update_price)
 
@@ -99,20 +109,28 @@ def transaction_categories_menu(
 def generate_categories_keyboard(
     transaction_type: str, page: int, keyboard: types.InlineKeyboardMarkup
 ) -> types.InlineKeyboardMarkup:
-    for category in MCCTransactionCategoryPagination[transaction_type][page]:
-        keyboard.add(
+    categories = MCCTransactionCategoryPagination[transaction_type][page]
+    buttons = []
+    for idx, category in enumerate(categories):
+        buttons.append(
             types.InlineKeyboardButton(
                 category["name"], callback_data=f"category_{category['code']}"
             )
         )
+        if len(buttons) % COlUMN_OF_CATEGORY_BUTTONS == 0 or len(categories) == idx + 1:
+            keyboard.add(*[button for button in buttons])
+            buttons = []
 
+    buttons = []
     if page > 1:
-        keyboard.add(
+        buttons.append(
             types.InlineKeyboardButton("Попередня⬅️", callback_data=f"page_{page-1}")
         )
     if page < len(MCCTransactionCategoryPagination[transaction_type]):
-        keyboard.add(
+        buttons.append(
             types.InlineKeyboardButton("Наступна➡️", callback_data=f"page_{page+1}")
         )
+
+    keyboard.add(*buttons)
 
     return keyboard

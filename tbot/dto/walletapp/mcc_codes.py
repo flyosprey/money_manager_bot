@@ -1054,7 +1054,7 @@ MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName
 )
 
-CODES_PER_PAGE = 5
+CODES_PER_PAGE = 6
 
 
 def paginate_categories(

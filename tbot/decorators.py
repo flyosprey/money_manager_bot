@@ -19,11 +19,11 @@ def exception_handler():
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            user_id, text, msg_id = get_message_info(msg=args[0])
+            chat_id, text, msg_id = get_message_info(msg=args[0])
             try:
                 return func(*args, **kwargs)
             except IncorrectMCCCodeError as e:
-                logger.error(e, user_id=user_id)
+                logger.error(e, user_id=chat_id)
 
                 admin_bot_notification(message=str(e))
 
@@ -32,22 +32,22 @@ def exception_handler():
                     "",
                 )
                 edit_message(
-                    chat_id=user_id,
+                    chat_id=chat_id,
                     message_id=msg_id,
                     text=f"{text}\n\nКатегорія транзакції наразі не підтримується! Спробуйте пізніше.",
                 )
                 return
             except InvalidCredentialsError as e:
-                logger.error(e, user_id=user_id)
+                logger.error(e, user_id=chat_id)
                 bot.send_message(
-                    chat_id=user_id,
+                    chat_id=chat_id,
                     text="Невірні облікові дані для WalletApp!🔴",
                 )
                 return
             except Exception as e:
-                logger.error(str(e), user_id=user_id)
+                logger.error(str(e), user_id=chat_id)
                 bot.send_message(
-                    chat_id=user_id,
+                    chat_id=chat_id,
                     text="Щось пішло не так!🔴 Спробуйте пізніше.🕐",
                 )
 
@@ -82,23 +82,23 @@ def update_message_category(
 def get_message_info(msg) -> (str, str, str):
     if isinstance(msg, CallbackQuery):
         return (
-            msg.message.from_user.id,
+            msg.message.chat.id,
             msg.message.text,
             msg.message.id,
         )
-    return msg.from_user.id, msg.text, msg.id
+    return msg.chat.id, msg.text, msg.id
 
 
 def unknown_category_message_handler():
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            user_id, text, msg_id = get_message_info(msg=args[0])
+            chat_id, text, msg_id = get_message_info(msg=args[0])
             try:
                 return func(*args, **kwargs)
             finally:
                 update_message_category(
-                    chat_id=user_id,
+                    chat_id=chat_id,
                     message_id=msg_id,
                     text=text,
                 )

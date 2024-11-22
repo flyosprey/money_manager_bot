@@ -49,7 +49,7 @@ def get_cashback(text: str) -> str:
 
 
 def get_time(text: str) -> str:
-    return  get_field_value_from_text(
+    return get_field_value_from_text(
         text=text, pattern=r"Дата: (.+?)\n", group_indexes=(1,)
     )
 

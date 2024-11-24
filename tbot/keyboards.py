@@ -50,10 +50,11 @@ def menu(bot):
     return markup
 
 
-def transaction_menu() -> types.InlineKeyboardMarkup:
+def transaction_menu(editable_menu: bool = True) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
     set_default_transaction_keyboard(keyboard=keyboard)
-    set_editable_menu(keyboard=keyboard)
+    if editable_menu:
+        set_editable_menu(keyboard=keyboard)
 
     select_category = types.InlineKeyboardButton(
         "Вибрати категорію📌", callback_data="page_1"
@@ -82,12 +83,17 @@ def set_default_transaction_keyboard(
 def set_editable_menu(
     keyboard: types.InlineKeyboardMarkup,
 ) -> types.InlineKeyboardMarkup:
+    separate_transaction = types.InlineKeyboardButton(
+        "Розділити транзакції🖇",
+        callback_data=TransactionStatus.AWAITING_SEPARATE_TRANSACTIONS,
+    )
     add_comment = types.InlineKeyboardButton(
         "Додати коментар💬", callback_data=TransactionStatus.AWAITING_ADD_COMMENT
     )
     update_price = types.InlineKeyboardButton(
         "Змінити ціну🫰", callback_data=TransactionStatus.AWAITING_UPDATE_PRICE
     )
+    keyboard.add(separate_transaction)
     keyboard.add(add_comment)
     keyboard.add(update_price)
 

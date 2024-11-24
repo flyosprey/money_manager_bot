@@ -82,9 +82,7 @@ def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
     transaction_text = transaction_data["text"]
     text = message.text.strip()
     if not text:
-        send_error_message(
-            message.chat.id, "Коментар не може бути пустим!"
-        )
+        send_error_message(message.chat.id, "Коментар не може бути пустим!")
 
     if get_comment(text=transaction_text) == "відсутній":
         transaction_text = re.sub(
@@ -170,6 +168,12 @@ def finish_edit_transaction(
         reply_markup=transaction_menu(),
     )
 
+    delete_edit_transaction_messages(
+        transaction_message_id=transaction_message_id, message=message
+    )
+
+
+def delete_edit_transaction_messages(transaction_message_id: int, message: Message):
     delete_message(
         chat_id=message.chat.id, message_id=transaction_message_id, ignore_errors=False
     )
@@ -178,6 +182,71 @@ def finish_edit_transaction(
     )
     delete_message(
         chat_id=message.from_user.id, message_id=message.message_id, ignore_errors=False
+    )
+
+
+def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrapper):
+    bot.send_message(
+        chat_id=call.message.chat.id,
+        text="Вкажіть суми транзакцій через кому ʼ,ʼ👇",
+    )
+
+    redis.set_transaction_status(
+        user_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=call.message.text,
+        status=TransactionStatus.SEPARATE_TRANSACTIONS,
+    )
+
+
+def handle_separate_transaction(message: Message, redis: RedisWrapper):
+    def send_error_message(chat_id, text):
+        bot.send_message(chat_id=chat_id, text=text)
+        redis.set_transaction_status(
+            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        )
+
+    amounts = []
+    for amount in re.split(r"\n|\s|,", message.text.strip()):
+        try:
+            amounts.append(float(amount))
+        except ValueError:
+            send_error_message(
+                message.chat.id, "Неправильна сума. Має бути в форматі 10.00/-10.00"
+            )
+            return
+
+    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_text = transaction_data["text"]
+    previous_amount = get_amount(text=transaction_text)
+
+    if sum(amounts) != float(previous_amount):
+        send_error_message(
+            message.chat.id,
+            "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції.",
+        )
+        return
+
+    transactions = []
+    for amount in amounts:
+        updated_transaction_text = transaction_text.replace(
+            previous_amount, f"{amount:.2f}"
+        )
+        transactions.append(updated_transaction_text)
+
+    delete_edit_transaction_messages(
+        transaction_message_id=transaction_data["message_id"], message=message
+    )
+
+    for transaction in transactions:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=transaction,
+            reply_markup=transaction_menu(),
+        )
+
+    redis.set_transaction_status(
+        user_id=message.from_user.id, status=TransactionStatus.IDLE
     )
 
 
@@ -196,5 +265,5 @@ def handle_change_category_transaction(call: CallbackQuery):
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=text,
-        reply_markup=transaction_menu(),
+        reply_markup=transaction_menu(editable_menu=False),
     )

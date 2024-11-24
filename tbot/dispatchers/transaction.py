@@ -175,13 +175,13 @@ def finish_edit_transaction(
 
 def delete_edit_transaction_messages(transaction_message_id: int, message: Message):
     delete_message(
-        chat_id=message.chat.id, message_id=transaction_message_id, ignore_errors=False
+        chat_id=message.chat.id, message_id=transaction_message_id,
     )
     delete_message(
-        chat_id=message.chat.id, message_id=message.message_id - 1, ignore_errors=False
+        chat_id=message.chat.id, message_id=message.message_id - 1,
     )
     delete_message(
-        chat_id=message.from_user.id, message_id=message.message_id, ignore_errors=False
+        chat_id=message.from_user.id, message_id=message.message_id
     )
 
 

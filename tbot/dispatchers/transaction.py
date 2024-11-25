@@ -175,14 +175,14 @@ def finish_edit_transaction(
 
 def delete_edit_transaction_messages(transaction_message_id: int, message: Message):
     delete_message(
-        chat_id=message.chat.id, message_id=transaction_message_id,
+        chat_id=message.chat.id,
+        message_id=transaction_message_id,
     )
     delete_message(
-        chat_id=message.chat.id, message_id=message.message_id - 1,
+        chat_id=message.chat.id,
+        message_id=message.message_id - 1,
     )
-    delete_message(
-        chat_id=message.from_user.id, message_id=message.message_id
-    )
+    delete_message(chat_id=message.from_user.id, message_id=message.message_id)
 
 
 def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrapper):

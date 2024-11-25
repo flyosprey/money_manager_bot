@@ -13,7 +13,6 @@ from django.views.generic import View
 
 from money_manager.config import TIMEZONE_KYIV, config
 from tbot.dto.monobank.payload import Transaction
-from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import transaction_menu
 from tbot.utils import (
     admin_bot_notification,
@@ -21,6 +20,7 @@ from tbot.utils import (
     convert_money,
     convert_timestamp_to_datetime,
     logger,
+    create_transaction_text,
 )
 from tbot_base.dto.github.payload import (
     PullRequestWebhook,
@@ -100,16 +100,17 @@ class MonobankWebhookView(View):
             transaction_type = "+" if transaction.amount > 0 else "-"
             tbot.send_message(
                 chat_id=user_id,
-                text=f"💰Валюта платежу: {currency}\n"
-                f"🔖Опис: {transaction.description}\n"
-                f"🫰Сума: {convert_money(transaction.amount):.2f}₴\n"
-                f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
-                f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
-                f"{'💬' if transaction.comment else '🤷‍♂'}Коментар: {transaction.comment or 'відсутній'}\n"
-                f"📅Дата: {date_}\n"
-                "🗂️Категорія: "
-                f"{MCCTransactionCategoryName[transaction_type].get(transaction.mcc, 'Поки невідома категорія')} "
-                f"({transaction.mcc})",
+                text=create_transaction_text(
+                    currency=currency,
+                    transaction_type=transaction_type,
+                    date_=date_,
+                    commission=commission,
+                    cashback=cashback,
+                    comment=transaction.comment,
+                    description=transaction.description,
+                    mcc_code=transaction.mcc,
+                    amount=transaction.amount,
+                ),
                 reply_markup=transaction_menu(),
             )
 

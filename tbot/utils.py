@@ -13,6 +13,7 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup
 
 from money_manager.config import TIMEZONE_UTC, config
+from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
@@ -138,3 +139,31 @@ def get_random_user_agent() -> (str, str):
 
         if chrome_version:
             return user_agent, chrome_version
+
+
+def create_transaction_text(
+    currency: str,
+    description: str,
+    amount: int,
+    commission: str,
+    cashback: str,
+    comment: str,
+    mcc_code: int,
+    date_: datetime,
+    transaction_type: str,
+    width: int = 70,
+    separator: str = "_",
+) -> str:
+    return f"""
+        💰Валюта платежу: {currency}\n
+        🔖Опис: {description}\n
+        🫰Сума: {convert_money(amount):.2f}₴\n
+        {'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n
+        {'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n
+        {'💬' if comment else '🤷‍♂'}Коментар: {comment or 'відсутній'}\n
+        📅Дата: {date_}\n
+        🗂️Категорія: 
+        {MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} "
+        ({mcc_code})\n
+        {separator * width}
+    """

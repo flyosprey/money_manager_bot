@@ -162,8 +162,6 @@ def create_transaction_text(
         {'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n
         {'💬' if comment else '🤷‍♂'}Коментар: {comment or 'відсутній'}\n
         📅Дата: {date_}\n
-        🗂️Категорія: 
-        {MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} "
-        ({mcc_code})\n
+        🗂️Категорія: {MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} ({mcc_code})\n
         {separator * width}
     """

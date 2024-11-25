@@ -19,6 +19,7 @@ def start_handler(message: Message):
 @exception_handler()
 def test_handler(message: Message):
     if config.is_test:
+        space = "\u00B7"
         bot.send_message(
             chat_id=message.chat.id,
             text="💰Валюта платежу: UAH\n"
@@ -28,6 +29,7 @@ def test_handler(message: Message):
             "🤑Кешбек: відсутній\n"
             "💬Коментар: відсутній\n"
             "📅Дата: 2024-11-21 14:53:59\n"
-            "🗂️Категорія: Кафе та Ресторани☕ (5411)",
+            f"🗂️Категорія: Кафе та Ресторани☕ (5411)\n"
+            f"{'_' * 70}",
             reply_markup=transaction_menu(),
         )

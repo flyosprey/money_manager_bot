@@ -57,8 +57,8 @@ def get_field_value_from_text(
             if value[group_index]:
                 return value[group_index].strip()
 
-    logger.error("Cannot to fetch date from text! Pattern %s | text %s", pattern, text)
-    raise ValueError(f"Cannot to fetch date from text! Pattern {pattern} | text {text}")
+    logger.error("Cannot to fetch data from text! Pattern %s | text %s", pattern, text)
+    raise ValueError(f"Cannot to fetch data from text! Pattern {pattern} | text {text}")
 
 
 def get_unix_time(seconds: int = 0) -> int:

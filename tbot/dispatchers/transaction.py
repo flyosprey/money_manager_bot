@@ -265,5 +265,5 @@ def handle_change_category_transaction(call: CallbackQuery):
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=text,
-        reply_markup=transaction_menu(editable_menu=False),
+        reply_markup=transaction_menu(),
     )

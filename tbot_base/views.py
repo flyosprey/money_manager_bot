@@ -109,7 +109,7 @@ class MonobankWebhookView(View):
                     comment=transaction.comment,
                     description=transaction.description,
                     mcc_code=transaction.mcc,
-                    amount=transaction.amount,
+                    amount=convert_money(transaction.amount),
                     separator="",
                 ),
                 reply_markup=transaction_menu(),

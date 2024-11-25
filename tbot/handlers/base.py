@@ -6,6 +6,7 @@ from tbot.dispatchers.base import (
     handle_start,
 )
 from tbot.keyboards import transaction_menu
+from tbot.utils import create_transaction_text
 from tbot_base.bot import tbot as bot
 
 
@@ -19,17 +20,19 @@ def start_handler(message: Message):
 @exception_handler()
 def test_handler(message: Message):
     if config.is_test:
-        space = "\u00B7"
         bot.send_message(
             chat_id=message.chat.id,
-            text="💰Валюта платежу: UAH\n"
-            "🔖Опис: Тестовий\n"
-            "🫰Сума: 100.23₴\n"
-            "😔Комісія: відсутня\n"
-            "🤑Кешбек: відсутній\n"
-            "💬Коментар: відсутній\n"
-            "📅Дата: 2024-11-21 14:53:59\n"
-            f"🗂️Категорія: Кафе та Ресторани☕ (5411)\n"
-            f"{'_' * 70}",
+            text=create_transaction_text(
+                currency="UAH",
+                description="Тестовий",
+                amount=100,
+                comment="відсутній",
+                cashback="відсутній",
+                commission="відсутня",
+                date_="2024-11-21 14:53:59",
+                transaction_type="-",
+                mcc_code=5411,
+                separator="",
+            ),
             reply_markup=transaction_menu(),
         )

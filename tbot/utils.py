@@ -144,24 +144,25 @@ def get_random_user_agent() -> (str, str):
 def create_transaction_text(
     currency: str,
     description: str,
-    amount: int,
+    amount: float,
     commission: str,
     cashback: str,
     comment: str,
     mcc_code: int,
-    date_: datetime,
+    date_: datetime | str,
     transaction_type: str,
     width: int = 70,
     separator: str = "_",
 ) -> str:
-    return f"""
-        💰Валюта платежу: {currency}\n
-        🔖Опис: {description}\n
-        🫰Сума: {convert_money(amount):.2f}₴\n
-        {'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n
-        {'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n
-        {'💬' if comment else '🤷‍♂'}Коментар: {comment or 'відсутній'}\n
-        📅Дата: {date_}\n
-        🗂️Категорія: {MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} ({mcc_code})\n
-        {separator * width}
-    """
+    return (
+        f"💰Валюта платежу: {currency}\n"
+        f"🔖Опис: {description}\n"
+        f"🫰Сума: {amount:.2f}₴\n"
+        f"{'😔' if re.search(r'[0-1]', commission) else '😁'}Комісія: {commission}\n"
+        f"{'🤑' if re.search(r'[0-1]', cashback) else '😔'}Кешбек: {cashback}\n"
+        f"{'💬' if comment else '🤷‍♂'}Коментар: {comment or 'відсутній'}\n"
+        f"📅Дата: {date_}\n"
+        "🗂️Категорія: "
+        f"{MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} ({mcc_code})\n"
+        f"{separator * width}"
+    )

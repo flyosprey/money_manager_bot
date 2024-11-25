@@ -33,6 +33,7 @@ MCCCodeCategory = {
         4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
         9311: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # TAX_PAYMENTS | PARKING
+        5995: "-Category_d0464e8f-ac69-45c1-8dbf-c87aa0ab3ee1",  # PET_SHOPS_PET
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -877,7 +878,6 @@ MCCCodeCategory = {
     5978: "TYPEWRITER_STORES",
     5983: "FUEL_FUEL",
     5994: "NEWS_DEALERS_AND",
-    5995: "PET_SHOPS_PET",
     5996: "SWIMMING_POOLS",
     5997: "ELECTRIC_RAZOR_STORES",
     5998: "TENT_AND_AWNING",
@@ -1026,6 +1026,7 @@ MCCTransactionCategoryName = {
         5921: "Алкоголь та Тютюн🍷",
         8999: "Комісії🫰",
         7399: "Доставка📦",
+        5995: "Домашні улюбленці🐶",
         4900: "Електроенергія⚡️",
         5211: "Шопінг🛍",
         5912: "Аптека💊",

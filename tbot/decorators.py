@@ -9,6 +9,7 @@ from telebot.types import CallbackQuery
 from tbot.controllers.transaction import get_transaction_from_message
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
 from tbot.errors import IncorrectMCCCodeError, InvalidCredentialsError
+from tbot.keyboards import transaction_menu
 from tbot.utils import admin_bot_notification, edit_message
 from tbot_base.bot import tbot as bot
 
@@ -76,7 +77,12 @@ def update_message_category(
         r":.+?невідома категорія.+?\)", f": {category} ({transaction.mcc})", text
     )
     with suppress(ApiTelegramException):
-        bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
+        bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=text,
+            reply_markup=transaction_menu(),
+        )
 
 
 def get_message_info(msg) -> (str, str, str):

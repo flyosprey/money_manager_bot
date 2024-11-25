@@ -188,7 +188,7 @@ def delete_edit_transaction_messages(transaction_message_id: int, message: Messa
 def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrapper):
     bot.send_message(
         chat_id=call.message.chat.id,
-        text="Вкажіть суми транзакцій через кому ʼ,ʼ👇",
+        text="Вкажіть суми транзакцій через кому/пробіл👇",
     )
 
     redis.set_transaction_status(

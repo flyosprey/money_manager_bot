@@ -32,6 +32,7 @@ MCCCodeCategory = {
         8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS,
         4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
+        9311: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # TAX_PAYMENTS | PARKING
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -994,7 +995,6 @@ MCCCodeCategory = {
     9211: "COURT_COSTS_INCLUDING",
     9222: "FINES",
     9223: "BAIL_AND_BOND",
-    9311: "TAX_PAYMENTS",
     9399: "GOVERNMENT_SERVICES",
     9402: "POSTAL_SERVICES",
     9405: "INTRA_GOVERNMENT",
@@ -1017,6 +1017,7 @@ MCCTransactionCategoryName = {
         5813: "Бар🍺",
         8021: "Лікування🏥",
         7523: "Парковка🅿️",
+        9311: "Парковка🅿️",
         4829: "Інше📎",
         6538: "Інше📎",
         4121: "Таксі🚕",

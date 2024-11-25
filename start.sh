@@ -2,7 +2,9 @@
 
 echo "Setting logs cleaner..."
 chmod +x cleanup_logs.sh
-(crontab -l 2>/dev/null; echo "0 0 * * * cleanup_logs.sh") | crontab -
+
+CRON_JOB="0 0 * * * cleanup_logs.sh >> cronjob.log 2>&1"
+crontab -l 2>/dev/null | grep -vF "$CRON_JOB" | crontab -
 
 echo "Makemigrations..."
 python manage.py makemigrations

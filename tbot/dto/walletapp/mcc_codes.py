@@ -34,6 +34,7 @@ MCCCodeCategory = {
         5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
         9311: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # TAX_PAYMENTS | PARKING
         5995: "-Category_d0464e8f-ac69-45c1-8dbf-c87aa0ab3ee1",  # PET_SHOPS_PET
+        7997: "-Category_c5e657c4-c4ff-4eae-976e-8ca3994ec4a0",  # MEMBERSHIP_CLUBS_SPORTS
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -962,7 +963,6 @@ MCCCodeCategory = {
     7994: "VIDEO_GAME_ARCADES_ESTABLISHMENTS",
     7995: "BETTING_INCLUDING_LOTTERY",
     7996: "AMUSEMENT_PARKS_CARNIVALS",
-    7997: "MEMBERSHIP_CLUBS_SPORTS",
     7998: "AQUARIUMS_SEA_AQUARIUMS",
     7999: "RECREATION_SERVICES_NOT",
     8011: "DOCTORS_AND_PHYSICIANS",
@@ -1030,6 +1030,7 @@ MCCTransactionCategoryName = {
         4900: "Електроенергія⚡️",
         5211: "Шопінг🛍",
         5912: "Аптека💊",
+        7997: "Спорт🏋️‍♂️",
         4814: "Телекомунікації📱",
         5541: "Заправка⛽",
         8299: "Навчання🏫",

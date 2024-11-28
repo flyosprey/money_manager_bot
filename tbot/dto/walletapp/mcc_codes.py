@@ -43,6 +43,7 @@ MCCCodeCategory = {
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
         5: "-Category_823abd62-101c-47ee-aacd-bc38e5b1682f",  # Taxes,
+        6: "-Category_ac706729-7b65-46da-b7d4-d18c670223d9",  # INVESTING,
     },
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
@@ -1046,6 +1047,7 @@ MCCTransactionCategoryName = {
         1: "Комунальні послуги🧾",
         4: "Консультації🗣",
         5: "Податки💲",
+        6: "Інвестиції🕵️",
     },
     "+": {
         4829: "Зарплата💰",

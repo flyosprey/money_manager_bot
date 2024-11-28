@@ -36,6 +36,9 @@ MCCCodeCategory = {
         5995: "-Category_d0464e8f-ac69-45c1-8dbf-c87aa0ab3ee1",  # PET_SHOPS_PET
         7997: "-Category_c5e657c4-c4ff-4eae-976e-8ca3994ec4a0",  # MEMBERSHIP_CLUBS_SPORTS
         5200: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOME_SUPPLY_WAREHOUSE
+        8099: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # MEDICAL_SERVICES_AND
+        7230: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # BARBER_AND_BEAUTY
+        8062: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # HOSPITALS
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -902,7 +905,6 @@ MCCCodeCategory = {
     7216: "DRY_CLEANERS",
     7217: "CARPET_AND_UPHOLSTERY",
     7221: "PHOTOGRAPHIC_STUDIOS",
-    7230: "BARBER_AND_BEAUTY",
     7251: "SHOP_REPAIR_SHOPS",
     7261: "FUNERAL_SERVICE_AND",
     7273: "DATING_AND_ESCORT",
@@ -974,9 +976,7 @@ MCCCodeCategory = {
     8044: "OPTICIANS_OPTICAL_GOODS",
     8049: "PODIATRISTS_AND_CHIROPODISTS",
     8050: "NURSING_AND_PERSONAL",
-    8062: "HOSPITALS",
     8071: "MEDICAL_AND_DENTAL",
-    8099: "MEDICAL_SERVICES_AND",
     8111: "LEGAL_SERVICES_AND",
     8211: "ELEMENTARY_AND_SECONDARY",
     8220: "COLLEGES_JUNIOR_COLLEGES",
@@ -1017,6 +1017,8 @@ MCCTransactionCategoryName = {
         5812: "Кафе та Ресторани☕",
         5813: "Бар🍺",
         8021: "Лікування🏥",
+        8099: "Лікування🏥",
+        8062: "Лікування🏥",
         7523: "Парковка🅿️",
         9311: "Парковка🅿️",
         4829: "Інше📎",
@@ -1040,8 +1042,8 @@ MCCTransactionCategoryName = {
         5200: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
+        7230: "Оздоровчі процедури та краса❤️",
         1: "Комунальні послуги🧾",
-        2: "Оздоровчі процедури та краса❤️",
         4: "Консультації🗣",
         5: "Податки💲",
     },

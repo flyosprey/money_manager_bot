@@ -39,6 +39,7 @@ MCCCodeCategory = {
         8099: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # MEDICAL_SERVICES_AND
         7230: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # BARBER_AND_BEAUTY
         8062: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # HOSPITALS
+        6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -1041,6 +1042,7 @@ MCCTransactionCategoryName = {
         5511: "Обслуговування авто🚗",
         5331: "Побут🏠",
         5200: "Побут🏠",
+        6012: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
         7230: "Оздоровчі процедури та краса❤️",

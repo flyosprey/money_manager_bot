@@ -71,8 +71,9 @@ class MonobankWebhookView(View):
             check_content_type(content_type=request.META["CONTENT_TYPE"])
             user_id = self.verify_signature(encrypted_user_id=encrypted_user_id)
 
+            raw_body = json.loads(request.body)
             transaction = Transaction(
-                **json.loads(request.body).get("data", {}).get("statementItem", {})
+                **raw_body.get("data", {}).get("statementItem", {})
             )
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
@@ -82,6 +83,7 @@ class MonobankWebhookView(View):
         except ValidationError as e:
             return JsonResponse({"error": e.error_dict}, status=422)
 
+        logger.info("Received body from monobank %s", raw_body)
         if not self.skip_transaction(transaction=transaction):
             currency = convert_currency_number_to_code(transaction.currency_code)
             cashback = (

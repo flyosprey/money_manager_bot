@@ -9,6 +9,7 @@ from tbot.controllers.integration import (
 )
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.users.type import UserStates
+from tbot.keyboards import menu
 from tbot.utils import delete_message, normalize_credential
 from tbot_base.bot import tbot as bot
 from tbot_base.repository.user_integration import UserIntegrationRepository
@@ -41,6 +42,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
         f"Відскануйте або натисніть на QR за [посиланням]({MONOBANK_URL})",
         parse_mode="MarkdownV2",
         disable_web_page_preview=True,
+        reply_markup=menu(bot),
     )
     user_state = (
         UserStates.AWAITING_ADDITIONAL_MONOTOKEN

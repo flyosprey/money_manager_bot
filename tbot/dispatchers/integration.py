@@ -32,7 +32,9 @@ def handle_integration(message: Message, redis: RedisWrapper):
         and message.text != "/add_token"
     ):
         bot.send_message(
-            chat_id=message.chat.id, text="Інтеграцію вже було активовано.✅"
+            chat_id=message.chat.id,
+            text="Інтеграцію вже було активовано.✅",
+            reply_markup=menu(bot),
         )
         return
 

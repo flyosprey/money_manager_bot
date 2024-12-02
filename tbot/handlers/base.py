@@ -10,7 +10,7 @@ from tbot.utils import create_transaction_text
 from tbot_base.bot import tbot as bot
 
 
-@bot.message_handler(commands=["start"])
+@bot.message_handler(commands=["about"])
 @exception_handler()
 def start_handler(message: Message):
     handle_start(message=message)

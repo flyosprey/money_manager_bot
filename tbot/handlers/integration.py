@@ -16,7 +16,7 @@ from tbot.dto.users.type import UserStates
 from tbot_base.bot import tbot as bot
 
 
-@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/integrate"))
+@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/start"))
 @exception_handler()
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)

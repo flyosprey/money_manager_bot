@@ -38,7 +38,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text="🏦*Введіть ваш токен Monobank:*\n"
-        f"||Його можна знайти за посиланням відсканувавши або натиснувши на QR👉 {MONOBANK_URL}||",
+        f"Відскануйте або натисніть на QR за [посиланням]({MONOBANK_URL})",
         parse_mode="MarkdownV2",
     )
     user_state = (

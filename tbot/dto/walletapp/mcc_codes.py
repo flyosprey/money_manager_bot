@@ -50,6 +50,7 @@ MCCCodeCategory = {
     "+": {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        6012: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
         2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
         3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money

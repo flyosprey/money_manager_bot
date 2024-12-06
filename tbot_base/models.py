@@ -239,7 +239,6 @@ class UserWalletLabel(models.Model):
         verbose_name_plural = "User Wallet Labels"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "name"],
-                name="unique_user_label_name"
+                fields=["user", "name"], name="unique_user_label_name"
             )
         ]

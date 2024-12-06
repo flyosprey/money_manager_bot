@@ -57,7 +57,10 @@ def get_time(text: str) -> str:
 
 def get_label(text: str) -> str:
     return get_field_value_from_text(
-        text=text, pattern=r"Мітка: (.+)", group_indexes=(1,), skip_error=True,
+        text=text,
+        pattern=r"Мітка: (.+)",
+        group_indexes=(1,),
+        skip_error=True,
     )
 
 

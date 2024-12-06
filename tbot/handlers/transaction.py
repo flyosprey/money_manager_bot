@@ -10,8 +10,10 @@ from tbot.dispatchers.transaction import (
     handle_awaiting_separate_transaction,
     handle_awaiting_update_price_transaction,
     handle_change_category_transaction,
+    handle_change_label_transaction,
     handle_reject_transaction,
     handle_select_category_transaction,
+    handle_select_label_transaction,
     handle_separate_transaction,
     handle_update_price_transaction,
 )
@@ -107,7 +109,7 @@ def separate_transaction_handler(
     handle_separate_transaction(message=message, redis=redis)
 
 
-@bot.callback_query_handler(func=lambda call: "page_" in call.data)
+@bot.callback_query_handler(func=lambda call: "category_page_" in call.data)
 @exception_handler()
 @unknown_category_message_handler()
 def select_category_transaction_handler(call: CallbackQuery):
@@ -119,3 +121,17 @@ def select_category_transaction_handler(call: CallbackQuery):
 @unknown_category_message_handler()
 def change_category_transaction_handler(call: CallbackQuery):
     handle_change_category_transaction(call=call)
+
+
+@bot.callback_query_handler(func=lambda call: "label_page_" in call.data)
+@exception_handler()
+@unknown_category_message_handler()
+def select_label_transaction_handler(call: CallbackQuery):
+    handle_select_label_transaction(call=call)
+
+
+@bot.callback_query_handler(func=lambda call: "label_" in call.data)
+@exception_handler()
+@unknown_category_message_handler()
+def change_label_transaction_handler(call: CallbackQuery):
+    handle_change_label_transaction(call=call)

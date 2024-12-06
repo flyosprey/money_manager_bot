@@ -8,3 +8,5 @@ class SimpleTransaction(BaseModel):
     time: int
     contractor: str
     type: str
+    label_name: str
+    label_id: str | None = None

@@ -25,14 +25,13 @@ def test_handler(message: Message):
             text=create_transaction_text(
                 currency="UAH",
                 description="Тестовий",
-                amount=100,
+                amount=-100,
                 comment="відсутній",
                 cashback="відсутній",
                 commission="відсутня",
-                date_="2024-11-21 14:53:59",
+                date_="2024-12-06 14:53:59",
                 transaction_type="-",
                 mcc_code=5411,
-                separator="",
             ),
             reply_markup=transaction_menu(),
         )

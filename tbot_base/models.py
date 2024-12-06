@@ -204,3 +204,36 @@ class UserIntegrations(models.Model):
     class Meta:
         verbose_name = "User Integrations"
         verbose_name_plural = "Users Integrations"
+
+
+class UserWalletLabel(models.Model):
+    user = models.ForeignKey(
+        "BotUsers",
+        on_delete=models.CASCADE,
+        verbose_name="User",
+        related_name="labels",
+        default=None,
+        null=True,
+    )
+    label_id = models.CharField(
+        verbose_name="Label ID",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
+        unique=True,
+    )
+    name = models.CharField(
+        verbose_name="Label name",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"Label for {self.user.user_name} {self.user.user_id}"
+
+    class Meta:
+        verbose_name = "User Wallet Label"
+        verbose_name_plural = "User Wallet Labels"

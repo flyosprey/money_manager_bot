@@ -19,8 +19,8 @@ from tbot.utils import (
     convert_currency_number_to_code,
     convert_money,
     convert_timestamp_to_datetime,
-    logger,
     create_transaction_text,
+    logger,
 )
 from tbot_base.dto.github.payload import (
     PullRequestWebhook,
@@ -112,7 +112,6 @@ class MonobankWebhookView(View):
                     description=transaction.description,
                     mcc_code=transaction.mcc,
                     amount=convert_money(transaction.amount),
-                    separator="",
                 ),
                 reply_markup=transaction_menu(),
             )

@@ -133,6 +133,7 @@ BOT_HANDLERS = [
     "tbot.handlers.helper",
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
+    "tbot.handlers.wallet_settings",
 ]
 
 django_heroku.settings(locals())

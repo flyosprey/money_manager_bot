@@ -151,8 +151,6 @@ def create_transaction_text(
     mcc_code: int,
     date_: datetime | str,
     transaction_type: str,
-    width: int = 70,
-    separator: str = "_",
 ) -> str:
     return (
         f"💰Валюта платежу: {currency}\n"
@@ -164,5 +162,5 @@ def create_transaction_text(
         f"📅Дата: {date_}\n"
         "🗂️Категорія: "
         f"{MCCTransactionCategoryName[transaction_type].get(mcc_code, 'Поки невідома категорія')} ({mcc_code})\n"
-        f"{separator * width}"
+        f"🏷Мітка: відсутня\n"
     )

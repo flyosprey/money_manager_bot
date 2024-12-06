@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BotConfig, BotUsers, UserIntegrations, UserPayments
+from .models import BotConfig, BotUsers, UserIntegrations, UserPayments, UserWalletLabel
 
 
 @admin.register(BotConfig)
@@ -43,6 +43,20 @@ class UserIntegrationsAdmin(admin.ModelAdmin):
     )
     list_display_links = ("user_id",)
     search_fields = ("user_id",)
+
+    def has_delete_permission(self, request, obj=None):
+        return True
+
+
+@admin.register(UserWalletLabel)
+class UserWalletLabelAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_id",
+        "label_id",
+        "name",
+    )
+    list_display_links = ("user_id", "name")
+    search_fields = ("user_id", "name")
 
     def has_delete_permission(self, request, obj=None):
         return True

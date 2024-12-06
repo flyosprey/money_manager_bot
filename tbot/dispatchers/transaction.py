@@ -7,18 +7,27 @@ from tbot.controllers.transaction import (
     add_transaction,
     get_amount,
     get_comment,
+    get_label_id,
     get_transaction_from_message,
 )
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.transactions.type import TransactionStatus
 from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
-from tbot.keyboards import transaction_categories_menu, transaction_menu
+from tbot.keyboards import (
+    transaction_categories_menu,
+    transaction_labels_menu,
+    transaction_menu,
+)
 from tbot.utils import delete_message, edit_message
 from tbot_base.bot import tbot as bot
+from tbot_base.repository.wallet_label import UserWalletLabelRepository
 
 
 def handle_accept_transaction(call: CallbackQuery, config: Config):
     transaction = get_transaction_from_message(call.message.text)
+    transaction.label_id = get_label_id(
+        user_id=call.from_user.id, label_name=transaction.label_name
+    )
 
     add_transaction(
         user_id=call.from_user.id,
@@ -259,6 +268,38 @@ def handle_change_category_transaction(call: CallbackQuery):
     text = re.sub(
         r"Категорія:.+",
         f"Категорія: {MCCTransactionCategoryName[transaction.type][int(mcc[1])]} ({mcc[1]})",
+        call.message.text,
+    )
+    edit_message(
+        chat_id=call.message.chat.id,
+        message_id=call.message.id,
+        text=text,
+        reply_markup=transaction_menu(),
+    )
+
+
+def handle_select_label_transaction(call: CallbackQuery):
+    labels = UserWalletLabelRepository.select(
+        user_id=call.from_user.id,
+        first=True,
+    )
+    labels = [label.name for label in labels]
+    edit_message(
+        chat_id=call.message.chat.id,
+        message_id=call.message.id,
+        text=call.message.text,
+        reply_markup=transaction_labels_menu(labels=labels),
+    )
+
+
+def handle_change_label_transaction(call: CallbackQuery):
+    label = re.search(r"label_(.+)", call.data)
+    if not label:
+        raise Exception("call.data label error!")
+
+    text = re.sub(
+        r"Мітка:.+",
+        f"Мітка: {label[1]}",
         call.message.text,
     )
     edit_message(

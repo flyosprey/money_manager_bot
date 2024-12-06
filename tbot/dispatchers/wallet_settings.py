@@ -32,6 +32,6 @@ def handle_add_label(message: Message):
     add_label(label=label, secret_key=config.secret_key, user_id=message.from_user.id)
 
     bot.send_message(
-        text="Мітка успішно додана!",
+        text="Мітка успішно додана!✅",
         chat_id=message.chat.id,
     )

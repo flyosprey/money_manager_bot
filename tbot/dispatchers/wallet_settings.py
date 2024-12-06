@@ -22,7 +22,7 @@ def handle_awaiting_add_label(call: CallbackQuery, redis: RedisWrapper):
         chat_id=call.message.chat.id,
     )
     redis.set_settings_status(
-        user_id=call.from_user.id, status=SettingsStates.ADD_LABEL.value
+        user_id=call.from_user.id, status=SettingsStates.ADD_LABEL
     )
 
 

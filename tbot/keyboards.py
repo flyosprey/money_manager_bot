@@ -218,7 +218,7 @@ def paginate_labels(labels: list[str], codes_per_page: int) -> dict[int, list[st
 def wallet_settings_menu():
     keyboard = types.InlineKeyboardMarkup()
     add_label = types.InlineKeyboardButton(
-        "Додати мітку📌", callback_data=SettingsStates.AWAITING_LABEL
+        "Додати мітку📌", callback_data=SettingsStates.AWAITING_LABEL.value
     )
 
     keyboard.add(add_label)

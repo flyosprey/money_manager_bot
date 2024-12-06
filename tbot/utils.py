@@ -49,13 +49,16 @@ def normalize_credential(credential: str) -> str:
 
 
 def get_field_value_from_text(
-    text: str, pattern: str, group_indexes: tuple = (0,)
+    text: str, pattern: str, group_indexes: tuple = (0,), skip_error: bool = False
 ) -> str:
     value = re.search(pattern, text)
     if value:
         for group_index in group_indexes:
             if value[group_index]:
                 return value[group_index].strip()
+
+    if skip_error:
+        return ""
 
     logger.error("Cannot to fetch data from text! Pattern %s | text %s", pattern, text)
     raise ValueError(f"Cannot to fetch data from text! Pattern {pattern} | text {text}")

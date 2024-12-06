@@ -157,12 +157,18 @@ class GithubWebhookView(View):
             if not self.is_prod_branch(branch=branch):
                 raise PermissionDenied("Branch not permitted")
 
-            output = self.execute_git_pull(
+            git_output = self.execute_git_pull(
                 branch=branch, project_path=config.deployment.project_path
+            )
+            migration_output = self.execute_django_migration(
+                project_path=config.deployment.project_path
             )
             admin_bot_notification(message="New version deployed successfully!✅")
 
-            return JsonResponse({"status": "success", "output": output}, status=200)
+            return JsonResponse(
+                {"status": "success", "git": git_output, "migration": migration_output},
+                status=200,
+            )
 
         except (json.JSONDecodeError, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
@@ -214,6 +220,42 @@ class GithubWebhookView(View):
         return branch in {"main", "beta"}
 
     @staticmethod
+    def execute_django_migration(project_path: str) -> dict[str, str]:
+        try:
+            make_migrations = subprocess.run(
+                ["/usr/bin/python", "manage.py", "makemigrations"],
+                capture_output=True,
+                text=True,
+                cwd=project_path,
+            )
+
+            if make_migrations.returncode != 0:
+                error_message = (
+                    f"{make_migrations.stderr} {make_migrations.stdout}".strip()
+                )
+                raise DjangoMigrationError(error_message)
+
+            migrate = subprocess.run(
+                ["/usr/bin/python", "manage.py", "migrate"],
+                capture_output=True,
+                text=True,
+                cwd=project_path,
+            )
+
+            if migrate.returncode != 0:
+                error_message = f"{migrate.stderr} {migrate.stdout}".strip()
+                raise DjangoMigrationError(error_message)
+
+            logger.info("Migrated successfully")
+            return {
+                "make_migrations": make_migrations.stdout,
+                "migrate": migrate.stdout,
+            }
+        except subprocess.SubprocessError as e:
+            logger.exception("Migration failed")
+            raise DjangoMigrationError("Migration failed") from e
+
+    @staticmethod
     def execute_git_pull(branch: str, project_path: str) -> str:
         try:
             git_pull = subprocess.run(
@@ -236,4 +278,8 @@ class GithubWebhookView(View):
 
 
 class DeployError(Exception):
+    pass
+
+
+class DjangoMigrationError(Exception):
     pass

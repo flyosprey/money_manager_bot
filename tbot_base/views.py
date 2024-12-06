@@ -3,6 +3,7 @@ import hmac
 import json
 import re
 import subprocess
+import sys
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -223,7 +224,7 @@ class GithubWebhookView(View):
     def execute_django_migration(project_path: str) -> dict[str, str]:
         try:
             make_migrations = subprocess.run(
-                ["/usr/bin/python", "manage.py", "makemigrations"],
+                [sys.executable, "manage.py", "makemigrations"],
                 capture_output=True,
                 text=True,
                 cwd=project_path,
@@ -236,7 +237,7 @@ class GithubWebhookView(View):
                 raise DjangoMigrationError(error_message)
 
             migrate = subprocess.run(
-                ["/usr/bin/python", "manage.py", "migrate"],
+                [sys.executable, "manage.py", "migrate"],
                 capture_output=True,
                 text=True,
                 cwd=project_path,

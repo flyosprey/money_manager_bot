@@ -221,7 +221,7 @@ class UserWalletLabel(models.Model):
         blank=True,
         editable=True,
         null=True,
-        unique=True,
+        unique=False,
     )
     name = models.CharField(
         verbose_name="Label name",
@@ -237,3 +237,9 @@ class UserWalletLabel(models.Model):
     class Meta:
         verbose_name = "User Wallet Label"
         verbose_name_plural = "User Wallet Labels"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "name"],
+                name="unique_user_label_name"
+            )
+        ]

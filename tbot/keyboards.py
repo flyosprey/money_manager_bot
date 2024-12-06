@@ -189,7 +189,7 @@ def generate_labels_keyboard(
                 "Попередня⬅️", callback_data=f"label_page_{page-1}"
             )
         )
-    if page < len(labels):
+    if page < len(paginated_labels):
         buttons.append(
             types.InlineKeyboardButton(
                 "Наступна➡️", callback_data=f"label_page_{page+1}"

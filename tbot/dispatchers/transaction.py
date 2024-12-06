@@ -281,7 +281,7 @@ def handle_change_category_transaction(call: CallbackQuery):
 def handle_select_label_transaction(call: CallbackQuery):
     labels = UserWalletLabelRepository.select(
         user_id=call.from_user.id,
-        first=True,
+        first=False,
     )
     labels = [label.name for label in labels]
     edit_message(

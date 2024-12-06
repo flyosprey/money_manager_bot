@@ -228,7 +228,7 @@ class GithubWebhookView(View):
                 capture_output=True,
                 text=True,
                 cwd=project_path,
-            )
+            ) # test migration
 
             if make_migrations.returncode != 0:
                 error_message = (

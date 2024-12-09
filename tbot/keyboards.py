@@ -31,8 +31,9 @@ def menu(bot):
 
     bot.set_my_commands(
         [
-            types.BotCommand("/start", "Розпочати"),
+            types.BotCommand("/integrate", "Розпочати"),
             types.BotCommand("/about", "Для чого цей бот?"),
+            types.BotCommand("/donate", "Підтримати донатом"),
             types.BotCommand(
                 "/add_token",
                 "Додати трекінг додаткового аккаунту Monobank",

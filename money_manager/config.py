@@ -38,6 +38,7 @@ class Config(BaseSettings):
     postgres: PostgresConfig = Field(..., description="Postgres Config")
     bot_admin: BotAdminConfig = Field(..., description="Bot Admin Config")
     deployment: DeploymentConfig = Field(..., description="Github Admin Config")
+    donate_url: str = Field("", description="Donate url")
 
     class Config:
         env_prefix = "APP_"

@@ -3,6 +3,7 @@ from telebot.types import Message
 from money_manager.config import config
 from tbot.decorators import exception_handler
 from tbot.dispatchers.base import (
+    handle_donate,
     handle_start,
 )
 from tbot.keyboards import transaction_menu
@@ -14,6 +15,12 @@ from tbot_base.bot import tbot as bot
 @exception_handler()
 def start_handler(message: Message):
     handle_start(message=message)
+
+
+@bot.message_handler(commands=["donate"])
+@exception_handler()
+def start_handler(message: Message):
+    handle_donate(message=message)
 
 
 @bot.message_handler(commands=["test"])

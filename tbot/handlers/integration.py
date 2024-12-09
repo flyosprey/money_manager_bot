@@ -1,6 +1,7 @@
 from telebot.types import Message
 
 from money_manager.config import config
+from tbot.controllers.base import register_user
 from tbot.decorators import exception_handler
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dispatchers.integration import (
@@ -21,6 +22,7 @@ from tbot_base.bot import tbot as bot
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
+    register_user(message=message)
     handle_integration(message=message, redis=redis)
 
 

@@ -10,20 +10,20 @@ from tbot.controllers.integration import (
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.users.type import UserStates
 from tbot.keyboards import menu
-from tbot.utils import delete_message, normalize_credential
+from tbot.utils import delete_message, escape_text_markdown, normalize_credential
 from tbot_base.bot import tbot as bot
 from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
 
 IOS_WALLETAPP_URL = (
-    "https://apps\\.apple\\.com/us/app/wallet\\-daily\\-budget\\-profit/id1032467659"
+    "https://apps.apple.com/us/app/wallet-daily-budget-profit/id1032467659"
 )
 ANDROID_WALLETAPP_URL = (
-    "https://play\\.google\\.com/store/apps/details?id\\=com\\.droid4you\\.application\\.wallet"
-    "&referrer\\=utm_source\\%\\3\\Dhome_page"
+    "https://play.google.com/store/apps/details?id=com.droid4you.application.wallet"
+    "&referrer=utm_source=home_page"
 )
-WEB_WALLETAPP_URL = "https://budgetbakers\\.com/"
-MONOBANK_URL = "https://api\\.monobank\\.ua/index\\.html"
+WEB_WALLETAPP_URL = "https://budgetbakers.com/"
+MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
@@ -40,8 +40,10 @@ def handle_integration(message: Message, redis: RedisWrapper):
 
     bot.send_message(
         chat_id=message.chat.id,
-        text="🏦*Введіть ваш токен Monobank:*\n"
-        f"Відскануйте або натисніть на QR за [посиланням]({MONOBANK_URL})",
+        text=escape_text_markdown(
+            "🏦*Введіть ваш токен Monobank:*\n"
+            f"Відскануйте або натисніть на QR за [посиланням]({MONOBANK_URL})"
+        ),
         parse_mode="MarkdownV2",
         disable_web_page_preview=True,
         reply_markup=menu(bot),
@@ -87,11 +89,13 @@ def handle_mono_token(message: Message, redis: RedisWrapper, dsn: str):
 def handle_walletapp_login(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
-        text="*Введіть ваш логін WalletApp:*\n\n"
-        "Створити аккаунт можна за посиланнями:👇👇\n"
-        f"\\- [iOS]({IOS_WALLETAPP_URL})\n"
-        f"\\- [Android]({ANDROID_WALLETAPP_URL})\n"
-        f"\\- [Веб\\-сайт]({WEB_WALLETAPP_URL})",
+        text=escape_text_markdown(
+            "*Введіть ваш логін WalletApp:*\n\n"
+            "Створити аккаунт можна за посиланнями:👇👇\n"
+            f"- [iOS]({IOS_WALLETAPP_URL})\n"
+            f"- [Android]({ANDROID_WALLETAPP_URL})\n"
+            f"- [Веб-сайт]({WEB_WALLETAPP_URL})"
+        ),
         parse_mode="MarkdownV2",
         disable_web_page_preview=True,
     )

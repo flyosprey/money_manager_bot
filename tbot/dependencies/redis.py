@@ -1,7 +1,6 @@
 import json
 
 from redis.client import Redis  # noqa
-
 from tbot.dto.transactions.type import TransactionStatus
 from tbot.dto.users.type import UserStates
 from tbot.dto.walletapp.type import SettingsStates

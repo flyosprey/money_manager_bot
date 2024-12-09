@@ -26,6 +26,12 @@ CURRENCY_NUMBERS = {
 }
 
 
+def escape_text_markdown(text: str) -> str:
+    for symbol in (".", "=", "-", "!"):
+        text = text.replace(symbol, f"\\{symbol}")
+    return text
+
+
 def absolute_endpoint_path(dsn: str, view_name: str, args: list) -> str:
     return f"{dsn}{reverse(view_name, args=args)}"
 

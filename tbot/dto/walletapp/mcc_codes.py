@@ -42,6 +42,7 @@ MCCCodeCategory = {
         6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
         5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
         7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
+        5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -884,7 +885,6 @@ MCCCodeCategory = {
     5973: "RELIGIOUS_GOODS_STORES",
     5975: "HEARING_AIDS",
     5976: "ORTHOPEDIC_GOODS_PROSTHETIC",
-    5977: "COSMETIC_STORES",
     5978: "TYPEWRITER_STORES",
     5983: "FUEL_FUEL",
     5994: "NEWS_DEALERS_AND",
@@ -1020,6 +1020,7 @@ MCCTransactionCategoryName = {
         5811: "Кафе та Ресторани☕",
         5812: "Кафе та Ресторани☕",
         5813: "Бар🍺",
+        5977: "Краса та здоровʼя🛁️",
         8021: "Лікування🏥",
         8099: "Лікування🏥",
         8062: "Лікування🏥",
@@ -1049,7 +1050,7 @@ MCCTransactionCategoryName = {
         6012: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
-        7230: "Оздоровчі процедури та краса❤️",
+        7230: "Оздоровчі процедури❤️",
         1: "Комунальні послуги🧾",
         4: "Консультації🗣",
         5: "Податки💲",

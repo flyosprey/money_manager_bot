@@ -1,30 +1,64 @@
+from collections import defaultdict
 from typing import TypeVar
 
 MCCCodeCategory = {
-    5411: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
-    5499: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
-    5399: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # MISC_GENERAL_MERCHANDISE
-    5814: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
-    5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
-    5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
-    7523: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # PARKING
-    4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
-    4121: "-Category_96ee297d-3878-4177-8f69-3cf2c02a07f6",  # TAXI
-    5734: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # SOFTWARE_APPS_GAMES
-    5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
-    8999: "-Category_2b51b290-71a3-4714-a7c9-2e621a1e64bc",  # CHARGES_FEES
-    7399: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # POSTAL_SERVICES
-    6536: "-Category_6fe6aeec-4403-4586-aa2c-2c40113ca5bf",  # INCOME
-    4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
-    5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
-    5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
-    4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
-    5921: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
-    5541: "-Category_9874700e-2502-4f51-a127-69ba58e076e2",  # SERVICE_STATIONS
-    8299: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # SCHOOL_AND_EDUCATION
-    5462: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # BAKERIES
-    5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
-    5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
+    "-": {
+        5411: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
+        5499: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
+        5399: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # MISC_GENERAL_MERCHANDISE
+        5814: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
+        5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
+        5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
+        7523: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # PARKING
+        4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
+        6538: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
+        4121: "-Category_96ee297d-3878-4177-8f69-3cf2c02a07f6",  # TAXI
+        5734: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # SOFTWARE_APPS_GAMES
+        5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
+        8999: "-Category_2b51b290-71a3-4714-a7c9-2e621a1e64bc",  # CHARGES_FEES
+        7399: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # POSTAL_SERVICES
+        6536: "-Category_6fe6aeec-4403-4586-aa2c-2c40113ca5bf",  # INCOME
+        4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
+        5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
+        5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
+        4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
+        5921: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
+        5541: "-Category_9874700e-2502-4f51-a127-69ba58e076e2",  # SERVICE_STATIONS
+        8299: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # SCHOOL_AND_EDUCATION
+        5462: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # BAKERIES
+        5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
+        5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
+        5331: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # VARIETY_STORES
+        8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS,
+        4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
+        5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
+        9311: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # TAX_PAYMENTS | PARKING
+        5995: "-Category_d0464e8f-ac69-45c1-8dbf-c87aa0ab3ee1",  # PET_SHOPS_PET
+        7997: "-Category_c5e657c4-c4ff-4eae-976e-8ca3994ec4a0",  # MEMBERSHIP_CLUBS_SPORTS
+        5200: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOME_SUPPLY_WAREHOUSE
+        8099: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # MEDICAL_SERVICES_AND
+        7230: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # BARBER_AND_BEAUTY
+        8062: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # HOSPITALS
+        6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
+        5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
+        7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
+        5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
+        1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
+        2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
+        4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
+        5: "-Category_823abd62-101c-47ee-aacd-bc38e5b1682f",  # Taxes,
+        6: "-Category_ac706729-7b65-46da-b7d4-d18c670223d9",  # INVESTING,
+    },
+    "+": {
+        4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        6012: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
+        2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
+        3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
+        7399: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
+        5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts
+    },
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",
     780: "HORTICULTURAL_SERVICES_LANDSCAPING",
@@ -779,7 +813,6 @@ MCCCodeCategory = {
     5309: "DUTY_FREE_STORE",
     5310: "DISCOUNT_STORES",
     5311: "DEPARTMENT_STORES",
-    5331: "VARIETY_STORES",
     5422: "MEAT_PROVISIONERS",
     5441: "CANDY_NUT_AND",
     5451: "DAIRY_PRODUCTS_STORES",
@@ -852,12 +885,9 @@ MCCCodeCategory = {
     5973: "RELIGIOUS_GOODS_STORES",
     5975: "HEARING_AIDS",
     5976: "ORTHOPEDIC_GOODS_PROSTHETIC",
-    5977: "COSMETIC_STORES",
     5978: "TYPEWRITER_STORES",
     5983: "FUEL_FUEL",
-    5992: "FLORISTS",
     5994: "NEWS_DEALERS_AND",
-    5995: "PET_SHOPS_PET",
     5996: "SWIMMING_POOLS",
     5997: "ELECTRIC_RAZOR_STORES",
     5998: "TENT_AND_AWNING",
@@ -880,7 +910,6 @@ MCCCodeCategory = {
     7216: "DRY_CLEANERS",
     7217: "CARPET_AND_UPHOLSTERY",
     7221: "PHOTOGRAPHIC_STUDIOS",
-    7230: "BARBER_AND_BEAUTY",
     7251: "SHOP_REPAIR_SHOPS",
     7261: "FUNERAL_SERVICE_AND",
     7273: "DATING_AND_ESCORT",
@@ -928,7 +957,6 @@ MCCCodeCategory = {
     7801: "GOVERNMENT_LICENSED_ON",
     7802: "GOVERNMENT_LICENSED_HORSE_DOG",
     7829: "MOTION_PICTURES_AND",
-    7832: "MOTION_PICTURE_THEATERS",
     7841: "VIDEO_TAPE_RENTAL",
     7911: "DANCE_HALLS_STUDIOS",
     7922: "THEATRICAL_PRODUCERS_EXCEPT",
@@ -942,11 +970,9 @@ MCCCodeCategory = {
     7994: "VIDEO_GAME_ARCADES_ESTABLISHMENTS",
     7995: "BETTING_INCLUDING_LOTTERY",
     7996: "AMUSEMENT_PARKS_CARNIVALS",
-    7997: "MEMBERSHIP_CLUBS_SPORTS",
     7998: "AQUARIUMS_SEA_AQUARIUMS",
     7999: "RECREATION_SERVICES_NOT",
     8011: "DOCTORS_AND_PHYSICIANS",
-    8021: "DENTISTS_AND_ORTHODONTISTS",
     8031: "OSTEOPATHS",
     8041: "CHIROPRACTORS",
     8042: "OPTOMETRISTS_AND_OPHTHALMOLOGISTS",
@@ -954,9 +980,7 @@ MCCCodeCategory = {
     8044: "OPTICIANS_OPTICAL_GOODS",
     8049: "PODIATRISTS_AND_CHIROPODISTS",
     8050: "NURSING_AND_PERSONAL",
-    8062: "HOSPITALS",
     8071: "MEDICAL_AND_DENTAL",
-    8099: "MEDICAL_SERVICES_AND",
     8111: "LEGAL_SERVICES_AND",
     8211: "ELEMENTARY_AND_SECONDARY",
     8220: "COLLEGES_JUNIOR_COLLEGES",
@@ -976,7 +1000,6 @@ MCCCodeCategory = {
     9211: "COURT_COSTS_INCLUDING",
     9222: "FINES",
     9223: "BAIL_AND_BOND",
-    9311: "TAX_PAYMENTS",
     9399: "GOVERNMENT_SERVICES",
     9402: "POSTAL_SERVICES",
     9405: "INTRA_GOVERNMENT",
@@ -988,54 +1011,89 @@ MCCCodeCategory = {
 MCCTransactionCategoryT = TypeVar("MCCTransactionCategoryT", bound=MCCCodeCategory)
 
 MCCTransactionCategoryName = {
-    5411: "Продукти🥦",
-    5499: "Продукти🥦",
-    5462: "Продукти🥦",
-    5399: "Продукти🥦",
-    5814: "Кафе та Ресторани☕",
-    5811: "Кафе та Ресторани☕",
-    5812: "Кафе та Ресторани☕",
-    5813: "Бар🍺",
-    7523: "Парковка🅿️",
-    4829: "Інше📎",
-    4121: "Таксі🚕",
-    5734: "Ігри та Підписки🕹",
-    5993: "Алкоголь та Тютюн🍷",
-    5921: "Алкоголь та Тютюн🍷",
-    8999: "Комісії🫰",
-    7399: "Доставка📦",
-    6536: "Прибуток💵",
-    4900: "Електроенергія⚡️",
-    5211: "Шопінг🛍",
-    5912: "Аптека💊",
-    4814: "Телекомунікації📱",
-    5541: "Заправка⛽",
-    8299: "Навчання🏫",
-    5511: "Обслуговування авто🚗",
+    "-": {
+        5411: "Продукти🥦",
+        5499: "Продукти🥦",
+        5462: "Продукти🥦",
+        5399: "Продукти🥦",
+        5814: "Кафе та Ресторани☕",
+        5811: "Кафе та Ресторани☕",
+        5812: "Кафе та Ресторани☕",
+        5813: "Бар🍺",
+        5977: "Краса та здоровʼя🛁️",
+        8021: "Лікування🏥",
+        8099: "Лікування🏥",
+        8062: "Лікування🏥",
+        7523: "Парковка🅿️",
+        9311: "Парковка🅿️",
+        4829: "Інше📎",
+        6538: "Інше📎",
+        7832: "Розваги🕺",
+        4121: "Таксі🚕",
+        5734: "Ігри та Підписки🕹",
+        5993: "Алкоголь та Тютюн🍷",
+        5921: "Алкоголь та Тютюн🍷",
+        8999: "Комісії🫰",
+        7399: "Доставка📦",
+        5995: "Домашні улюбленці🐶",
+        4900: "Електроенергія⚡️",
+        5211: "Шопінг🛍",
+        5912: "Аптека💊",
+        7997: "Спорт🏋️‍♂️",
+        4814: "Телекомунікації📱",
+        5541: "Заправка⛽",
+        8299: "Навчання🏫",
+        5942: "Навчання🏫",
+        5511: "Обслуговування авто🚗",
+        5331: "Побут🏠",
+        5200: "Побут🏠",
+        6012: "Побут🏠",
+        4833: "Благодійність🫴",
+        5992: "Подарунки🎉",
+        7230: "Оздоровчі процедури❤️",
+        1: "Комунальні послуги🧾",
+        4: "Консультації🗣",
+        5: "Податки💲",
+        6: "Інвестиції🕵️",
+    },
+    "+": {
+        4829: "Зарплата💰",
+        6536: "Зарплата💰",
+        6538: "Зарплата💰",
+        1: "Продаж📦",
+        2: "Дивіденди🏦",
+        3: "Повернення коштів🔙",
+        4121: "Повернення коштів🔙",
+        5992: "Подарунки🎁",
+    },
 }
 MCCTransactionCategoryNameT = TypeVar(
     "MCCTransactionCategoryNameT", bound=MCCTransactionCategoryName
 )
 
-CODES_PER_PAGE = 5
+CODES_PER_PAGE = 6
 
 
-def paginate_categories(categories: MCCTransactionCategoryNameT, codes_per_page: int):
-    unique_categories = {}
-    for code, category in categories.items():
-        if category not in unique_categories:
-            unique_categories[category] = code
+def paginate_categories(
+    categories: dict[str, dict[str, str]], codes_per_page: int
+) -> dict[str, dict[int, list[dict[int, str]]]]:
+    unique_categories = defaultdict(list)
+    categories_appended = []
 
-    categories_list = [
-        {"name": key, "code": value} for key, value in unique_categories.items()
-    ]
-    total_pages = (len(categories_list) + codes_per_page - 1) // codes_per_page
+    for type_ in {"+", "-"}:
+        for code, category in categories[type_].items():
+            if category not in categories_appended:
+                unique_categories[type_].append({"name": category, "code": code})
+                categories_appended.append(category)
+
     pages = {}
-
-    for page in range(1, total_pages + 1):
-        start_idx = (page - 1) * codes_per_page
-        end_idx = start_idx + codes_per_page
-        pages[page] = categories_list[start_idx:end_idx]
+    for type_ in {"+", "-"}:
+        categories_list = unique_categories[type_]
+        total_pages = (len(categories_list) + codes_per_page - 1) // codes_per_page
+        pages[type_] = {
+            page: categories_list[(page - 1) * codes_per_page : page * codes_per_page]
+            for page in range(1, total_pages + 1)
+        }
 
     return pages
 

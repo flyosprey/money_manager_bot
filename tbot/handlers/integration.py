@@ -1,6 +1,8 @@
 from telebot.types import Message
 
 from money_manager.config import config
+from tbot.controllers.base import register_user
+from tbot.decorators import exception_handler
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dispatchers.integration import (
     handle_ask_reset,
@@ -12,15 +14,15 @@ from tbot.dispatchers.integration import (
     handle_walletapp_username,
 )
 from tbot.dto.users.type import UserStates
-from tbot.errors import exception_handler
 from tbot_base.bot import tbot as bot
 
 
-@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/integra"))
+@bot.message_handler(func=lambda message: message.text in ("Розпочати", "/start"))
 @exception_handler()
 def integrate_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
+    register_user(message=message)
     handle_integration(message=message, redis=redis)
 
 

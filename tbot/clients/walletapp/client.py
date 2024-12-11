@@ -9,6 +9,7 @@ from requests.exceptions import RequestException
 
 from money_manager.config import TIMEZONE_KYIV
 from tbot.clients.base import BaseClient
+from tbot.clients.walletapp.type import RecordType
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.errors import InvalidCredentialsError
@@ -104,7 +105,7 @@ class CloudWalletAppClient(BaseClient):
         super().__init__(*args, **kwargs, credentials=credentials)
 
         self.owner_id = owner_id
-        self.current_api_version = self.__find_current_api_version()
+        self.current_api_version = self._find_current_api_version()
 
         self.base_headers.update(
             {
@@ -117,99 +118,51 @@ class CloudWalletAppClient(BaseClient):
             }
         )
 
-    def __prepare_payload(
-        self, transaction: SimpleTransaction, record_id: str, rev_id: str
-    ) -> dict:
-        record_date = convert_timestamp_to_datetime(
-            timestamp=transaction.time
-        ) - timedelta(
-            hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600
-        )
-        created_at = (
-            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
-        )
-        currency_id, account_id = self.__find_account_currency_id(
-            data=self.get_history_changes()
-        )
-        return {
-            "docs": [
-                {
-                    "reservedCreatedAt": created_at,
-                    "reservedModelType": "Record",
-                    "reservedOwnerId": self.owner_id,
-                    "reservedAuthorId": self.owner_id,
-                    "reservedSource": "web",
-                    "recordDate": record_date.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
-                    + "Z",
-                    "type": int(transaction.amount < 0),
-                    "recordState": 1,
-                    "paymentType": 1,
-                    "amount": transaction.amount,
-                    "labels": [],
-                    "currencyId": currency_id,
-                    "accountId": account_id,
-                    "categoryId": MCCCodeCategory[transaction.mcc],
-                    "payee": transaction.contractor,
-                    "note": transaction.note,
-                    "refAmount": transaction.amount,
-                    "reservedUpdatedAt": created_at,
-                    "_id": f"Record_{record_id}",
-                    "_rev": f"1-{rev_id}",
-                }
-            ],
-            "new_edits": False,
-        }
-
-    @staticmethod
-    def __find_account_currency_id(data: dict) -> tuple[str, str]:
-        currency_id = None
-        account_id = None
-
-        for result in data["results"]:
-            if result["id"].startswith("-Currency_"):
-                currency_id = result["id"]
-            if account_id is None and result["id"].startswith("-Account_"):
-                account_id = result["id"]
-            if currency_id and account_id:
-                break
-
-        return currency_id, account_id
-
-    def __find_current_api_version(self) -> int | None:
-        for index, version in enumerate(self.api_versions):
-            try:
-                self._request(
-                    method="GET",
-                    url=urljoin(
-                        self.api_url.format(version=version),
-                        f"/bb-{self.owner_id}/_changes",
-                    ),
-                )
-                return version
-            except RequestException as e:
-                if index + 1 == len(self.api_versions):
-                    raise e
-
-        return
-
-    def add_record(
+    def add_transaction(
         self,
         transaction: SimpleTransaction,
         record_id: str = None,
         rev_id: str = None,
-    ) -> None:
+    ) -> str:
         if record_id is None:
             record_id = str(uuid.uuid4())
         if rev_id is None:
             rev_id = str(uuid.uuid4()).replace("-", "")
 
-        payload = self.__prepare_payload(
+        payload = self._prepare_transaction_payload(
             transaction=transaction, record_id=record_id, rev_id=rev_id
         )
-        if not self.initialize_record(record_id=record_id, rev_id=rev_id):
+        if not self.initialize_record(
+            record_type=RecordType.TRANSACTION, record_id=record_id, rev_id=rev_id
+        ):
             raise Exception("Failed to initialize record!")
 
         self.create_record(payload=payload)
+
+        return record_id
+
+    def add_label(
+        self,
+        label: str,
+        record_id: str = None,
+        rev_id: str = None,
+    ) -> str:
+        if record_id is None:
+            record_id = str(uuid.uuid4())
+        if rev_id is None:
+            rev_id = str(uuid.uuid4()).replace("-", "")
+
+        payload = self._prepare_label_payload(
+            label=label, record_id=record_id, rev_id=rev_id
+        )
+        if not self.initialize_record(
+            record_type=RecordType.LABEL, record_id=record_id, rev_id=rev_id
+        ):
+            raise Exception("Failed to initialize record!")
+
+        self.create_record(payload=payload)
+
+        return record_id
 
     def get_history_changes(self) -> dict:
         response = self._request(
@@ -222,8 +175,10 @@ class CloudWalletAppClient(BaseClient):
 
         return json.loads(response.text)
 
-    def initialize_record(self, record_id: str, rev_id: str) -> bool:
-        payload = json.dumps({f"Record_{record_id}": [f"1-{rev_id}"]})
+    def initialize_record(
+        self, record_type: RecordType, record_id: str, rev_id: str
+    ) -> bool:
+        payload = json.dumps({f"{record_type.value}_{record_id}": [f"1-{rev_id}"]})
         response = self._request(
             method="POST",
             data=payload,
@@ -244,3 +199,106 @@ class CloudWalletAppClient(BaseClient):
                 f"/bb-{self.owner_id}/_bulk_docs",
             ),
         )
+
+    def _prepare_label_payload(self, label: str, record_id: str, rev_id: str) -> dict:
+        created_at = (
+            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        )
+        return {
+            "docs": [
+                {
+                    "reservedCreatedAt": created_at,
+                    "reservedModelType": "HashTag",
+                    "reservedOwnerId": self.owner_id,
+                    "reservedAuthorId": self.owner_id,
+                    "reservedSource": "web",
+                    "name": label,
+                    "color": "#26c6da",
+                    "position": 1000,
+                    "autoAssign": False,
+                    "reservedUpdatedAt": created_at,
+                    "_id": f"-HashTag_{record_id}",
+                    "_rev": f"1-{rev_id}",
+                }
+            ],
+            "new_edits": False,
+        }
+
+    def _prepare_transaction_payload(
+        self, transaction: SimpleTransaction, record_id: str, rev_id: str
+    ) -> dict:
+        record_date = convert_timestamp_to_datetime(
+            timestamp=transaction.time
+        ) - timedelta(
+            hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600
+        )
+        created_at = (
+            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        )
+        currency_id, account_id = self._find_account_currency_id(
+            data=self.get_history_changes()
+        )
+        return {
+            "docs": [
+                {
+                    "reservedCreatedAt": created_at,
+                    "reservedModelType": "Record",
+                    "reservedOwnerId": self.owner_id,
+                    "reservedAuthorId": self.owner_id,
+                    "reservedSource": "web",
+                    "recordDate": record_date.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+                    + "Z",
+                    "type": int(transaction.amount < 0),
+                    "recordState": 1,
+                    "paymentType": 1,
+                    "amount": abs(transaction.amount),
+                    "labels": (
+                        [f"-HashTag_{transaction.label_id}"]
+                        if transaction.label_id
+                        else []
+                    ),
+                    "currencyId": currency_id,
+                    "accountId": account_id,
+                    "categoryId": MCCCodeCategory[transaction.type][transaction.mcc],
+                    "payee": transaction.contractor,
+                    "note": transaction.note,
+                    "refAmount": abs(transaction.amount),
+                    "reservedUpdatedAt": created_at,
+                    "_id": f"Record_{record_id}",
+                    "_rev": f"1-{rev_id}",
+                }
+            ],
+            "new_edits": False,
+        }
+
+    @staticmethod
+    def _find_account_currency_id(data: dict) -> tuple[str, str]:
+        currency_id = None
+        account_id = None
+
+        for result in data["results"]:
+            if result["id"].startswith("-Currency_"):
+                currency_id = result["id"]
+            if account_id is None and result["id"].startswith("-Account_"):
+                account_id = result["id"]
+            if currency_id and account_id:
+                break
+
+        return currency_id, account_id
+
+    def _find_current_api_version(self) -> int | None:
+        for index, version in enumerate(self.api_versions):
+            try:
+                self._request(
+                    method="GET",
+                    url=urljoin(
+                        self.api_url.format(version=version),
+                        f"/bb-{self.owner_id}/_changes",
+                    ),
+                )
+                return version
+            except RequestException as e:
+                if index + 1 == len(self.api_versions):
+                    raise e
+
+        return

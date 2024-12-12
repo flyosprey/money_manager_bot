@@ -43,6 +43,7 @@ MCCCodeCategory = {
         5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
         7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
         5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
+        5722: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOUSEHOLD_APPLIANCE_STORES
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -844,7 +845,6 @@ MCCCodeCategory = {
     5714: "DRAPERY_WINDOW_COVERING",
     5718: "FIREPLACE_FIREPLACE_SCREENS",
     5719: "MISCELLANEOUS_HOME_FURNISHING",
-    5722: "HOUSEHOLD_APPLIANCE_STORES",
     5732: "ELECTRONIC_SALES",
     5733: "MUSIC_STORES_MUSICAL",
     5735: "RECORD_SHOPS",
@@ -1048,6 +1048,7 @@ MCCTransactionCategoryName = {
         5331: "Побут🏠",
         5200: "Побут🏠",
         6012: "Побут🏠",
+        5722: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
         7230: "Оздоровчі процедури❤️",

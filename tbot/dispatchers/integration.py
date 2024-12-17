@@ -30,7 +30,7 @@ def handle_integration(message: Message, redis: RedisWrapper):
     user_integration = UserIntegrationRepository.select(user_id=message.from_user.id, first=True)[0]
     if (
         user_integration.monobank_token
-        and user_integration.user_integration
+        and user_integration.wallet_app_password
         and user_integration.wallet_app_login
         and message.text != "/add_token"
     ):

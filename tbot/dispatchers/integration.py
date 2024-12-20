@@ -121,7 +121,8 @@ def handle_walletapp_username(message: Message, redis: RedisWrapper):
     delete_message(chat_id=message.chat.id, message_id=message.message_id)
     bot.send_message(
         chat_id=message.chat.id,
-        text="*Введіть ваш пароль для WalletApp:*👇",
+        text="*Введіть ваш пароль для WalletApp:*👇"
+             f"Відскануйте або натисніть на QR за [посиланням]({MONOBANK_URL})",
         parse_mode="MarkdownV2",
     )
     redis.set_user_state(

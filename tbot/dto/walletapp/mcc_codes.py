@@ -45,6 +45,9 @@ MCCCodeCategory = {
         5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
         5722: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOUSEHOLD_APPLIANCE_STORES
         5719: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # MISCELLANEOUS_HOME_FURNISHING
+        7841: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # VIDEO_TAPE_RENTAL
+        6010: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # FINANCIAL_INSTITUTIONS
+        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -55,6 +58,7 @@ MCCCodeCategory = {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         6012: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
         1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
         2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
         3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
@@ -892,7 +896,6 @@ MCCCodeCategory = {
     5997: "ELECTRIC_RAZOR_STORES",
     5998: "TENT_AND_AWNING",
     5999: "MISCELLANEOUS_AND_SPECIALTY",
-    6010: "FINANCIAL_INSTITUTIONS",
     6011: "FINANCIAL_INSTITUTIONS",
     6012: "FINANCIAL_INSTITUTIONS",
     6051: "NON_FINANCIAL_INSTITUTIONS",
@@ -957,7 +960,6 @@ MCCCodeCategory = {
     7801: "GOVERNMENT_LICENSED_ON",
     7802: "GOVERNMENT_LICENSED_HORSE_DOG",
     7829: "MOTION_PICTURES_AND",
-    7841: "VIDEO_TAPE_RENTAL",
     7911: "DANCE_HALLS_STUDIOS",
     7922: "THEATRICAL_PRODUCERS_EXCEPT",
     7929: "BANDS_ORCHESTRAS_AND",
@@ -968,7 +970,6 @@ MCCCodeCategory = {
     7992: "GOLF_COURSES",
     7993: "VIDEO_AMUSEMENT_GAME",
     7994: "VIDEO_GAME_ARCADES_ESTABLISHMENTS",
-    7995: "BETTING_INCLUDING_LOTTERY",
     7996: "AMUSEMENT_PARKS_CARNIVALS",
     7998: "AQUARIUMS_SEA_AQUARIUMS",
     7999: "RECREATION_SERVICES_NOT",
@@ -1031,6 +1032,7 @@ MCCTransactionCategoryName = {
         7832: "Розваги🕺",
         4121: "Таксі🚕",
         5734: "Ігри та Підписки🕹",
+        7841: "Ігри та Підписки🕹",
         5993: "Алкоголь та Тютюн🍷",
         5921: "Алкоголь та Тютюн🍷",
         8999: "Комісії🫰",
@@ -1062,11 +1064,13 @@ MCCTransactionCategoryName = {
         4829: "Зарплата💰",
         6536: "Зарплата💰",
         6538: "Зарплата💰",
+        6010: "Зарплата💰",
         1: "Продаж📦",
         2: "Дивіденди🏦",
         3: "Повернення коштів🔙",
         4121: "Повернення коштів🔙",
         5992: "Подарунки🎁",
+        7995: "Ставки🔥"
     },
 }
 MCCTransactionCategoryNameT = TypeVar(

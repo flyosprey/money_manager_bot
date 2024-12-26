@@ -138,6 +138,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
         return
 
+    integration = integration[0]
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
 
     check_walletapp_credentials(

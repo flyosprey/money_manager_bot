@@ -49,6 +49,7 @@ MCCCodeCategory = {
         7841: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # VIDEO_TAPE_RENTAL
         6010: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # FINANCIAL_INSTITUTIONS
         7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
+        7278: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # BUYING_SHOPPING_SERVICES_CLUBS
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -918,7 +919,6 @@ MCCCodeCategory = {
     7273: "DATING_AND_ESCORT",
     7276: "TAX_PREPARATION_SERVICE",
     7277: "COUNSELING_SERVICE",
-    7278: "BUYING_SHOPPING_SERVICES_CLUBS",
     7296: "CLOTHING_RENTAL",
     7297: "MASSAGE_PARLORS",
     7298: "HEALTH_AND_BEAUTY",
@@ -1033,6 +1033,7 @@ MCCTransactionCategoryName = {
         4121: "Таксі🚕",
         5734: "Ігри та Підписки🕹",
         7841: "Ігри та Підписки🕹",
+        7278: "Ігри та Підписки🕹",
         5993: "Алкоголь та Тютюн🍷",
         5921: "Алкоголь та Тютюн🍷",
         8999: "Комісії🫰",

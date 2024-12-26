@@ -152,7 +152,11 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         where={"user_id": message.from_user.id},
         update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
-    bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!✅")
+    bot.send_message(
+        chat_id=message.chat.id,
+        text="Успішно інтегровано!✅"
+             "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції",
+    )
 
 
 def handle_ask_reset(message: Message, redis: RedisWrapper):

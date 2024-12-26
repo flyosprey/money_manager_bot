@@ -134,7 +134,11 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     walletapp_password = normalize_credential(credential=message.text)
     repository = UserIntegrationRepository()
     delete_message(chat_id=message.chat.id, message_id=message.message_id)
-    integration = repository.select(user_id=message.from_user.id, first=True)[0]
+    integration = repository.select(user_id=message.from_user.id, first=True)
+    if not integration:
+        bot.send_message("Спробуйте заново розпочати /start")
+        return
+
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
 
     check_walletapp_credentials(

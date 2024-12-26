@@ -34,10 +34,10 @@ def menu(bot):
             types.BotCommand("/integrate", "Розпочати"),
             types.BotCommand("/about", "Для чого цей бот?"),
             types.BotCommand("/donate", "Підтримати донатом"),
-            types.BotCommand(
-                "/add_token",
-                "Додати трекінг додаткового аккаунту Monobank",
-            ),
+            # types.BotCommand(
+            #     "/add_token",
+            #     "Додати трекінг додаткового аккаунту Monobank",
+            # ),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
             types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
             types.BotCommand(

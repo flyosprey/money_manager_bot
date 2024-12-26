@@ -135,7 +135,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     delete_message(chat_id=message.chat.id, message_id=message.message_id)
     integration = repository.select(user_id=message.from_user.id, first=True)
     if not integration:
-        bot.send_message("Спробуйте заново розпочати /start")
+        bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
         return
 
     encrypt_manager = EncryptManager(secret_key=config.secret_key)

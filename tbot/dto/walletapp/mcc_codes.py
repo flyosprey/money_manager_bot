@@ -17,6 +17,7 @@ MCCCodeCategory = {
         5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
         8999: "-Category_2b51b290-71a3-4714-a7c9-2e621a1e64bc",  # CHARGES_FEES
         7399: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # POSTAL_SERVICES
+        4214: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # MOTOR_FREIGHT_CARRIERS
         6536: "-Category_6fe6aeec-4403-4586-aa2c-2c40113ca5bf",  # INCOME
         4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
         5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
@@ -767,7 +768,6 @@ MCCCodeCategory = {
     4112: "PASSENGER_RAILWAYS",
     4119: "AMBULANCE_SERVICES",
     4131: "BUS_LINES_INCLUDING",
-    4214: "MOTOR_FREIGHT_CARRIERS",
     4215: "COURIER_SERVICES",
     4225: "PUBLIC_WAREHOUSING_STORAGE",
     4411: "CRUISE_AND_STEAMSHIP",
@@ -1037,6 +1037,7 @@ MCCTransactionCategoryName = {
         5921: "Алкоголь та Тютюн🍷",
         8999: "Комісії🫰",
         7399: "Доставка📦",
+        4214: "Доставка📦",
         5995: "Домашні улюбленці🐶",
         4900: "Електроенергія⚡️",
         5211: "Шопінг🛍",

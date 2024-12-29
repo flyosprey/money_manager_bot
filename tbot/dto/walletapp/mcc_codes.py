@@ -43,6 +43,7 @@ MCCCodeCategory = {
         6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
         5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
         7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
+        7999: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # RECREATION_SERVICES_NOT
         5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
         5722: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOUSEHOLD_APPLIANCE_STORES
         5719: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # MISCELLANEOUS_HOME_FURNISHING
@@ -972,7 +973,6 @@ MCCCodeCategory = {
     7994: "VIDEO_GAME_ARCADES_ESTABLISHMENTS",
     7996: "AMUSEMENT_PARKS_CARNIVALS",
     7998: "AQUARIUMS_SEA_AQUARIUMS",
-    7999: "RECREATION_SERVICES_NOT",
     8011: "DOCTORS_AND_PHYSICIANS",
     8031: "OSTEOPATHS",
     8041: "CHIROPRACTORS",
@@ -1030,6 +1030,7 @@ MCCTransactionCategoryName = {
         4829: "Інше📎",
         6538: "Інше📎",
         7832: "Розваги🕺",
+        7999: "Розваги🕺",
         4121: "Таксі🚕",
         5734: "Ігри та Підписки🕹",
         7841: "Ігри та Підписки🕹",

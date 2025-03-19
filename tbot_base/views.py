@@ -134,7 +134,11 @@ class MonobankWebhookView(View):
 
     @staticmethod
     def skip_transaction(transaction: Transaction) -> bool:
-        return bool(re.search(r"з.+?(картки|ФОП)|на.+(картку|ФОП)", transaction.description.lower()))
+        return bool(
+            re.search(
+                r"з.+?(картки|ФОП)|на.+(картку|ФОП)", transaction.description.lower()
+            )
+        )
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -179,10 +183,14 @@ class GithubWebhookView(View):
         except DeployError as e:
             logger.exception(e)
             admin_bot_notification(message=f"Failed to deploy new version!🔴\n{e}")
-            return JsonResponse({"status": "failure", "error": "Internal error"}, status=500)
+            return JsonResponse(
+                {"status": "failure", "error": "Internal error"}, status=500
+            )
         except Exception as e:
             logger.exception(e)
-            return JsonResponse({"status": "failure", "error": "Internal error"}, status=500)
+            return JsonResponse(
+                {"status": "failure", "error": "Internal error"}, status=500
+            )
 
     @staticmethod
     def verify_signature(

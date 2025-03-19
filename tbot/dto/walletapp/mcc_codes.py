@@ -1075,7 +1075,7 @@ MCCTransactionCategoryName = {
         3: "Повернення коштів🔙",
         4121: "Повернення коштів🔙",
         5992: "Подарунки🎁",
-        7995: "Ставки🔥"
+        7995: "Ставки🔥",
     },
 }
 MCCTransactionCategoryNameT = TypeVar(

@@ -27,7 +27,9 @@ MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
-    user_integration = UserIntegrationRepository.select(user_id=message.from_user.id, first=True)
+    user_integration = UserIntegrationRepository.select(
+        user_id=message.from_user.id, first=True
+    )
     user_integration = user_integration[0] if user_integration else None
     if (
         user_integration
@@ -135,7 +137,9 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     delete_message(chat_id=message.chat.id, message_id=message.message_id)
     integration = repository.select(user_id=message.from_user.id, first=True)
     if not integration:
-        bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
+        bot.send_message(
+            chat_id=message.chat.id, text="Спробуйте заново розпочати /start"
+        )
         return
 
     integration = integration[0]
@@ -155,7 +159,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     bot.send_message(
         chat_id=message.chat.id,
         text="Успішно інтегровано!✅"
-             "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції",
+        "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції",
     )
 
 
@@ -215,7 +219,9 @@ def handle_walletapp_reset(
         first=True,
     )
     if not integration:
-        bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
+        bot.send_message(
+            chat_id=message.chat.id, text="Спробуйте заново розпочати /start"
+        )
         return
 
     try:

@@ -19,7 +19,7 @@ def start_handler(message: Message):
 
 @bot.message_handler(commands=["donate"])
 @exception_handler()
-def start_handler(message: Message):
+def donate_handler(message: Message):
     handle_donate(message=message)
 
 

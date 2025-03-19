@@ -17,6 +17,7 @@ MCCCodeCategory = {
         5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
         8999: "-Category_2b51b290-71a3-4714-a7c9-2e621a1e64bc",  # CHARGES_FEES
         7399: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # POSTAL_SERVICES
+        4214: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # MOTOR_FREIGHT_CARRIERS
         6536: "-Category_6fe6aeec-4403-4586-aa2c-2c40113ca5bf",  # INCOME
         4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
         5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
@@ -42,7 +43,14 @@ MCCCodeCategory = {
         6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
         5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
         7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
+        7999: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # RECREATION_SERVICES_NOT
         5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
+        5722: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOUSEHOLD_APPLIANCE_STORES
+        5719: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # MISCELLANEOUS_HOME_FURNISHING
+        7841: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # VIDEO_TAPE_RENTAL
+        6010: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # FINANCIAL_INSTITUTIONS
+        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
+        7278: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # BUYING_SHOPPING_SERVICES_CLUBS
         1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
         2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
         4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
@@ -53,6 +61,7 @@ MCCCodeCategory = {
         4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
         6012: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
+        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
         1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
         2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
         3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
@@ -761,7 +770,6 @@ MCCCodeCategory = {
     4112: "PASSENGER_RAILWAYS",
     4119: "AMBULANCE_SERVICES",
     4131: "BUS_LINES_INCLUDING",
-    4214: "MOTOR_FREIGHT_CARRIERS",
     4215: "COURIER_SERVICES",
     4225: "PUBLIC_WAREHOUSING_STORAGE",
     4411: "CRUISE_AND_STEAMSHIP",
@@ -843,8 +851,6 @@ MCCCodeCategory = {
     5713: "FLOOR_COVERING_STORES",
     5714: "DRAPERY_WINDOW_COVERING",
     5718: "FIREPLACE_FIREPLACE_SCREENS",
-    5719: "MISCELLANEOUS_HOME_FURNISHING",
-    5722: "HOUSEHOLD_APPLIANCE_STORES",
     5732: "ELECTRONIC_SALES",
     5733: "MUSIC_STORES_MUSICAL",
     5735: "RECORD_SHOPS",
@@ -892,7 +898,6 @@ MCCCodeCategory = {
     5997: "ELECTRIC_RAZOR_STORES",
     5998: "TENT_AND_AWNING",
     5999: "MISCELLANEOUS_AND_SPECIALTY",
-    6010: "FINANCIAL_INSTITUTIONS",
     6011: "FINANCIAL_INSTITUTIONS",
     6012: "FINANCIAL_INSTITUTIONS",
     6051: "NON_FINANCIAL_INSTITUTIONS",
@@ -915,7 +920,6 @@ MCCCodeCategory = {
     7273: "DATING_AND_ESCORT",
     7276: "TAX_PREPARATION_SERVICE",
     7277: "COUNSELING_SERVICE",
-    7278: "BUYING_SHOPPING_SERVICES_CLUBS",
     7296: "CLOTHING_RENTAL",
     7297: "MASSAGE_PARLORS",
     7298: "HEALTH_AND_BEAUTY",
@@ -957,7 +961,6 @@ MCCCodeCategory = {
     7801: "GOVERNMENT_LICENSED_ON",
     7802: "GOVERNMENT_LICENSED_HORSE_DOG",
     7829: "MOTION_PICTURES_AND",
-    7841: "VIDEO_TAPE_RENTAL",
     7911: "DANCE_HALLS_STUDIOS",
     7922: "THEATRICAL_PRODUCERS_EXCEPT",
     7929: "BANDS_ORCHESTRAS_AND",
@@ -968,10 +971,8 @@ MCCCodeCategory = {
     7992: "GOLF_COURSES",
     7993: "VIDEO_AMUSEMENT_GAME",
     7994: "VIDEO_GAME_ARCADES_ESTABLISHMENTS",
-    7995: "BETTING_INCLUDING_LOTTERY",
     7996: "AMUSEMENT_PARKS_CARNIVALS",
     7998: "AQUARIUMS_SEA_AQUARIUMS",
-    7999: "RECREATION_SERVICES_NOT",
     8011: "DOCTORS_AND_PHYSICIANS",
     8031: "OSTEOPATHS",
     8041: "CHIROPRACTORS",
@@ -1029,12 +1030,16 @@ MCCTransactionCategoryName = {
         4829: "Інше📎",
         6538: "Інше📎",
         7832: "Розваги🕺",
+        7999: "Розваги🕺",
         4121: "Таксі🚕",
         5734: "Ігри та Підписки🕹",
+        7841: "Ігри та Підписки🕹",
+        7278: "Ігри та Підписки🕹",
         5993: "Алкоголь та Тютюн🍷",
         5921: "Алкоголь та Тютюн🍷",
         8999: "Комісії🫰",
         7399: "Доставка📦",
+        4214: "Доставка📦",
         5995: "Домашні улюбленці🐶",
         4900: "Електроенергія⚡️",
         5211: "Шопінг🛍",
@@ -1048,9 +1053,13 @@ MCCTransactionCategoryName = {
         5331: "Побут🏠",
         5200: "Побут🏠",
         6012: "Побут🏠",
+        5722: "Побут🏠",
+        5719: "Побут🏠",
         4833: "Благодійність🫴",
         5992: "Подарунки🎉",
         7230: "Оздоровчі процедури❤️",
+        7995: "Ставки🔥",
+        6010: "Зняття коштів💰",
         1: "Комунальні послуги🧾",
         4: "Консультації🗣",
         5: "Податки💲",
@@ -1060,11 +1069,13 @@ MCCTransactionCategoryName = {
         4829: "Зарплата💰",
         6536: "Зарплата💰",
         6538: "Зарплата💰",
+        6010: "Зарплата💰",
         1: "Продаж📦",
         2: "Дивіденди🏦",
         3: "Повернення коштів🔙",
         4121: "Повернення коштів🔙",
         5992: "Подарунки🎁",
+        7995: "Ставки🔥"
     },
 }
 MCCTransactionCategoryNameT = TypeVar(

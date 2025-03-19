@@ -195,7 +195,6 @@ class UserIntegrations(models.Model):
         blank=True,
         editable=True,
         null=True,
-        unique=True,
     )
 
     def __str__(self):

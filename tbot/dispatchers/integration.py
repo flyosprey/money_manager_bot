@@ -27,8 +27,13 @@ MONOBANK_URL = "https://api.monobank.ua/index.html"
 
 
 def handle_integration(message: Message, redis: RedisWrapper):
+    user_integration = UserIntegrationRepository.select(user_id=message.from_user.id, first=True)
+    user_integration = user_integration[0] if user_integration else None
     if (
-        UserIntegrationRepository.select(user_id=message.from_user.id, first=True)
+        user_integration
+        and user_integration.monobank_token
+        and user_integration.wallet_app_password
+        and user_integration.wallet_app_login
         and message.text != "/add_token"
     ):
         bot.send_message(
@@ -128,7 +133,12 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
     walletapp_password = normalize_credential(credential=message.text)
     repository = UserIntegrationRepository()
     delete_message(chat_id=message.chat.id, message_id=message.message_id)
-    integration = repository.select(user_id=message.from_user.id, first=True)[0]
+    integration = repository.select(user_id=message.from_user.id, first=True)
+    if not integration:
+        bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
+        return
+
+    integration = integration[0]
     encrypt_manager = EncryptManager(secret_key=config.secret_key)
 
     check_walletapp_credentials(
@@ -142,7 +152,11 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         where={"user_id": message.from_user.id},
         update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
-    bot.send_message(chat_id=message.chat.id, text="Успішно інтегровано!✅")
+    bot.send_message(
+        chat_id=message.chat.id,
+        text="Успішно інтегровано!✅"
+             "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції",
+    )
 
 
 def handle_ask_reset(message: Message, redis: RedisWrapper):
@@ -199,7 +213,10 @@ def handle_walletapp_reset(
         wallet_app_password__isnull=False,
         wallet_app_login__isnull=False,
         first=True,
-    )[0]
+    )
+    if not integration:
+        bot.send_message(chat_id=message.chat.id, text="Спробуйте заново розпочати /start")
+        return
 
     try:
         WalletAppClient().login(

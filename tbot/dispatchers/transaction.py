@@ -227,9 +227,13 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
 
     transaction_data = redis.get_transaction_status(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
-    previous_amount = get_amount(text=transaction_text)
+    previous_amount = float(get_amount(text=transaction_text))
+    sum_amounts = sum(amounts)
+    if (sum_amounts > 0 > previous_amount) or (sum_amounts < 0 < previous_amount):
+        amounts = [amount * -1 for amount in amounts]
+        sum_amounts = sum(amounts)
 
-    if sum(amounts) != float(previous_amount):
+    if sum_amounts != previous_amount:
         send_error_message(
             message.chat.id,
             "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції.",

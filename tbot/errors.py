@@ -7,10 +7,6 @@ class IncorrectMCCCodeError(Exception):
         return f"{self.mcc_code}: {self.message}"
 
 
-class MonoExceptionError(Exception):
-    pass
-
-
 class RetryExceededError(Exception):
     pass
 

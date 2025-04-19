@@ -1,8 +1,9 @@
+from requests import RequestException
+
 from tbot.clients.monobank.client import MonobankClient
 from tbot.clients.walletapp.client import WalletAppClient
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.users.type import UserStates
-from tbot.errors import MonoExceptionError
 from tbot.utils import absolute_endpoint_path
 
 
@@ -24,7 +25,7 @@ def check_monobank(
             mono_token=mono_token,
             webhook_url=webhook_url,
         )
-    except MonoExceptionError:
+    except RequestException:
         return False
 
     return True

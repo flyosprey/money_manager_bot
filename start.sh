@@ -34,7 +34,7 @@ if not User.objects.filter(username=username).exists():
 EOF
 
 echo "Starting Django server..."
-gunicorn --reload --certfile=/etc/ssl/certs/fullchain.pem --keyfile=/etc/ssl/private/privkey.pem money_manager.wsgi:application --bind 0.0.0.0:443 --workers 3 --timeout 120 &
+gunicorn --reload money_manager.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 &
 
 sleep 20
 

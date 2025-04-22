@@ -78,6 +78,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "money_manager.wsgi.application"
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

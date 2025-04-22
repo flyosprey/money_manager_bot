@@ -17,7 +17,7 @@ services:
   web:
     expose:
       - 8000
-      - 443
+#      - 443
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -25,7 +25,7 @@ services:
       - .env.prod
     ports:
       - "8000:8000"
-      - "443:443"
+#      - "443:443"
     volumes:
       - ~/.ssh:/root/.ssh:ro
       - /etc/letsencrypt/live/osprey.work.gd/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro

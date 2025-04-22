@@ -85,37 +85,37 @@ class MonobankWebhookView(View):
             return JsonResponse({"error": e.error_dict}, status=422)
 
         logger.info("Received body from monobank %s", raw_body)
-        if not self.skip_transaction(transaction=transaction):
-            currency = convert_currency_number_to_code(transaction.currency_code)
-            cashback = (
-                f"{convert_money(transaction.cashback_amount):.2f}₴"
-                if transaction.cashback_amount
-                else "відсутній"
-            )
-            commission = (
-                f"{convert_money(transaction.commission_rate):.2f}₴"
-                if transaction.commission_rate
-                else "відсутня"
-            )
-            date_ = convert_timestamp_to_datetime(
-                timestamp=transaction.time, timezone=TIMEZONE_KYIV
-            ).replace(tzinfo=None)
-            transaction_type = "+" if transaction.amount > 0 else "-"
-            tbot.send_message(
-                chat_id=user_id,
-                text=create_transaction_text(
-                    currency=currency,
-                    transaction_type=transaction_type,
-                    date_=date_,
-                    commission=commission,
-                    cashback=cashback,
-                    comment=transaction.comment,
-                    description=transaction.description,
-                    mcc_code=transaction.mcc,
-                    amount=convert_money(transaction.amount),
-                ),
-                reply_markup=transaction_menu(),
-            )
+        # if not self.skip_transaction(transaction=transaction):
+        currency = convert_currency_number_to_code(transaction.currency_code)
+        cashback = (
+            f"{convert_money(transaction.cashback_amount):.2f}₴"
+            if transaction.cashback_amount
+            else "відсутній"
+        )
+        commission = (
+            f"{convert_money(transaction.commission_rate):.2f}₴"
+            if transaction.commission_rate
+            else "відсутня"
+        )
+        date_ = convert_timestamp_to_datetime(
+            timestamp=transaction.time, timezone=TIMEZONE_KYIV
+        ).replace(tzinfo=None)
+        transaction_type = "+" if transaction.amount > 0 else "-"
+        tbot.send_message(
+            chat_id=user_id,
+            text=create_transaction_text(
+                currency=currency,
+                transaction_type=transaction_type,
+                date_=date_,
+                commission=commission,
+                cashback=cashback,
+                comment=transaction.comment,
+                description=transaction.description,
+                mcc_code=transaction.mcc,
+                amount=convert_money(transaction.amount),
+            ),
+            reply_markup=transaction_menu(),
+        )
 
         return HttpResponse(status=200)
 

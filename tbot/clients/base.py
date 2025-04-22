@@ -45,14 +45,6 @@ class BaseClient:
                 headers=headers,
                 timeout=self.timeout,
             )
-            if response.status_code == 429:
-                return self.retry(
-                    url=url,
-                    method=method,
-                    headers=headers,
-                    **kwargs,
-                )
-
             logger.info(
                 "%s response status=%s, content=%s.",
                 self.name,
@@ -60,6 +52,14 @@ class BaseClient:
                 response.text,
                 request={"method": method, "uri": url, **kwargs},
             )
+
+            if response.status_code == 429:
+                return self.retry(
+                    url=url,
+                    method=method,
+                    headers=headers,
+                    **kwargs,
+                )
         except RequestException as e:
             raise RequestException(f"Unsuccessful request to {self.name}: {e}") from e
         if response.status_code >= 400:

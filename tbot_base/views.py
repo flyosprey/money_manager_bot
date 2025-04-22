@@ -136,7 +136,7 @@ class MonobankWebhookView(View):
     def skip_transaction(transaction: Transaction) -> bool:
         return bool(
             re.search(
-                r"з.+?(картки|ФОП)|на.+(картку|ФОП)", transaction.description.lower()
+                r"Mocking", transaction.description.lower()
             )
         )
 

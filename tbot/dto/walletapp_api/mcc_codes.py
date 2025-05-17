@@ -3,70 +3,70 @@ from typing import TypeVar
 
 MCCCodeCategory = {
     "-": {
-        5411: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
-        5499: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # GROCERIES
-        5399: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # MISC_GENERAL_MERCHANDISE
-        5814: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
-        5811: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # FAST FOOD RESTAURANT
-        5813: "-Category_6b9ffb6d-4fa9-4f14-8aa5-5725ef91d1ca",  # BAR
-        7523: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # PARKING
-        4829: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
-        6538: "-Category_e87f865a-9bbb-40cf-a296-7cd31850c01f",  # MONEY_ORDERS
-        4121: "-Category_96ee297d-3878-4177-8f69-3cf2c02a07f6",  # TAXI
-        5734: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # SOFTWARE_APPS_GAMES
-        5993: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # ALCOHOL_AND_TOBACCO
-        8999: "-Category_2b51b290-71a3-4714-a7c9-2e621a1e64bc",  # CHARGES_FEES
-        7399: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # POSTAL_SERVICES
-        4214: "-Category_fbba816b-490e-4e3b-8865-ebe54bc918de",  # MOTOR_FREIGHT_CARRIERS
-        6536: "-Category_6fe6aeec-4403-4586-aa2c-2c40113ca5bf",  # INCOME
-        4900: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # ENERGY UTILITIES
-        5211: "-Category_5e4bc67f-7743-49cc-9a26-4dc610be033c",  # SHOPPING
-        5912: "-Category_57aba05d-b3a3-44d7-818c-46b58869d370",  # Drug-stores
-        4814: "-Category_3134a76c-f11c-47fa-9700-0e621742ec90",  # FAX_SERVICES_TELECOMMUNICATION
-        5921: "-Category_26504b77-a731-40ca-a534-124c5f1be11e",  # PACKAGE_STORES
-        5541: "-Category_9874700e-2502-4f51-a127-69ba58e076e2",  # SERVICE_STATIONS
-        8299: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # SCHOOL_AND_EDUCATION
-        5462: "-Category_8ee7d6fc-b689-4a3c-b77f-5850600d5916",  # BAKERIES
-        5812: "-Category_e5a1f41d-0af3-4cec-a295-9857f7cb7d7c",  # EATING_PLACES_AND
-        5511: "-Category_413e002b-93e9-44ea-8ec2-3b2911bf862b",  # CAR_AND_TRUCK
-        5331: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # VARIETY_STORES
-        8021: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # DENTISTS_AND_ORTHODONTISTS,
-        4833: "-Category_e284a38a-eeb7-4b43-9400-f386d23bf5d2",  # Donates,
-        5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts,
-        9311: "-Category_16c45944-6084-4657-970b-6ead31694b4c",  # TAX_PAYMENTS | PARKING
-        5995: "-Category_d0464e8f-ac69-45c1-8dbf-c87aa0ab3ee1",  # PET_SHOPS_PET
-        7997: "-Category_c5e657c4-c4ff-4eae-976e-8ca3994ec4a0",  # MEMBERSHIP_CLUBS_SPORTS
-        5200: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOME_SUPPLY_WAREHOUSE
-        8099: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # MEDICAL_SERVICES_AND
-        7230: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # BARBER_AND_BEAUTY
-        8062: "-Category_0d1adfd6-2b2a-4bfe-97e1-a02f2e382d8b",  # HOSPITALS
-        6012: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # FINANCIAL_INSTITUTIONS
-        5942: "-Category_8810898c-131c-48a8-83d4-b6f7021e44fb",  # BOOK_STORES
-        7832: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # MOTION_PICTURE_THEATERS
-        7999: "-Category_c95aea48-7329-4f1a-b5ff-c2e7a74d5880",  # RECREATION_SERVICES_NOT
-        5977: "-Category_ecf1c5c8-17ed-483a-96c1-6de54e11f8c0",  # COSMETIC_STORES
-        5722: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # HOUSEHOLD_APPLIANCE_STORES
-        5719: "-Category_fcbcd7fe-235c-4240-b071-4f8492fd7e4e",  # MISCELLANEOUS_HOME_FURNISHING
-        7841: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # VIDEO_TAPE_RENTAL
-        6010: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # FINANCIAL_INSTITUTIONS
-        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
-        7278: "-Category_863a617f-0da2-4a85-817a-cb4ccde76a3e",  # BUYING_SHOPPING_SERVICES_CLUBS
-        1: "-Category_759f843f-b898-4f90-ae8d-7d993c946343",  # Utilities,
-        2: "-Category_f6c3e6b8-ce2c-4c47-892f-9ff1cbb3e383",  # Wellness and Beauty,
-        4: "-Category_aeb52eef-3d8d-4e0f-a2da-74057c32d9f4",  # Consultations,
-        5: "-Category_823abd62-101c-47ee-aacd-bc38e5b1682f",  # Taxes,
-        6: "-Category_ac706729-7b65-46da-b7d4-d18c670223d9",  # INVESTING,
+        5411: "Food & Beverages_Groceries",  # GROCERIES
+        5499: "Food & Beverages_Groceries",  # GROCERIES
+        5399: "Food & Beverages_Groceries",  # MISC_GENERAL_MERCHANDISE
+        5814: "Food & Beverages_Restaurant, fast-food",  # FAST FOOD RESTAURANT
+        5811: "Food & Beverages_Restaurant, fast-food",  # FAST FOOD RESTAURANT
+        5813: "Food & Beverages_Bar, cafe",  # BAR
+        7523: "Vehicle_Parking",  # PARKING
+        4829: "Others_Others",  # MONEY_ORDERS
+        6538: "Others_Others",  # MONEY_ORDERS
+        4121: "Transportation_Taxi",  # TAXI
+        5734: "Communication, PC_Software, apps, games",  # SOFTWARE_APPS_GAMES
+        5993: "Life & Entertainment_Alcohol, tobacco",  # ALCOHOL_AND_TOBACCO
+        8999: "Financial expenses_Charges, Fees",  # CHARGES_FEES
+        7399: "Communication, PC_Postal services",  # POSTAL_SERVICES
+        4214: "Communication, PC_Postal services",  # MOTOR_FREIGHT_CARRIERS
+        6536: "Income_Income",  # INCOME
+        4900: "Housing_Energy, utilities",  # ENERGY UTILITIES
+        5211: "Shopping_Shopping",  # SHOPPING
+        5912: "Shopping_Drug-store, chemist",  # Drug-stores
+        4814: "Communication, PC_Communication, PC",  # FAX_SERVICES_TELECOMMUNICATION
+        5921: "Life & Entertainment_Alcohol, tobacco",  # PACKAGE_STORES
+        5541: "Vehicle_Fuel",  # SERVICE_STATIONS
+        8299: "Life & Entertainment_Education, development",  # SCHOOL_AND_EDUCATION
+        5462: "Food & Beverages_Groceries",  # BAKERIES
+        5812: "Food & Beverages_Restaurant, fast-food",  # EATING_PLACES_AND
+        5511: "Vehicle_Vehicle maintenance",  # CAR_AND_TRUCK
+        5331: "Shopping_Home, garden",  # VARIETY_STORES
+        8021: "Life & Entertainment_Health care, doctor",  # DENTISTS_AND_ORTHODONTISTS,
+        4833: "Life & Entertainment_Charity, gifts",  # Donates,
+        5992: "Shopping_Gifts, joy",  # Gifts,
+        9311: "Vehicle_Parking",  # TAX_PAYMENTS | PARKING
+        5995: "Shopping_Pets, animals",  # PET_SHOPS_PET
+        7997: "Life & Entertainment_Active sport, fitness",  # MEMBERSHIP_CLUBS_SPORTS
+        5200: "Shopping_Home, garden",  # HOME_SUPPLY_WAREHOUSE
+        8099: "Life & Entertainment_Health care, doctor",  # MEDICAL_SERVICES_AND
+        7230: "Life & Entertainment_Health care, doctor",  # BARBER_AND_BEAUTY
+        8062: "Life & Entertainment_Health care, doctor",  # HOSPITALS
+        6012: "Shopping_Home, garden",  # FINANCIAL_INSTITUTIONS
+        5942: "Life & Entertainment_Education, development",  # BOOK_STORES
+        7832: "Life & Entertainment_Life & Entertainment",  # MOTION_PICTURE_THEATERS
+        7999: "Life & Entertainment_Life & Entertainment",  # RECREATION_SERVICES_NOT
+        5977: "Shopping_Health and beauty",  # COSMETIC_STORES
+        5722: "Shopping_Home, garden",  # HOUSEHOLD_APPLIANCE_STORES
+        5719: "Shopping_Home, garden",  # MISCELLANEOUS_HOME_FURNISHING
+        7841: "Communication, PC_Software, apps, games",  # VIDEO_TAPE_RENTAL
+        6010: "Income_Wage, invoices",  # FINANCIAL_INSTITUTIONS
+        7995: "Income_Lottery, gambling",  # BETTING_INCLUDING_LOTTERY
+        7278: "Communication, PC_Software, apps, games",  # BUYING_SHOPPING_SERVICES_CLUBS
+        1: "Housing_Energy, utilities",  # Utilities,
+        2: "Life & Entertainment_Wellness, beauty",  # Wellness and Beauty,
+        4: "Financial expenses_Advisory",  # Consultations,
+        5: "Financial expenses_Taxes",  # Taxes,
+        6: "Investments_Financial investments",  # INVESTING,
     },
     "+": {
-        4829: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
-        6538: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
-        6012: "-Category_bdcb3359-93ea-4a2e-ab9a-ebd9a1057fc5",  # Salary
-        7995: "-Category_431bf729-3c54-4a95-b0cd-05217312a820",  # BETTING_INCLUDING_LOTTERY
-        1: "-Category_caca3adb-f9b5-4ec8-8ba9-c5baaf317ff3",  # Selling
-        2: "-Category_80209d1e-c203-446b-87af-63215d611d1e",  # Dividends
-        3: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
-        7399: "-Category_9bf6e5ea-e451-4a2c-a0b0-9de8e0dc2fd8",  # Returning money
-        5992: "-Category_e076e2dd-6fb7-4d62-9836-ccdf54341389",  # Gifts
+        4829: "Income_Wage, invoices",  # Salary
+        6538: "Income_Wage, invoices",  # Salary
+        6012: "Income_Wage, invoices",  # Salary
+        7995: "Income_Lottery, gambling",  # BETTING_INCLUDING_LOTTERY
+        1: "Income_Sale",  # Selling
+        2: "Income_Interests, dividends",  # Dividends
+        3: "Income_Refunds (tax, purchase)",  # Returning money
+        7399: "Income_Refunds (tax, purchase)",  # Returning money
+        5992: "Shopping_Gifts, joy",  # Gifts
     },
     742: "VETERINARY_SERVICES",
     763: "AGRICULTURAL_CO_OPERATIVES",

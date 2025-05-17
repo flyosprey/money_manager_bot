@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:12-alpine
+    image: postgres:15-alpine
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     env_file:
@@ -13,6 +13,31 @@ services:
     ports:
       - 127.0.0.1:${POSTGRES_PORT-5432}:5432
     restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: celery -A money_manager.celery.app worker -l info
+    env_file:
+      - .env.prod
+    volumes:
+      - ./:/opt/money_manager_bot:ro
+      - ./:/opt/money_manager_bot
+    depends_on:
+      - web
+
+  beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file:
+      - .env.prod
+    command: celery -A money_manager.celery.app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/code
+    depends_on:
+      - web
 
   web:
     expose:

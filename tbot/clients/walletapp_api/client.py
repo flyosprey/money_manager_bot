@@ -9,9 +9,8 @@ from requests.exceptions import RequestException
 
 from money_manager.config import TIMEZONE_KYIV
 from tbot.clients.base import BaseClient
-from tbot.clients.walletapp.type import RecordType
+from tbot.clients.walletapp_api.type import RecordType
 from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
 from tbot.errors import InvalidCredentialsError
 from tbot.utils import convert_timestamp_to_datetime
 
@@ -129,7 +128,7 @@ class CloudWalletAppClient(BaseClient):
         if rev_id is None:
             rev_id = str(uuid.uuid4()).replace("-", "")
 
-        payload = self._prepare_transaction_payload(
+        payload = self._prepare_create_transaction_payload(
             transaction=transaction, record_id=record_id, rev_id=rev_id
         )
         if not self.initialize_record(
@@ -140,6 +139,29 @@ class CloudWalletAppClient(BaseClient):
         self.create_record(payload=payload)
 
         return record_id
+
+    def delete_transaction(
+        self,
+        transaction_payload: dict,
+        rev_id: str = None,
+    ) -> None:
+        index = 2
+        record_id = transaction_payload["docs"][0]["_id"].replace("Record_", "")
+        if rev_id is None:
+            rev_id = str(uuid.uuid4()).replace("-", "")
+
+        payload = self._prepare_delete_transaction_payload(
+            transaction_payload=transaction_payload, rev_id=rev_id, index=index
+        )
+        if not self.initialize_record(
+            record_type=RecordType.TRANSACTION,
+            record_id=record_id,
+            rev_id=rev_id,
+            index=index,
+        ):
+            raise Exception("Failed to initialize record!")
+
+        self.create_record(payload=payload)
 
     def add_label(
         self,
@@ -176,9 +198,11 @@ class CloudWalletAppClient(BaseClient):
         return json.loads(response.text)
 
     def initialize_record(
-        self, record_type: RecordType, record_id: str, rev_id: str
+        self, record_type: RecordType, record_id: str, rev_id: str, index: int = 1
     ) -> bool:
-        payload = json.dumps({f"{record_type.value}_{record_id}": [f"1-{rev_id}"]})
+        payload = json.dumps(
+            {f"{record_type.value}_{record_id}": [f"{index}-{rev_id}"]}
+        )
         response = self._request(
             method="POST",
             data=payload,
@@ -201,9 +225,7 @@ class CloudWalletAppClient(BaseClient):
         )
 
     def _prepare_label_payload(self, label: str, record_id: str, rev_id: str) -> dict:
-        created_at = (
-            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-        )
+        created_at = self.get_datetime_now()
         return {
             "docs": [
                 {
@@ -224,7 +246,27 @@ class CloudWalletAppClient(BaseClient):
             "new_edits": False,
         }
 
-    def _prepare_transaction_payload(
+    @staticmethod
+    def get_datetime_now():
+        return (
+            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        )
+
+    def _prepare_delete_transaction_payload(
+        self, transaction_payload: dict, rev_id: str, index: int = 2
+    ) -> dict:
+        doc = transaction_payload["docs"][0]
+        deleted_at = self.get_datetime_now()
+
+        old_rev_id = doc["_rev"]
+        doc["_rev"] = f"{index}-{rev_id}"
+        doc["_deleted"] = True
+        doc["reservedDeletedAt"] = deleted_at
+        doc["reservedDeletedSource"] = "web"
+        doc["_revisions"] = {"start": 2, "ids": [rev_id, old_rev_id.split("-")[1]]}
+        return transaction_payload
+
+    def _prepare_create_transaction_payload(
         self, transaction: SimpleTransaction, record_id: str, rev_id: str
     ) -> dict:
         record_date = convert_timestamp_to_datetime(
@@ -232,9 +274,7 @@ class CloudWalletAppClient(BaseClient):
         ) - timedelta(
             hours=datetime.now(tz=TIMEZONE_KYIV).utcoffset().total_seconds() / 3600
         )
-        created_at = (
-            datetime.now(tz=TIMEZONE_KYIV).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-        )
+        created_at = self.get_datetime_now()
         currency_id, account_id = self._find_account_currency_id(
             data=self.get_history_changes()
         )
@@ -259,7 +299,7 @@ class CloudWalletAppClient(BaseClient):
                     ),
                     "currencyId": currency_id,
                     "accountId": account_id,
-                    "categoryId": MCCCodeCategory[transaction.type][transaction.mcc],
+                    "categoryId": transaction.category_id,
                     "payee": transaction.contractor,
                     "note": transaction.note,
                     "refAmount": abs(transaction.amount),

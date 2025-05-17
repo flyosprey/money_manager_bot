@@ -8,7 +8,7 @@ from tbot.dispatchers.wallet_settings import (
     handle_awaiting_add_label,
     handle_wallet_settings,
 )
-from tbot.dto.walletapp.type import SettingsStates
+from tbot.dto.walletapp_api.type import SettingsStates
 from tbot_base.bot import tbot as bot
 
 

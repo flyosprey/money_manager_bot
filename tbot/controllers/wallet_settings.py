@@ -1,6 +1,6 @@
 from pydantic.types import SecretStr
 
-from tbot.clients.walletapp.client import CloudWalletAppClient, WalletAppClient
+from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
 from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
 from tbot_base.security.encrypting import EncryptManager

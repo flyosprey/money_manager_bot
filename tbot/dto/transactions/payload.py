@@ -10,3 +10,4 @@ class SimpleTransaction(BaseModel):
     type: str
     label_name: str
     label_id: str | None = None
+    category_id: str | None = None

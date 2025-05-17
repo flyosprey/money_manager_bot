@@ -2,6 +2,7 @@ import re
 
 from telebot.types import CallbackQuery, Message
 
+from money_manager.celery.tasks import save_to_ai_memory
 from money_manager.config import Config
 from tbot.controllers.transaction import (
     add_transaction,
@@ -12,7 +13,7 @@ from tbot.controllers.transaction import (
 )
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.transactions.type import TransactionStatus
-from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
+from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import (
     transaction_categories_menu,
     transaction_labels_menu,
@@ -40,6 +41,8 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
         message_id=call.message.id,
         text=f"{call.message.text}\n\nЗаписано✅",
     )
+
+    save_to_ai_memory.delay(call.from_user.id, transaction.model_dump())
 
 
 def handle_reject_transaction(call: CallbackQuery):
@@ -227,13 +230,16 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
 
     transaction_data = redis.get_transaction_status(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
-    previous_amount = float(get_amount(text=transaction_text))
+    previous_amount = get_amount(text=transaction_text)
+    previous_amount_float = float(previous_amount)
     sum_amounts = sum(amounts)
-    if (sum_amounts > 0 > previous_amount) or (sum_amounts < 0 < previous_amount):
+    if (sum_amounts > 0 > previous_amount_float) or (
+        sum_amounts < 0 < previous_amount_float
+    ):
         amounts = [amount * -1 for amount in amounts]
         sum_amounts = sum(amounts)
 
-    if sum_amounts != previous_amount:
+    if sum_amounts != previous_amount_float:
         send_error_message(
             message.chat.id,
             "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції.",

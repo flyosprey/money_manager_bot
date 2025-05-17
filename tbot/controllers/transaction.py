@@ -1,13 +1,14 @@
 from pydantic import SecretStr
 
-from tbot.clients.walletapp.client import CloudWalletAppClient, WalletAppClient
+from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
 from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.dto.walletapp.mcc_codes import MCCCodeCategory
+from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError
 from tbot.utils import (
     convert_datetime_to_timestamp,
     get_field_value_from_text,
 )
+from tbot_base.repository.user_categories import UserCategoriesRepository
 from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
 from tbot_base.security.encrypting import EncryptManager
@@ -99,7 +100,9 @@ def get_label_id(user_id: int, label_name: str) -> str:
 def add_transaction(
     transaction: SimpleTransaction, user_id: int, secret_key: SecretStr
 ):
-    validate_transaction_to_add(transaction=transaction)
+    transaction.category_id = get_category_id(
+        mcc=transaction.mcc, category_type=transaction.type, user_id=user_id
+    )
 
     integration = UserIntegrationRepository.select(
         user_id=user_id,
@@ -118,12 +121,15 @@ def add_transaction(
     ).add_transaction(transaction=transaction)
 
 
-def validate_transaction_to_add(transaction: SimpleTransaction) -> None:
-    if (
-        not MCCCodeCategory[transaction.type]
-        .get(transaction.mcc, "")
-        .startswith("-Category_")
-    ):
+def get_category_id(mcc: int, category_type: str, user_id: int) -> str:
+    category = UserCategoriesRepository.select(
+        user_id=user_id,
+        name=MCCCodeCategory[category_type].get(mcc, ""),
+        first=True,
+    )
+    if not category:
         raise IncorrectMCCCodeError(
-            message="MCC code is not supported yet", mcc_code=transaction.mcc
+            message="MCC code is not supported yet", mcc_code=mcc
         )
+
+    return category[0].category_id

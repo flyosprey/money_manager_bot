@@ -1,7 +1,7 @@
 from requests import RequestException
 
 from tbot.clients.monobank.client import MonobankClient
-from tbot.clients.walletapp.client import WalletAppClient
+from tbot.clients.walletapp_api.client import WalletAppClient
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.users.type import UserStates
 from tbot.utils import absolute_endpoint_path

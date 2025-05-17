@@ -134,11 +134,7 @@ class MonobankWebhookView(View):
 
     @staticmethod
     def skip_transaction(transaction: Transaction) -> bool:
-        return bool(
-            re.search(
-                r"Mocking", transaction.description.lower()
-            )
-        )
+        return bool(re.search(r"Mocking", transaction.description.lower()))
 
 
 @method_decorator(csrf_exempt, name="dispatch")

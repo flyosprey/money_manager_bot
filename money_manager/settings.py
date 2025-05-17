@@ -14,7 +14,6 @@ import os
 import pathlib
 
 import dj_database_url
-import django_heroku
 
 from money_manager.config import config
 from money_manager.logger.setup import setup_logging
@@ -35,6 +34,7 @@ DEBUG = config.is_test
 ALLOWED_HOSTS = ["*"]
 
 PROJECT_PATH = pathlib.Path(__file__).parent.parent.absolute()
+FAISS_DIR = PROJECT_PATH / "faiss_storage"
 
 # Application definition
 
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tbot_base",
+    "django_celery_beat",
+    "money_manager.celery",
 ]
 
 MIDDLEWARE = [
@@ -78,8 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "money_manager.wsgi.application"
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
+SECURE_SSL_REDIRECT = False
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -136,6 +138,11 @@ BOT_HANDLERS = [
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
     "tbot.handlers.wallet_settings",
+    "tbot.handlers.ai",
 ]
 
-django_heroku.settings(locals())
+CELERY_BROKER_URL = config.redis.url
+CELERY_RESULT_BACKEND = config.redis.url
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"

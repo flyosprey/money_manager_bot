@@ -1,4 +1,4 @@
-import logging
+import logging.config
 import os
 import pathlib
 from datetime import UTC, datetime

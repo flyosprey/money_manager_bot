@@ -34,6 +34,12 @@ DEBUG = config.is_test
 ALLOWED_HOSTS = ["*"]
 
 PROJECT_PATH = pathlib.Path(__file__).parent.parent.absolute()
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://osprey.work.gd",
+    "https://www.osprey.work.gd"
+]
+
 FAISS_DIR = PROJECT_PATH / "faiss_storage"
 
 # Application definition

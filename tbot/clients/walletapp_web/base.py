@@ -25,6 +25,9 @@ class MoneyManagerBase(ABC):
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--start-maximized")
+
         temp_profile = tempfile.mkdtemp()
         options.add_argument(f"--user-data-dir={temp_profile}")
 

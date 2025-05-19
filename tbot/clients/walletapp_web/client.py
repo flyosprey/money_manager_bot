@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-from selenium.common import NoSuchElementException
+from selenium.common import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
@@ -48,13 +48,16 @@ class MoneyManager(MoneyManagerBase):
 
     def press_create_record(self) -> None:
         record_button = WebDriverWait(self.driver, 120).until(
-            ec.presence_of_element_located(
+            ec.element_to_be_clickable(
                 (By.XPATH, ".//button[@class='ui blue mini circular compact button']")
             )
         )
         self.scroll_into_view(record_button)
-        time.sleep(1)
-        record_button.click()
+
+        try:
+            record_button.click()
+        except ElementClickInterceptedException:
+            self.driver.execute_script("arguments[0].click();", record_button)
 
     def set_amount(self, amount: float) -> None:
         amount_input = self.driver.find_element(By.XPATH, ".//input[@name='amount']")

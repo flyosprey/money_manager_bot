@@ -24,8 +24,6 @@ services:
     volumes:
       - ./:/opt/money_manager_bot:ro
       - ./:/opt/money_manager_bot
-    depends_on:
-      - web
 
   beat:
     build:
@@ -36,8 +34,6 @@ services:
     command: celery -A money_manager.celery.app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/code
-    depends_on:
-      - web
 
   web:
     expose:

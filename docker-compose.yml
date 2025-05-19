@@ -26,6 +26,7 @@ services:
       - ./:/opt/money_manager_bot
     depends_on:
       - db
+      - redis
 
   beat:
     build:
@@ -38,6 +39,7 @@ services:
       - .:/code
     depends_on:
       - db
+      - redis
 
   web:
     expose:

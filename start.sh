@@ -13,7 +13,7 @@ echo "Migrate..."
 python manage.py migrate
 
 echo "Setup staticfiles"
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 SUPERUSER_NAME=${DJANGO_SUPERUSER_USERNAME}
 SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}

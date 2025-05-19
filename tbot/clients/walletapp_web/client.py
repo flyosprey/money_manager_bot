@@ -53,6 +53,7 @@ class MoneyManager(MoneyManagerBase):
             )
         )
         self.scroll_into_view(record_button)
+        time.sleep(1)
         record_button.click()
 
     def set_amount(self, amount: float) -> None:

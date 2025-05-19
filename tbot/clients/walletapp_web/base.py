@@ -1,4 +1,5 @@
 import json
+import tempfile
 import time
 from abc import ABC, abstractmethod
 
@@ -22,6 +23,11 @@ class MoneyManagerBase(ABC):
     def __set_options() -> Options:
         options = Options()
         options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        temp_profile = tempfile.mkdtemp()
+        options.add_argument(f"--user-data-dir={temp_profile}")
+
         return options
 
     @staticmethod

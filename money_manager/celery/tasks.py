@@ -1,3 +1,4 @@
+import structlog
 from celery import shared_task
 
 from money_manager.config import TIMEZONE_KYIV, config
@@ -15,6 +16,8 @@ from tbot_base.repository.bot_user import BotUserRepository
 from tbot_base.repository.user_categories import UserCategoriesRepository
 from tbot_base.repository.user_integration import UserIntegrationRepository
 from tbot_base.security.encrypting import EncryptManager
+
+logger = structlog.get_logger(__name__)
 
 
 @shared_task
@@ -43,19 +46,24 @@ def setup_categories(user_id: int):
     ) as manager:
         for category in CATEGORY_SUBCATEGORY_MAP:
             for sub_category in CATEGORY_SUBCATEGORY_MAP[category]:
+                category_name = f"{category.value}_{sub_category.value}"
                 manager.create_transaction(
                     amount=MINIMUM_ALLOWED_TRANSACTION_AMOUNT,
                     category=category,
                     sub_category=sub_category,
                 )
+                logger.info("Transaction for category %s created", category_name)
                 payload = manager.get_transaction_payload()
+                logger.info("Category id: %s created", payload["docs"][0]["categoryId"])
 
                 category_repository.upsert(
                     user_id=user_id,
                     category_id=payload["docs"][0]["categoryId"],
-                    name=f"{category.value}_{sub_category.value}",
+                    name=category_name,
                 )
+                logger.info("Category saved %s", category_name)
                 cloud_wallet_client.delete_transaction(transaction_payload=payload)
+                logger.info("Transaction for category %s deleted", category_name)
 
 
 @shared_task

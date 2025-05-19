@@ -25,7 +25,6 @@ class UserCategoriesRepository(Repository):
             filter_kwargs = {
                 "user_id": kwargs["user_id"],
                 "category_id": kwargs["category_id"],
-                "category_type": kwargs.get("category_type", ""),
             }
 
             UserCategories.objects.filter(**filter_kwargs).update(**kwargs)

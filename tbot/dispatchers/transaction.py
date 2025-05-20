@@ -42,8 +42,7 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
         text=f"{call.message.text}\n\nЗаписано✅",
     )
 
-    # save_to_ai_memory.delay(call.from_user.id, transaction.model_dump())
-    save_to_ai_memory(call.from_user.id, transaction.model_dump())
+    save_to_ai_memory.delay(call.from_user.id, transaction.model_dump())
 
 
 def handle_reject_transaction(call: CallbackQuery):

@@ -36,6 +36,10 @@ class MemoryRAGBase(ABC):
         pass
 
     @abstractmethod
+    def delete(self, doc_id: str) -> None:
+        pass
+
+    @abstractmethod
     def reset(self):
         pass
 
@@ -48,6 +52,10 @@ class UserMemoryRAG(MemoryRAGBase):
     def search(self, query: str, k: int = 3) -> list[str]:
         results = self.vectorstore.similarity_search(query, k=k)
         return [doc.page_content for doc in results]
+
+    def delete(self, doc_id: str) -> None:
+        self.vectorstore.delete(ids=[doc_id])
+        self.vectorstore.save_local(str(self.persist_dir), index_name=str(self.user_id))
 
     def reset(self):
         for path in [self.index_path, self.doc_path]:

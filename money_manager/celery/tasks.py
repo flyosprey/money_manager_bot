@@ -90,7 +90,10 @@ def save_to_ai_memory(user_id: int, transaction: dict):
 
 
 def construct_metadata_for_rag_storage(transaction: SimpleTransaction) -> dict:
-    return transaction.model_dump(exclude={"label_id", "category_id"})
+    return {
+        **transaction.model_dump(exclude={"label_id", "category_id"}),
+        "doc_id": str(transaction.time)
+    }
 
 
 def construct_message_for_rag_storage(transaction: SimpleTransaction) -> str:

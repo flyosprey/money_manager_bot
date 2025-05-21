@@ -8,14 +8,14 @@ from tbot_base.bot import tbot as bot
 
 def handle_awaiting_question_to_ai(message: Message, redis: RedisWrapper):
     bot.send_message(chat_id=message.chat.id, text="Напишіть питання раднику.")
-    redis.set_user_state(message.from_user.id, state=UserStates.QUESTION_TO_AI)
+    redis.set_user_state(user_id=message.from_user.id, state=UserStates.QUESTION_TO_AI)
 
 
 def handle_question_to_ai(message: Message, redis: RedisWrapper):
     llm = LLMAssistant(user_id=message.from_user.id)
     response = llm.ask(query=message.text)
     bot.send_message(chat_id=message.chat.id, text=response.content)
-    redis.set_user_state(message.from_user.id, state=UserStates.IDLE)
+    redis.set_user_state(user_id=message.from_user.id, state=UserStates.IDLE)
 
 
 def handle_ai_advice(message: Message):

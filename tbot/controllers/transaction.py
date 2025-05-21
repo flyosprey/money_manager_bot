@@ -130,7 +130,9 @@ def add_transaction(
 
 
 def delete_transaction(doc_id: int, user_id: int, secret_key: SecretStr):
-    transaction = UserTransactionsRepository.select(user_id=user_id, doc_id=doc_id, first=True)
+    transaction = UserTransactionsRepository.select(
+        user_id=user_id, doc_id=doc_id, first=True
+    )
     if not transaction:
         return
 

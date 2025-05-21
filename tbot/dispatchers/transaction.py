@@ -25,9 +25,7 @@ from tbot_base.repository.wallet_label import UserWalletLabelRepository
 
 
 def fix_accept_delete_transaction_message(text: str) -> str:
-    return text.replace("\n\nВідхилено🚫", "").replace(
-        "\n\nЗаписано✅", ""
-    )
+    return text.replace("\n\nВідхилено🚫", "").replace("\n\nЗаписано✅", "")
 
 
 def handle_accept_transaction(call: CallbackQuery, config: Config):

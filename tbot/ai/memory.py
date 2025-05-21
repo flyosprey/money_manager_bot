@@ -28,7 +28,9 @@ class MemoryRAGBase(ABC):
         return FAISS.from_texts([""], self.embedding)
 
     @abstractmethod
-    def add(self, texts: list[str], metadatas: list[dict]):
+    def add(
+        self, texts: list[str], metadatas: list[dict], ids: list[str] | None = None
+    ):
         pass
 
     @abstractmethod
@@ -45,8 +47,10 @@ class MemoryRAGBase(ABC):
 
 
 class UserMemoryRAG(MemoryRAGBase):
-    def add(self, texts: list[str], metadatas: list[dict]):
-        self.vectorstore.add_texts(texts, metadatas=metadatas)
+    def add(
+        self, texts: list[str], metadatas: list[dict], ids: list[str] | None = None
+    ):
+        self.vectorstore.add_texts(texts, metadatas=metadatas, ids=ids)
         self.vectorstore.save_local(str(self.persist_dir), index_name=str(self.user_id))
 
     def search(self, query: str, k: int = 3) -> list[str]:

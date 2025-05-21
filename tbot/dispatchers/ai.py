@@ -19,7 +19,7 @@ def save_to_ai_memory(user_id: int, transaction: SimpleTransaction):
     memory_storage = UserMemoryRAG(user_id=user_id)
     text = construct_message_for_rag_storage(transaction=transaction)
     metadata = construct_metadata_for_rag_storage(transaction=transaction)
-    memory_storage.add(texts=[text], metadatas=[metadata])
+    memory_storage.add(texts=[text], metadatas=[metadata], ids=[str(transaction.time)])
 
 
 def delete_from_ai_memory(user_id: int, doc_id: int):
@@ -28,10 +28,7 @@ def delete_from_ai_memory(user_id: int, doc_id: int):
 
 
 def construct_metadata_for_rag_storage(transaction: SimpleTransaction) -> dict:
-    return {
-        **transaction.model_dump(exclude={"label_id", "category_id"}),
-        "doc_id": str(transaction.time),
-    }
+    return transaction.model_dump(exclude={"label_id", "category_id"})
 
 
 def construct_message_for_rag_storage(transaction: SimpleTransaction) -> str:

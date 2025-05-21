@@ -8,7 +8,6 @@ from tbot.controllers.transaction import (
     delete_transaction,
     get_amount,
     get_comment,
-    get_label_id,
     get_transaction_from_message,
 )
 from tbot.dependencies.redis import RedisWrapper
@@ -30,9 +29,6 @@ def fix_accept_delete_transaction_message(text: str) -> str:
 
 def handle_accept_transaction(call: CallbackQuery, config: Config):
     transaction = get_transaction_from_message(call.message.text)
-    transaction.label_id = get_label_id(
-        user_id=call.from_user.id, label_name=transaction.label_name
-    )
 
     add_transaction(
         user_id=call.from_user.id,

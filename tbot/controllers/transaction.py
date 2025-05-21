@@ -105,6 +105,9 @@ def add_transaction(
     transaction.category_id = get_category_id(
         mcc=transaction.mcc, category_type=transaction.type, user_id=user_id
     )
+    transaction.label_id = get_label_id(
+        user_id=user_id, label_name=transaction.label_name
+    )
 
     integration = UserIntegrationRepository.select(
         user_id=user_id,

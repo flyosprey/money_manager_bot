@@ -241,3 +241,42 @@ class UserWalletLabel(models.Model):
                 fields=["user", "name"], name="unique_user_label_name"
             )
         ]
+
+
+class UserCategories(models.Model):
+    user = models.ForeignKey(
+        "BotUsers",
+        on_delete=models.CASCADE,
+        verbose_name="User",
+        related_name="categories",
+        default=None,
+        null=True,
+    )
+    category_id = models.CharField(
+        verbose_name="Category ID",
+        max_length=256,
+        blank=False,
+        editable=True,
+        null=False,
+        unique=False,
+    )
+    name = models.CharField(
+        verbose_name="Category name",
+        max_length=256,
+        blank=True,
+        editable=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"Category for {self.user.user_name} {self.user.user_id}"
+
+    class Meta:
+        verbose_name = "User Category"
+        verbose_name_plural = "User Categories"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "category_id"],
+                name="unique_user_category_id",
+            )
+        ]

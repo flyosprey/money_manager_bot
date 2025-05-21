@@ -1,8 +1,9 @@
 from requests.exceptions import RequestException
 from telebot.types import Message
 
+from money_manager.celery.tasks import setup_categories
 from money_manager.config import config
-from tbot.clients.walletapp.client import WalletAppClient
+from tbot.clients.walletapp_api.client import WalletAppClient
 from tbot.controllers.integration import (
     check_monobank,
     check_walletapp_credentials,
@@ -156,6 +157,7 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         where={"user_id": message.from_user.id},
         update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
+    setup_categories.delay(message.from_user.id)
     bot.send_message(
         chat_id=message.chat.id,
         text="Успішно інтегровано!✅"
@@ -270,3 +272,8 @@ def handle_monobank_handler(
         chat_id=message.chat.id,
         text="🏦Токен Monobank оновлено✅",
     )
+
+
+def handle_setup_categories(message: Message):
+    bot.send_message(chat_id=message.chat.id, text="Categories sent to collect")
+    setup_categories.delay(message.from_user.id)

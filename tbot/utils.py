@@ -13,7 +13,7 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup
 
 from money_manager.config import TIMEZONE_UTC, config
-from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
+from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()

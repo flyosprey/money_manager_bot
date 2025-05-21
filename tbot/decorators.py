@@ -7,7 +7,7 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import CallbackQuery
 
 from tbot.controllers.transaction import get_transaction_from_message
-from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryName
+from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot.errors import IncorrectMCCCodeError, InvalidCredentialsError
 from tbot.keyboards import transaction_menu
 from tbot.utils import admin_bot_notification, edit_message

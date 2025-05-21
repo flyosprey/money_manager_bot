@@ -1,8 +1,8 @@
 from telebot import types
 
 from tbot.dto.transactions.type import TransactionStatus
-from tbot.dto.walletapp.mcc_codes import MCCTransactionCategoryPagination
-from tbot.dto.walletapp.type import SettingsStates
+from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryPagination
+from tbot.dto.walletapp_api.type import SettingsStates
 
 COlUMN_OF_CATEGORY_BUTTONS = 2
 COlUMN_OF_LABEL_BUTTONS = 2
@@ -21,7 +21,11 @@ def menu(bot):
         types.KeyboardButton("Змінити аккаунт WalletApp"),
     )
 
-    markup.add(types.KeyboardButton("Налаштування гаманця обліку"))
+    markup.add(
+        types.KeyboardButton("Налаштування гаманця обліку"),
+        types.KeyboardButton("Порада радника"),
+        types.KeyboardButton("Налаштувати категорії"),
+    )
 
     markup.add(
         types.KeyboardButton(
@@ -34,10 +38,8 @@ def menu(bot):
             types.BotCommand("/integrate", "Розпочати"),
             types.BotCommand("/about", "Для чого цей бот?"),
             types.BotCommand("/donate", "Підтримати донатом"),
-            # types.BotCommand(
-            #     "/add_token",
-            #     "Додати трекінг додаткового аккаунту Monobank",
-            # ),
+            types.BotCommand("/setup_categories", "Налаштувати категорії"),
+            types.BotCommand("/ai_advice", "Порада радника"),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
             types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
             types.BotCommand(

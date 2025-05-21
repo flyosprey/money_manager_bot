@@ -14,7 +14,6 @@ import os
 import pathlib
 
 import dj_database_url
-import django_heroku
 
 from money_manager.config import config
 from money_manager.logger.setup import setup_logging
@@ -36,6 +35,13 @@ ALLOWED_HOSTS = ["*"]
 
 PROJECT_PATH = pathlib.Path(__file__).parent.parent.absolute()
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://osprey.work.gd",
+    "https://www.osprey.work.gd"
+]
+
+FAISS_DIR = PROJECT_PATH / "faiss_storage"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,6 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tbot_base",
+    "django_celery_beat",
+    "money_manager.celery",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "money_manager.urls"
@@ -129,6 +138,7 @@ setup_logging(path_=PROJECT_PATH)
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 BOT_HANDLERS = [
     "tbot.handlers.base",
@@ -136,6 +146,11 @@ BOT_HANDLERS = [
     "tbot.handlers.integration",
     "tbot.handlers.transaction",
     "tbot.handlers.wallet_settings",
+    "tbot.handlers.ai",
 ]
 
-django_heroku.settings(locals())
+CELERY_BROKER_URL = config.redis.url
+CELERY_RESULT_BACKEND = config.redis.url
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"

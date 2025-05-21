@@ -11,9 +11,16 @@ ENV DEBIAN_FRONTEND=noninteractive \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_HOME='/usr/local'
 
-RUN apt-get update && \
-    apt-get install -y curl libpq-dev gcc cron git && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    wget gnupg unzip curl libpq-dev gcc cron git \
+    libnss3 libgconf-2-4 libxss1 libappindicator1 libindicator7 \
+    fonts-liberation libasound2 libatk-bridge2.0-0 libcups2 libdrm2 libgtk-3-0 \
+    libxcomposite1 libxdamage1 libxrandr2 libgbm1 libx11-xcb1 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y google-chrome-stable
 
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
     poetry config virtualenvs.in-project false && \

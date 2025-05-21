@@ -1,9 +1,9 @@
 import json
 
-from redis.client import Redis  # noqa
+from redis.client import Redis
 from tbot.dto.transactions.type import TransactionStatus
 from tbot.dto.users.type import UserStates
-from tbot.dto.walletapp.type import SettingsStates
+from tbot.dto.walletapp_api.type import SettingsStates
 
 USER_STATE_TEMPLATE = "{user_id}_state"
 USER_STATUS_TTL = 60 * 60 * 24  # 1 day

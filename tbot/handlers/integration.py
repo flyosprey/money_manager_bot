@@ -9,6 +9,7 @@ from tbot.dispatchers.integration import (
     handle_integration,
     handle_mono_token,
     handle_reset,
+    handle_setup_categories,
     handle_walletapp_login,
     handle_walletapp_password,
     handle_walletapp_username,
@@ -24,14 +25,6 @@ def integrate_handler(
 ):
     register_user(message=message)
     handle_integration(message=message, redis=redis)
-
-
-# @bot.message_handler(commands=["add_token"])
-# @exception_handler()
-# def additional_mono_token_handler(
-#     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
-# ):
-#     handle_integration(message=message, redis=redis)
 
 
 @bot.message_handler(
@@ -111,3 +104,11 @@ def reset_handler(
     message: Message, redis: RedisWrapper = RedisWrapper(dsn=config.redis.url)
 ):
     handle_reset(message=message, redis=redis, dsn=config.dsn)
+
+
+@bot.message_handler(
+    func=lambda message: message.text in ("Налаштувати аккаунт", "/setup_categories")
+)
+@exception_handler()
+def setup_categories_handler(message: Message):
+    handle_setup_categories(message=message)

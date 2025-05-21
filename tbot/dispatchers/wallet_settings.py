@@ -3,7 +3,7 @@ from telebot.types import CallbackQuery, Message
 from money_manager.config import config
 from tbot.controllers.wallet_settings import add_label
 from tbot.dependencies.redis import RedisWrapper
-from tbot.dto.walletapp.type import SettingsStates
+from tbot.dto.walletapp_api.type import SettingsStates
 from tbot.keyboards import wallet_settings_menu
 from tbot_base.bot import tbot as bot
 

@@ -12,6 +12,9 @@ python manage.py makemigrations
 echo "Migrate..."
 python manage.py migrate
 
+echo "Setup staticfiles"
+python manage.py collectstatic --noinput
+
 SUPERUSER_NAME=${DJANGO_SUPERUSER_USERNAME}
 SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
 SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
@@ -34,7 +37,7 @@ if not User.objects.filter(username=username).exists():
 EOF
 
 echo "Starting Django server..."
-gunicorn --reload money_manager.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 &
+gunicorn --reload money_manager.wsgi:application --bind 0.0.0.0:${WEB_PORT} --workers 3 --timeout 120 &
 
 sleep 20
 

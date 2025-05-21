@@ -22,6 +22,18 @@ class BotAdminConfig(BaseSettings):
     chat_id: int = Field(..., description="Chat id")
 
 
+class OpenAIConfig(BaseSettings):
+    token: str = Field(..., description="Api key")
+
+    @property
+    def api_key(self) -> str:
+        return (
+            "sk-proj-" + self.token[:3:-1]
+            if self.token.startswith("gpt:")
+            else self.token
+        )
+
+
 class DeploymentConfig(BaseSettings):
     github_secret_key: SecretStr = Field(..., description="Secret Key from Github")
     project_path: str = Field(
@@ -38,6 +50,7 @@ class Config(BaseSettings):
     postgres: PostgresConfig = Field(..., description="Postgres Config")
     bot_admin: BotAdminConfig = Field(..., description="Bot Admin Config")
     deployment: DeploymentConfig = Field(..., description="Github Admin Config")
+    openai: OpenAIConfig = Field(..., description="OpenAI Config")
     donate_url: str = Field("", description="Donate url")
 
     class Config:

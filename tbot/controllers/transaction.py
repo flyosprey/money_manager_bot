@@ -1,7 +1,7 @@
 from pydantic import SecretStr
 
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
-from tbot.dispatchers.ai import delete_from_ai_memory, save_to_ai_memory
+from tbot.controllers.ai import delete_from_ai_memory, save_to_ai_memory
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError

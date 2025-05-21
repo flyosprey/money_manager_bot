@@ -16,6 +16,18 @@ from tbot_base.bot import tbot as bot
 logger = structlog.get_logger(__name__)
 
 
+def notify_admin_about_action(action: str):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            chat_id, text, msg_id = get_message_info(msg=args[0])
+            admin_bot_notification(message=f"[Action] {action}\n[{chat_id}] {text}")
+
+        return wrapper
+
+    return decorator
+
+
 def exception_handler():
     def decorator(func):
         @wraps(func)

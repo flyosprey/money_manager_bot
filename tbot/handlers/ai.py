@@ -36,7 +36,7 @@ def awaiting_question_to_ai_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url).get_user_state(
         message.from_user.id
     )
-    == UserStates.QUESTION_TO_AI
+    == UserStates.QUESTION_TO_AI.value
 )
 @exception_handler()
 @notify_admin_about_action(action="ai_question")

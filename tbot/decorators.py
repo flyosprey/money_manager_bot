@@ -22,6 +22,7 @@ def notify_admin_about_action(action: str):
         def wrapper(*args, **kwargs):
             chat_id, text, msg_id = get_message_info(msg=args[0])
             admin_bot_notification(message=f"[Action] {action}\n[{chat_id}] {text}")
+            return func(*args, **kwargs)
 
         return wrapper
 

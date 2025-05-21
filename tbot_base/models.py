@@ -280,3 +280,43 @@ class UserCategories(models.Model):
                 name="unique_user_category_id",
             )
         ]
+
+
+class UserTransactions(models.Model):
+    user = models.ForeignKey(
+        "BotUsers",
+        on_delete=models.CASCADE,
+        verbose_name="User",
+        related_name="transactions",
+        default=None,
+        null=True,
+    )
+    id = models.CharField(
+        verbose_name="Transaction ID",
+        max_length=256,
+        blank=False,
+        editable=False,
+        null=False,
+        primary_key=True,
+    )
+    doc_id = models.CharField(
+        verbose_name="Memory Doc ID",
+        max_length=256,
+        blank=False,
+        editable=True,
+        null=False,
+        unique=True,
+    )
+    body = models.JSONField(
+        verbose_name="Transaction Body",
+        null=False,
+        blank=False,
+        default=dict,
+    )
+
+    def __str__(self):
+        return f"Transaction for {self.user.user_name} {self.user.user_id}"
+
+    class Meta:
+        verbose_name = "User Transaction"
+        verbose_name_plural = "User Transactions"

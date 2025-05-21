@@ -31,7 +31,7 @@ def accept_transaction_handler(call: CallbackQuery):
 @exception_handler()
 @unknown_category_message_handler()
 def reject_transaction_handler(call: CallbackQuery):
-    handle_reject_transaction(call=call)
+    handle_reject_transaction(call=call, config=config)
 
 
 @bot.callback_query_handler(

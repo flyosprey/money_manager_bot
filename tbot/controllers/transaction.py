@@ -1,6 +1,7 @@
 from pydantic import SecretStr
 
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
+from tbot.dispatchers.ai import delete_from_ai_memory, save_to_ai_memory
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError
@@ -10,6 +11,7 @@ from tbot.utils import (
 )
 from tbot_base.repository.user_categories import UserCategoriesRepository
 from tbot_base.repository.user_integration import UserIntegrationRepository
+from tbot_base.repository.user_transaction import UserTransactionsRepository
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
 from tbot_base.security.encrypting import EncryptManager
 
@@ -116,9 +118,42 @@ def add_transaction(
         username=encrypter.decrypt_key(integration.wallet_app_login),
         password=encrypter.decrypt_key(integration.wallet_app_password),
     )
-    CloudWalletAppClient(
+    transaction_id, body = CloudWalletAppClient(
         owner_id=owner_id, owner_id_token=owner_id_token
     ).add_transaction(transaction=transaction)
+
+    UserTransactionsRepository.insert(
+        user_id=user_id, id=transaction_id, doc_id=transaction.time, body=body
+    )
+
+    save_to_ai_memory(user_id, transaction)
+
+
+def delete_transaction(doc_id: int, user_id: int, secret_key: SecretStr):
+    transaction = UserTransactionsRepository.select(user_id=user_id, doc_id=doc_id, first=True)
+    if not transaction:
+        return
+
+    transaction = transaction[0]
+    integration = UserIntegrationRepository.select(
+        user_id=user_id,
+        wallet_app_password__isnull=False,
+        wallet_app_login__isnull=False,
+        first=True,
+    )[0]
+    encrypter = EncryptManager(secret_key=secret_key)
+
+    owner_id, owner_id_token = WalletAppClient().login(
+        username=encrypter.decrypt_key(integration.wallet_app_login),
+        password=encrypter.decrypt_key(integration.wallet_app_password),
+    )
+    CloudWalletAppClient(
+        owner_id=owner_id, owner_id_token=owner_id_token
+    ).delete_transaction(transaction_payload=transaction.body)
+
+    delete_from_ai_memory(user_id, doc_id)
+
+    UserTransactionsRepository.delete(user_id=user_id, doc_id=doc_id)
 
 
 def get_category_id(mcc: int, category_type: str, user_id: int) -> str:

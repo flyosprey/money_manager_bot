@@ -1,16 +1,12 @@
 import structlog
 from celery import shared_task
 
-from money_manager.config import TIMEZONE_KYIV, config
+from money_manager.config import config
 from tbot.ai.gpt import LLMAssistant
-from tbot.ai.memory import UserMemoryRAG
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
 from tbot.clients.walletapp_web.client import MoneyManager
 from tbot.constants import MINIMUM_ALLOWED_TRANSACTION_AMOUNT
-from tbot.dto.transactions.payload import SimpleTransaction
-from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot.dto.walletapp_web.type import CATEGORY_SUBCATEGORY_MAP
-from tbot.utils import convert_money, convert_timestamp_to_datetime
 from tbot_base.bot import tbot as bot
 from tbot_base.repository.bot_user import BotUserRepository
 from tbot_base.repository.user_categories import UserCategoriesRepository
@@ -78,32 +74,3 @@ def ai_advice(user, prompt: str, title: str):
 
     if response.content and "I don’t know" not in response.content:
         bot.send_message(chat_id=user.chat_id, text=f"{title}:\n{response.content}")
-
-
-@shared_task
-def save_to_ai_memory(user_id: int, transaction: dict):
-    transaction = SimpleTransaction(**transaction)
-    memory_storage = UserMemoryRAG(user_id=user_id)
-    text = construct_message_for_rag_storage(transaction=transaction)
-    metadata = construct_metadata_for_rag_storage(transaction=transaction)
-    memory_storage.add(texts=[text], metadatas=[metadata])
-
-
-def construct_metadata_for_rag_storage(transaction: SimpleTransaction) -> dict:
-    return {
-        **transaction.model_dump(exclude={"label_id", "category_id"}),
-        "doc_id": str(transaction.time)
-    }
-
-
-def construct_message_for_rag_storage(transaction: SimpleTransaction) -> str:
-    label = f"- {transaction.label_name}" if transaction.label_name else ""
-    date_ = convert_timestamp_to_datetime(
-        timestamp=transaction.time, timezone=TIMEZONE_KYIV
-    ).replace(tzinfo=None)
-    amount = convert_money(transaction.amount)
-    return (
-        f"[{date_}] {transaction.type}{amount}₴ for "
-        f"{MCCTransactionCategoryName[transaction.type][transaction.mcc]} {label}."
-        f"Additional_info: {transaction.note}."
-    )

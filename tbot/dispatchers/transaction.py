@@ -2,10 +2,10 @@ import re
 
 from telebot.types import CallbackQuery, Message
 
-from money_manager.celery.tasks import save_to_ai_memory
 from money_manager.config import Config
 from tbot.controllers.transaction import (
     add_transaction,
+    delete_transaction,
     get_amount,
     get_comment,
     get_label_id,
@@ -24,6 +24,12 @@ from tbot_base.bot import tbot as bot
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
 
 
+def fix_accept_delete_transaction_message(text: str) -> str:
+    return text.replace("\n\nВідхилено🚫", "").replace(
+        "\n\nЗаписано✅", ""
+    )
+
+
 def handle_accept_transaction(call: CallbackQuery, config: Config):
     transaction = get_transaction_from_message(call.message.text)
     transaction.label_id = get_label_id(
@@ -36,23 +42,29 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
         transaction=transaction,
     )
 
+    text = fix_accept_delete_transaction_message(text=call.message.text)
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
-        text=f"{call.message.text}\n\nЗаписано✅",
+        text=f"{text}\n\nЗаписано✅",
+        reply_markup=transaction_menu(is_acceptable=False),
     )
 
-    # save_to_ai_memory.delay(call.from_user.id, transaction.model_dump())
-    save_to_ai_memory(call.from_user.id, transaction.model_dump())
 
+def handle_reject_transaction(call: CallbackQuery, config: Config):
+    transaction = get_transaction_from_message(call.message.text)
+    delete_transaction(
+        user_id=call.from_user.id,
+        doc_id=transaction.time,
+        secret_key=config.secret_key,
+    )
 
-def handle_reject_transaction(call: CallbackQuery):
-    text = call.message.text.replace("\n\nВідхилено🚫", "")
+    text = fix_accept_delete_transaction_message(text=call.message.text)
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=f"{text}\n\nВідхилено🚫",
-        reply_markup=transaction_menu(),
+        reply_markup=transaction_menu(is_deletable=False),
     )
 
 

@@ -122,7 +122,7 @@ class CloudWalletAppClient(BaseClient):
         transaction: SimpleTransaction,
         record_id: str = None,
         rev_id: str = None,
-    ) -> str:
+    ) -> (str, dict):
         if record_id is None:
             record_id = str(uuid.uuid4())
         if rev_id is None:
@@ -138,7 +138,7 @@ class CloudWalletAppClient(BaseClient):
 
         self.create_record(payload=payload)
 
-        return record_id
+        return record_id, payload
 
     def delete_transaction(
         self,

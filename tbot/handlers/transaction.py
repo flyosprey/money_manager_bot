@@ -60,7 +60,7 @@ def awaiting_update_price_transaction_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
     .get_transaction_status(message.from_user.id)
     .get("status")
-    in {TransactionStatus.ADD_COMMENT.value}
+    == TransactionStatus.ADD_COMMENT
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -74,7 +74,7 @@ def add_comment_transaction_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
     .get_transaction_status(message.from_user.id)
     .get("status")
-    in {TransactionStatus.UPDATE_PRICE.value}
+    == TransactionStatus.UPDATE_PRICE
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -99,7 +99,7 @@ def awaiting_separate_transaction_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
     .get_transaction_status(message.from_user.id)
     .get("status")
-    in {TransactionStatus.SEPARATE_TRANSACTIONS.value}
+    == TransactionStatus.SEPARATE_TRANSACTIONS
 )
 @exception_handler()
 @unknown_category_message_handler()

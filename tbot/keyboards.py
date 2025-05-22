@@ -13,24 +13,26 @@ COlUMN_OF_LABEL_BUTTONS = 2
 def menu(bot):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
 
-    markup.add(types.KeyboardButton("Розпочати"))
+    markup.add(
+        types.KeyboardButton(
+            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
+        ),
+    )
+
+    markup.add(
+        types.KeyboardButton("Порада радника"),
+        types.KeyboardButton("Запитання раднику"),
+    )
+
+    markup.add(
+        types.KeyboardButton("Налаштування гаманця обліку"),
+        types.KeyboardButton("Налаштувати категорії"),
+    )
 
     markup.add(
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
         types.KeyboardButton("Змінити аккаунт WalletApp"),
-    )
-
-    markup.add(
-        types.KeyboardButton("Налаштування гаманця обліку"),
-        types.KeyboardButton("Порада радника"),
-        types.KeyboardButton("Налаштувати категорії"),
-    )
-
-    markup.add(
-        types.KeyboardButton(
-            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
-        )
     )
 
     bot.set_my_commands(
@@ -40,6 +42,7 @@ def menu(bot):
             types.BotCommand("/donate", "Підтримати донатом"),
             types.BotCommand("/setup_categories", "Налаштувати категорії"),
             types.BotCommand("/ai_advice", "Порада радника"),
+            types.BotCommand("/question_to_ai", "Запитання раднику"),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
             types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
             types.BotCommand(
@@ -125,6 +128,13 @@ def set_editable_menu(
     return keyboard
 
 
+def go_back_menu(keyboard: types.InlineKeyboardMarkup) -> types.InlineKeyboardMarkup:
+    keyboard.add(
+        types.InlineKeyboardButton("Повернутися назад🔙", callback_data="go_back_menu")
+    )
+    return keyboard
+
+
 def transaction_categories_menu(
     transaction_type: str, page: int = 1
 ) -> types.InlineKeyboardMarkup:
@@ -133,6 +143,7 @@ def transaction_categories_menu(
     generate_categories_keyboard(
         transaction_type=transaction_type, page=page, keyboard=keyboard
     )
+    go_back_menu(keyboard=keyboard)
 
     return keyboard
 

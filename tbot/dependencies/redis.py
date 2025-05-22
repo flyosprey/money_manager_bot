@@ -48,12 +48,15 @@ class RedisWrapper:
         )
 
     def get_transaction_status(self, user_id: int) -> dict:
-        status = self.redis.get(name=TRANSACTION_STATE_TEMPLATE.format(user_id=user_id))
+        data = self.redis.get(name=TRANSACTION_STATE_TEMPLATE.format(user_id=user_id))
 
-        if not status:
+        if not data:
             return {}
 
-        return json.loads(status)
+        data = json.loads(data)
+        data["status"] = TransactionStatus(data["status"])
+
+        return data
 
     def set_settings_status(
         self,

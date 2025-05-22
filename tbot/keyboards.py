@@ -158,6 +158,7 @@ def transaction_labels_menu(
         page=page,
         keyboard=keyboard,
     )
+    go_back_menu(keyboard=keyboard)
 
     return keyboard
 

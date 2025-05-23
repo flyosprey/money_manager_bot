@@ -35,20 +35,18 @@ def exception_handler():
         def wrapper(*args, **kwargs):
             chat_id, text, msg_id = get_message_info(msg=args[0])
             try:
-                return func(*args, **kwargs)
+                func(*args, **kwargs)
             except IncorrectMCCCodeError as e:
                 logger.error(e, user_id=chat_id)
 
                 admin_bot_notification(message=str(e))
 
-                text = text.replace(
-                    "Категорія транзакції наразі не підтримується! Спробуйте пізніше.",
-                    "",
-                )
+                text = fix_not_supported_mcc_to_category_text(text=text)
                 edit_message(
                     chat_id=chat_id,
                     message_id=msg_id,
-                    text=f"{text}\n\nКатегорія транзакції наразі не підтримується! Спробуйте пізніше.",
+                    text=f"{text}\n\nКатегорія транзакції наразі не підтримується! Оберіть вручну.",
+                    reply_markup=transaction_menu()
                 )
                 return
             except InvalidCredentialsError as e:
@@ -67,10 +65,25 @@ def exception_handler():
 
                 admin_bot_notification(message=str(e))
                 return
+            else:
+                text = fix_not_supported_mcc_to_category_text(text=text)
+                edit_message(
+                    chat_id=chat_id,
+                    message_id=msg_id,
+                    text=text,
+                    reply_markup=transaction_menu()
+                )
 
         return wrapper
 
     return decorator
+
+
+def fix_not_supported_mcc_to_category_text(text: str) -> str:
+    return text.replace(
+        "Категорія транзакції наразі не підтримується! Спробуйте пізніше.",
+        "",
+    )
 
 
 def update_message_category(

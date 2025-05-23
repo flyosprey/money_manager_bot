@@ -29,7 +29,7 @@ def awaiting_add_label_handler(
 
 
 @bot.message_handler(
-    func=lambda message: RedisWrapper(dsn=config.redis.url).get_settings_status(
+    func=lambda message: RedisWrapper(dsn=config.redis.url).get_settings_state(
         message.from_user.id
     )
     == SettingsStates.ADD_LABEL

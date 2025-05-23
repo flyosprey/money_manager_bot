@@ -1,16 +1,18 @@
 import json
 
 from redis.client import Redis
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.users.type import UserStates
-from tbot.dto.walletapp_api.type import SettingsStates
+from tbot.dto.walletapp_api.type import SettingsStates, SetUpCategoriesStates
 
 USER_STATE_TEMPLATE = "{user_id}_state"
 USER_STATUS_TTL = 60 * 60 * 24  # 1 day
 TRANSACTION_STATE_TEMPLATE = "{user_id}_transaction_state"
-TRANSACTION_STATUS_TTL = 60 * 60 * 24  # 1 day
+TRANSACTION_STATE_TTL = 60 * 60 * 24  # 1 day
 SETTING_STATE_TEMPLATE = "{user_id}_settings_state"
-SETTING_STATUS_TTL = 60 * 60 * 24  # 1 day
+SETTING_STATE_TTL = 60 * 60 * 24  # 1 day
+SETUP_CATEGORIES_TEMPLATE = "{user_id}_setup_categories_state"
+SETUP_CATEGORIES_TTL = 60 * 60 * 1  # 1 hour
 
 
 class RedisWrapper:
@@ -32,47 +34,67 @@ class RedisWrapper:
 
         return UserStates(int(state.decode()))
 
-    def set_transaction_status(
+    def set_transaction_state(
         self,
         user_id: int,
-        status: TransactionStatus,
+        state: TransactionStates,
         text: str | None = None,
         message_id: int | None = None,
     ):
         self.redis.set(
             name=TRANSACTION_STATE_TEMPLATE.format(user_id=user_id),
             value=json.dumps(
-                {"status": status.value, "message_id": message_id, "text": text}
+                {"state": state.value, "message_id": message_id, "text": text}
             ),
-            ex=TRANSACTION_STATUS_TTL,
+            ex=TRANSACTION_STATE_TTL,
         )
 
-    def get_transaction_status(self, user_id: int) -> dict:
+    def get_transaction_state(self, user_id: int) -> dict:
         data = self.redis.get(name=TRANSACTION_STATE_TEMPLATE.format(user_id=user_id))
 
         if not data:
             return {}
 
         data = json.loads(data)
-        data["status"] = TransactionStatus(data["status"])
+        data["state"] = TransactionStates(data["state"])
 
         return data
 
-    def set_settings_status(
+    def set_settings_state(
         self,
         user_id: int,
-        status: SettingsStates,
+        state: SettingsStates,
     ):
         self.redis.set(
             name=SETTING_STATE_TEMPLATE.format(user_id=user_id),
-            value=status.value,
-            ex=TRANSACTION_STATUS_TTL,
+            value=state.value,
+            ex=SETTING_STATE_TTL,
         )
 
-    def get_settings_status(self, user_id: int) -> SettingsStates:
-        status = self.redis.get(name=SETTING_STATE_TEMPLATE.format(user_id=user_id))
+    def get_settings_state(self, user_id: int) -> SettingsStates:
+        state = self.redis.get(name=SETTING_STATE_TEMPLATE.format(user_id=user_id))
 
-        if not status:
+        if not state:
             return SettingsStates.IDLE
 
-        return SettingsStates(int(status.decode()))
+        return SettingsStates(int(state.decode()))
+
+    def set_setup_categories_state(
+        self,
+        user_id: int,
+        state: SetUpCategoriesStates,
+    ):
+        # SENT_TO_SET_UP
+        self.redis.set(
+            name=SETUP_CATEGORIES_TEMPLATE.format(user_id=user_id),
+            value=state.value,
+            ex=SETUP_CATEGORIES_TTL,
+        )
+
+    def get_setup_categories_state(self, user_id: int) -> SetUpCategoriesStates:
+        status = self.redis.get(name=SETUP_CATEGORIES_TEMPLATE.format(user_id=user_id))
+
+        if not status:
+            return SetUpCategoriesStates.IDLE
+
+        return SetUpCategoriesStates(int(status.decode()))

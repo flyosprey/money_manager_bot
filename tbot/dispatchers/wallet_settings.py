@@ -21,9 +21,7 @@ def handle_awaiting_add_label(call: CallbackQuery, redis: RedisWrapper):
         text="Введіть назву мітки:",
         chat_id=call.message.chat.id,
     )
-    redis.set_settings_status(
-        user_id=call.from_user.id, status=SettingsStates.ADD_LABEL
-    )
+    redis.set_settings_state(user_id=call.from_user.id, state=SettingsStates.ADD_LABEL)
 
 
 def handle_add_label(message: Message):

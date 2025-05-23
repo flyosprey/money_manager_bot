@@ -62,7 +62,7 @@ class MoneyManagerBase(ABC):
         )
         self.press_add_record()
 
-    def get_transaction_payload(self, timeout: int = 20) -> dict:
+    def get_transaction_payload(self, timeout: int = 30) -> dict:
         start_time = time.time()
         while time.time() - start_time < timeout:
             for req in self.driver.requests[self.start_requests_index :]:

@@ -11,7 +11,7 @@ from tbot.controllers.transaction import (
     get_transaction_from_message,
 )
 from tbot.dependencies.redis import RedisWrapper
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import (
     transaction_categories_menu,
@@ -68,11 +68,11 @@ def handle_awaiting_add_comment_transaction(call: CallbackQuery, redis: RedisWra
         text="Додайте коментар👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.ADD_COMMENT,
+        state=TransactionStates.ADD_COMMENT,
     )
 
 
@@ -82,22 +82,22 @@ def handle_awaiting_update_price_transaction(call: CallbackQuery, redis: RedisWr
         text="Вкажіть оновлену суму👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.UPDATE_PRICE,
+        state=TransactionStates.UPDATE_PRICE,
     )
 
 
 def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
     def send_error_message(chat_id, text):
         bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     text = message.text.strip()
     if not text:
@@ -124,8 +124,8 @@ def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
 def handle_update_price_transaction(message: Message, redis: RedisWrapper):
     def send_error_message(chat_id, text):
         bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
     try:
@@ -140,7 +140,7 @@ def handle_update_price_transaction(message: Message, redis: RedisWrapper):
         send_error_message(message.chat.id, "Сума не може бути 0")
         return
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     previous_amount = get_amount(text=transaction_text)
     updated_transaction_text = transaction_text.replace(
@@ -177,8 +177,8 @@ def finish_edit_transaction(
     message: Message,
     redis: RedisWrapper,
 ):
-    redis.set_transaction_status(
-        user_id=message.from_user.id, status=TransactionStatus.IDLE
+    redis.set_transaction_state(
+        user_id=message.from_user.id, state=TransactionStates.IDLE
     )
 
     bot.send_message(
@@ -210,19 +210,19 @@ def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrappe
         text="Вкажіть суми транзакцій через кому/пробіл👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.SEPARATE_TRANSACTIONS,
+        state=TransactionStates.SEPARATE_TRANSACTIONS,
     )
 
 
 def handle_separate_transaction(message: Message, redis: RedisWrapper):
     def send_error_message(chat_id, text):
         bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
     amounts = []
@@ -235,7 +235,7 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
             )
             return
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     previous_amount = get_amount(text=transaction_text)
     previous_amount_float = float(previous_amount)
@@ -271,8 +271,8 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
             reply_markup=transaction_menu(),
         )
 
-    redis.set_transaction_status(
-        user_id=message.from_user.id, status=TransactionStatus.IDLE
+    redis.set_transaction_state(
+        user_id=message.from_user.id, state=TransactionStates.IDLE
     )
 
 

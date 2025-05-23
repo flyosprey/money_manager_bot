@@ -1,6 +1,6 @@
 from telebot import types
 
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryPagination
 from tbot.dto.walletapp_api.type import SettingsStates
 
@@ -92,13 +92,13 @@ def set_default_transaction_keyboard(
     if is_acceptable:
         keyboard.add(
             types.InlineKeyboardButton(
-                "️Записати✍", callback_data=TransactionStatus.ACCEPTED
+                "️Записати✍", callback_data=TransactionStates.ACCEPTED
             )
         )
     if is_deletable:
         keyboard.add(
             types.InlineKeyboardButton(
-                "Відхилити🚫", callback_data=TransactionStatus.REJECTED
+                "Відхилити🚫", callback_data=TransactionStates.REJECTED
             )
         )
 
@@ -111,17 +111,17 @@ def set_editable_menu(
     keyboard.add(
         types.InlineKeyboardButton(
             "Розділити транзакції🖇",
-            callback_data=TransactionStatus.AWAITING_SEPARATE_TRANSACTIONS,
+            callback_data=TransactionStates.AWAITING_SEPARATE_TRANSACTIONS,
         )
     )
     keyboard.add(
         types.InlineKeyboardButton(
-            "Додати коментар💬", callback_data=TransactionStatus.AWAITING_ADD_COMMENT
+            "Додати коментар💬", callback_data=TransactionStates.AWAITING_ADD_COMMENT
         )
     )
     keyboard.add(
         types.InlineKeyboardButton(
-            "Змінити ціну🫰", callback_data=TransactionStatus.AWAITING_UPDATE_PRICE
+            "Змінити ціну🫰", callback_data=TransactionStates.AWAITING_UPDATE_PRICE
         )
     )
 

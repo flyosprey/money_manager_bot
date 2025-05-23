@@ -51,7 +51,9 @@ def setup_categories(user_id: int):
                 logger.info("Transaction for category %s created", category_name)
                 payload = manager.get_transaction_payload()
 
-                category_id = payload["docs"][0].get("categoryId") or payload["docs"][0]["_id"]
+                category_id = (
+                    payload["docs"][0].get("categoryId") or payload["docs"][0]["_id"]
+                )
                 logger.info("Category id: %s created", category_id)
 
                 category_repository.upsert(

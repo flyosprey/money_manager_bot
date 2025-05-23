@@ -70,7 +70,7 @@ class MoneyManagerBase(ABC):
                     continue
 
                 payload = json.loads(req.body)
-                if payload["docs"][0].get("categoryId"):
+                if payload.get("docs", [{}])[0].get("categoryId"):
                     return payload
             time.sleep(0.2)
 

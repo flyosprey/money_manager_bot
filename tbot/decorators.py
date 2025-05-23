@@ -65,14 +65,6 @@ def exception_handler():
 
                 admin_bot_notification(message=f"[Chat_id] {chat_id}.\n[Action] {text}.\nError message:\n{e}")
                 return
-            else:
-                text = fix_not_supported_mcc_to_category_text(text=text)
-                edit_message(
-                    chat_id=chat_id,
-                    message_id=msg_id,
-                    text=text,
-                    reply_markup=transaction_menu()
-                )
 
         return wrapper
 

@@ -261,12 +261,16 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
         transaction_message_id=data["message_id"], message=message
     )
 
+    previous_transaction_text = original_text
+    previous_amount = original_amount
     for amount in amounts:
-        updated = original_text.replace(f"{original_amount:.2f}", f"{amount:.2f}")
-        updated = modify_date_to_new(transaction_text=updated, seconds_diff=1)
+        updated_transaction_text = previous_transaction_text.replace(f"{previous_amount:.2f}", f"{amount:.2f}")
+        updated_transaction_text = modify_date_to_new(transaction_text=updated_transaction_text, seconds_diff=1)
         bot.send_message(
-            chat_id=message.chat.id, text=updated, reply_markup=transaction_menu()
+            chat_id=message.chat.id, text=updated_transaction_text, reply_markup=transaction_menu()
         )
+        previous_transaction_text = updated_transaction_text
+        previous_amount = amount
 
     redis.set_transaction_state(
         user_id=message.from_user.id, state=TransactionStates.IDLE

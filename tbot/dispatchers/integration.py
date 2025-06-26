@@ -229,7 +229,7 @@ def handle_walletapp_reset(
         wallet_app_password__isnull=False,
         wallet_app_login__isnull=False,
         first=True,
-    )
+    )[0]
     if not integration:
         bot.send_message(
             chat_id=message.chat.id, text="Спробуйте заново розпочати /start"

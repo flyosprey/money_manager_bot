@@ -54,11 +54,11 @@ class AssistantBase(ABC):
         self.chain: RunnableSerializable[dict, BaseMessage] = self.prompt | self.llm
 
     @abstractmethod
-    def ask(self, query: str) -> str:
+    def ask(self, query: str) -> BaseMessage:
         pass
 
 
 class LLMAssistant(AssistantBase):
     def ask(self, query: str) -> BaseMessage:
-        context = "\n".join(self.memory.search(query))
+        context = "\n".join(self.memory.search(query, k=70))
         return self.chain.invoke({"context": context, "question": query})

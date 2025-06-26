@@ -1,5 +1,6 @@
 from pydantic import SecretStr
 
+from money_manager.config import TIMEZONE_KYIV
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
 from tbot.controllers.ai import delete_from_ai_memory, save_to_ai_memory
 from tbot.dto.transactions.payload import SimpleTransaction
@@ -7,6 +8,7 @@ from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError
 from tbot.utils import (
     convert_datetime_to_timestamp,
+    convert_timestamp_to_datetime,
     get_field_value_from_text,
 )
 from tbot_base.repository.user_categories import UserCategoriesRepository
@@ -65,6 +67,16 @@ def get_label(text: str) -> str:
         group_indexes=(1,),
         skip_error=True,
     )
+
+
+def modify_date_to_new(transaction_text: str, seconds_diff: int = 1) -> str:
+    date_ = get_time(text=transaction_text)
+    new_time = convert_datetime_to_timestamp(time_=date_) + seconds_diff
+    new_date = convert_timestamp_to_datetime(
+        timestamp=new_time, timezone=TIMEZONE_KYIV
+    ).replace(tzinfo=None)
+
+    return transaction_text.replace(date_, str(new_date))
 
 
 def get_transaction_from_message(text: str) -> SimpleTransaction:

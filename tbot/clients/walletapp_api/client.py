@@ -14,6 +14,8 @@ from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.errors import InvalidCredentialsError
 from tbot.utils import convert_timestamp_to_datetime
 
+WEB_VERSION_CODE = "4.18.18"
+
 
 class WalletAppClient(BaseClient):
     name = "WalletApp"
@@ -48,8 +50,7 @@ class WalletAppClient(BaseClient):
             "flavor": "0",
             "origin": "https://web.budgetbakers.com",
             "platform": "web",
-            "priority": "u=1, i",
-            "web-version-code": "4.18.9",
+            "Web-Version-Code": WEB_VERSION_CODE,
         }
         try:
             response = self._request(

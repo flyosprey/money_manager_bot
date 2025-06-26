@@ -39,14 +39,16 @@ def exception_handler():
             except IncorrectMCCCodeError as e:
                 logger.error(e, user_id=chat_id)
 
-                admin_bot_notification(message=f"[Chat_id] {chat_id}.\n[Action] {text}.\nError message:\n{e}")
+                admin_bot_notification(
+                    message=f"[Chat_id] {chat_id}.\n[Action] {text}.\nError message:\n{e}"
+                )
 
                 text = fix_not_supported_mcc_to_category_text(text=text)
                 edit_message(
                     chat_id=chat_id,
                     message_id=msg_id,
                     text=f"{text}\n\nКатегорія транзакції наразі не підтримується! Оберіть вручну.",
-                    reply_markup=transaction_menu()
+                    reply_markup=transaction_menu(),
                 )
                 return
             except InvalidCredentialsError as e:
@@ -63,7 +65,9 @@ def exception_handler():
                     text="Щось пішло не так!🔴 Спробуйте пізніше.🕐",
                 )
 
-                admin_bot_notification(message=f"[Chat_id] {chat_id}.\n[Action] {text}.\nError message:\n{e}")
+                admin_bot_notification(
+                    message=f"[Chat_id] {chat_id}.\n[Action] {text}.\nError message:\n{e}"
+                )
                 return
 
         return wrapper

@@ -1,5 +1,6 @@
 import re
 
+import structlog
 from telebot.types import CallbackQuery, Message
 
 from money_manager.config import Config
@@ -9,6 +10,7 @@ from tbot.controllers.transaction import (
     get_amount,
     get_comment,
     get_transaction_from_message,
+    modify_date_to_new,
 )
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.transactions.type import TransactionStates
@@ -20,7 +22,10 @@ from tbot.keyboards import (
 )
 from tbot.utils import delete_message, edit_message
 from tbot_base.bot import tbot as bot
+from tbot_base.repository.user_transaction import UserTransactionsRepository
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
+
+logger = structlog.get_logger(__name__)
 
 
 def fix_accept_delete_transaction_message(text: str) -> str:
@@ -29,6 +34,12 @@ def fix_accept_delete_transaction_message(text: str) -> str:
 
 def handle_accept_transaction(call: CallbackQuery, config: Config):
     transaction = get_transaction_from_message(call.message.text)
+
+    if UserTransactionsRepository.select(
+        user_id=call.from_user.id, doc_id=transaction.time, first=True
+    ):
+        logger.info("Transaction with doc_id already exist %s", transaction.time)
+        return
 
     add_transaction(
         user_id=call.from_user.id,
@@ -219,56 +230,42 @@ def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrappe
 
 
 def handle_separate_transaction(message: Message, redis: RedisWrapper):
-    def send_error_message(chat_id, text):
-        bot.send_message(chat_id=chat_id, text=text)
+    def error(text: str):
+        bot.send_message(chat_id=message.chat.id, text=text)
         redis.set_transaction_state(
             user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
-    amounts = []
-    for amount in re.split(r"\n|\s|,", message.text.strip()):
-        try:
-            amounts.append(float(amount))
-        except ValueError:
-            send_error_message(
-                message.chat.id, "Неправильна сума. Має бути в форматі 10.00/-10.00"
-            )
-            return
+    try:
+        amounts = [float(a) for a in re.split(r"[,\s\n]+", message.text.strip()) if a]
+    except ValueError:
+        error("Неправильна сума. Має бути в форматі 10.00/-10.00")
+        return
 
-    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
-    transaction_text = transaction_data["text"]
-    previous_amount = get_amount(text=transaction_text)
-    previous_amount_float = float(previous_amount)
-    sum_amounts = sum(amounts)
-    if (sum_amounts > 0 > previous_amount_float) or (
-        sum_amounts < 0 < previous_amount_float
-    ):
-        amounts = [amount * -1 for amount in amounts]
-        sum_amounts = sum(amounts)
+    data = redis.get_transaction_state(user_id=message.chat.id)
+    original_text = data["text"]
 
-    if sum_amounts != previous_amount_float:
-        send_error_message(
-            message.chat.id,
-            "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції.",
+    total = sum(amounts)
+    original_amount = float(get_amount(original_text))
+    if (total > 0 > original_amount) or (total < 0 < original_amount):
+        amounts = [-a for a in amounts]
+        total = sum(amounts)
+
+    if total != original_amount:
+        error(
+            "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції."
         )
         return
 
-    transactions = []
-    for amount in amounts:
-        updated_transaction_text = transaction_text.replace(
-            previous_amount, f"{amount:.2f}"
-        )
-        transactions.append(updated_transaction_text)
-
     delete_edit_transaction_messages(
-        transaction_message_id=transaction_data["message_id"], message=message
+        transaction_message_id=data["message_id"], message=message
     )
 
-    for transaction in transactions:
+    for amount in amounts:
+        updated = original_text.replace(f"{original_amount:.2f}", f"{amount:.2f}")
+        updated = modify_date_to_new(transaction_text=updated, seconds_diff=1)
         bot.send_message(
-            chat_id=message.chat.id,
-            text=transaction,
-            reply_markup=transaction_menu(),
+            chat_id=message.chat.id, text=updated, reply_markup=transaction_menu()
         )
 
     redis.set_transaction_state(

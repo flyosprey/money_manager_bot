@@ -20,7 +20,7 @@ class MonobankClient(BaseClient):
 
         return json.loads(response.text)
 
-    def get_currency_rate(self) -> dict[str, Any]:
+    def get_currencies_rate(self) -> dict[str, Any]:
         response = self._request(
             method="GET",
             url=urljoin(self.api_url, "/bank/currency"),

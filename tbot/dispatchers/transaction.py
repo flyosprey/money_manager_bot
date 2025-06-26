@@ -264,10 +264,16 @@ def handle_separate_transaction(message: Message, redis: RedisWrapper):
     previous_transaction_text = original_text
     previous_amount = original_amount
     for amount in amounts:
-        updated_transaction_text = previous_transaction_text.replace(f"{previous_amount:.2f}", f"{amount:.2f}")
-        updated_transaction_text = modify_date_to_new(transaction_text=updated_transaction_text, seconds_diff=1)
+        updated_transaction_text = previous_transaction_text.replace(
+            f"{previous_amount:.2f}", f"{amount:.2f}"
+        )
+        updated_transaction_text = modify_date_to_new(
+            transaction_text=updated_transaction_text, seconds_diff=1
+        )
         bot.send_message(
-            chat_id=message.chat.id, text=updated_transaction_text, reply_markup=transaction_menu()
+            chat_id=message.chat.id,
+            text=updated_transaction_text,
+            reply_markup=transaction_menu(),
         )
         previous_transaction_text = updated_transaction_text
         previous_amount = amount
@@ -282,7 +288,7 @@ def handle_change_category_transaction(call: CallbackQuery):
     if not mcc:
         raise Exception("call.data category error!")
 
-    transaction = get_transaction_from_message(call.message.text)
+    transaction = get_transaction_from_message(text=call.message.text)
     text = re.sub(
         r"Категорія:.+",
         f"Категорія: {MCCTransactionCategoryName[transaction.type][int(mcc[1])]} ({mcc[1]})",

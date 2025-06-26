@@ -2,6 +2,7 @@ from pydantic import SecretStr
 
 from money_manager.config import TIMEZONE_KYIV
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
+from tbot.constants import TransactionTypes
 from tbot.controllers.ai import delete_from_ai_memory, save_to_ai_memory
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
@@ -98,7 +99,7 @@ def get_transaction_from_message(text: str) -> SimpleTransaction:
         time=convert_datetime_to_timestamp(time_=time),
         label_name=label,
         contractor=description,
-        type="+" if amount > 0 else "-",
+        type=TransactionTypes.from_amount(amount),
     )
 
 
@@ -115,7 +116,7 @@ def add_transaction(
     transaction: SimpleTransaction, user_id: int, secret_key: SecretStr
 ):
     transaction.category_id = get_category_id(
-        mcc=transaction.mcc, category_type=transaction.type, user_id=user_id
+        mcc=transaction.mcc, transaction_type=transaction.type, user_id=user_id
     )
     transaction.label_id = get_label_id(
         user_id=user_id, label_name=transaction.label_name
@@ -173,10 +174,10 @@ def delete_transaction(doc_id: int, user_id: int, secret_key: SecretStr):
     UserTransactionsRepository.delete(user_id=user_id, doc_id=doc_id)
 
 
-def get_category_id(mcc: int, category_type: str, user_id: int) -> str:
+def get_category_id(mcc: int, transaction_type: TransactionTypes, user_id: int) -> str:
     category = UserCategoriesRepository.select(
         user_id=user_id,
-        name=MCCCodeCategory[category_type].get(mcc, ""),
+        name=MCCCodeCategory[transaction_type].get(mcc, ""),
         first=True,
     )
     if not category:

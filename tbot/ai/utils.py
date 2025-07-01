@@ -1,4 +1,5 @@
 import functools
+from types import FunctionType
 
 from tbot.utils import admin_bot_notification
 
@@ -22,10 +23,15 @@ class SuppressTokenErrorsMixin:
         super().__init_subclass__(**kwargs)
 
         for attr_name in dir(cls):
-            attr = getattr(cls, attr_name, None)
-            if attr is None:
+            if attr_name.startswith("__") and attr_name.endswith("__"):
                 continue
 
-            if callable(attr):
-                wrapped = suppress_token_errors(attr)
-                setattr(cls, attr_name, wrapped)
+            attr = getattr(cls, attr_name, None)
+
+            if not isinstance(attr, FunctionType):
+                continue
+
+            setattr(cls, attr_name, suppress_token_errors(attr))
+
+        if isinstance(cls.__init__, FunctionType):
+            cls.__init__ = suppress_token_errors(cls.__init__)

@@ -6,6 +6,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 
 from money_manager.config import config
 from money_manager.settings import FAISS_DIR
+from tbot.ai.utils import SuppressTokenErrorsMixin
 
 
 class MemoryRAGBase(ABC):
@@ -46,7 +47,7 @@ class MemoryRAGBase(ABC):
         pass
 
 
-class UserMemoryRAG(MemoryRAGBase):
+class UserMemoryRAG(MemoryRAGBase, SuppressTokenErrorsMixin):
     def add(
         self, texts: list[str], metadatas: list[dict], ids: list[str] | None = None
     ):

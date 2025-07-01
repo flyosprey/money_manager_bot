@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 
 from money_manager.config import config
 from tbot.ai.memory import MemoryRAGBase, UserMemoryRAG
+from tbot.ai.utils import SuppressTokenErrorsMixin
 
 
 class AssistantBase(ABC):
@@ -58,7 +59,7 @@ class AssistantBase(ABC):
         pass
 
 
-class LLMAssistant(AssistantBase):
+class LLMAssistant(AssistantBase, SuppressTokenErrorsMixin):
     def ask(self, query: str) -> BaseMessage:
         context = "\n".join(self.memory.search(query, k=70))
         return self.chain.invoke({"context": context, "question": query})

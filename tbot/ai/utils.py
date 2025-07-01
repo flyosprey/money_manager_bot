@@ -22,7 +22,10 @@ class SuppressTokenErrorsMixin:
         super().__init_subclass__(**kwargs)
 
         for attr_name in dir(cls):
-            attr = getattr(cls, attr_name)
+            attr = getattr(cls, attr_name, None)
+            if attr is None:
+                continue
+
             if callable(attr):
                 wrapped = suppress_token_errors(attr)
                 setattr(cls, attr_name, wrapped)

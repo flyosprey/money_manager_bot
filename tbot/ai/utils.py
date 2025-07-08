@@ -10,10 +10,8 @@ def suppress_token_errors(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            if "incorrect api key provided" in str(e).lower():
-                admin_bot_notification(message=str(e))
-                return None
-            raise
+            admin_bot_notification(message=str(e))
+            return None
 
     return wrapper
 

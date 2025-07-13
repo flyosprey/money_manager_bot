@@ -5,7 +5,7 @@ from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.users.type import UserStates
 from tbot.dto.walletapp_api.type import SettingsStates, SetUpCategoriesStates
 
-CURRENCY_RATE_TEMPLATE = "{currency_from}_{currency_to}"
+CURRENCY_RATE_TEMPLATE = "{transaction_type}_{currency_from}_{currency_to}"
 CURRENCY_RATE_TTL = 60 * 5  # 5 minutes
 USER_STATE_TEMPLATE = "{user_id}_state"
 USER_STATUS_TTL = 60 * 60 * 24  # 1 day
@@ -101,18 +101,26 @@ class RedisWrapper:
 
         return SetUpCategoriesStates(int(status.decode()))
 
-    def set_currency_rate(self, rate: float, currency_from: int, currency_to: int):
+    def set_currency_rate(
+        self, rate: float, currency_from: int, currency_to: int, transaction_type: str
+    ):
         self.redis.set(
             name=CURRENCY_RATE_TEMPLATE.format(
-                currency_from=str(currency_from), currency_to=str(currency_to)
+                currency_from=str(currency_from),
+                currency_to=str(currency_to),
+                transaction_type=transaction_type,
             ),
             value=rate,
             ex=CURRENCY_RATE_TTL,
         )
 
-    def get_currency_rate(self, currency_from: int, currency_to: int):
+    def get_currency_rate(
+        self, currency_from: int, currency_to: int, transaction_type: str
+    ):
         return self.redis.get(
             name=CURRENCY_RATE_TEMPLATE.format(
-                currency_from=str(currency_from), currency_to=str(currency_to)
+                currency_from=str(currency_from),
+                currency_to=str(currency_to),
+                transaction_type=transaction_type,
             )
         )

@@ -91,31 +91,43 @@ def process_amount(
 
     redis = RedisWrapper(dsn=config.redis.url)
     rate = redis.get_currency_rate(
-        currency_from=currency_code, currency_to=DEFAULT_CURRENCY_CODE
+        currency_from=currency_code,
+        currency_to=DEFAULT_CURRENCY_CODE,
+        transaction_type=transaction_type.value,
     )
 
     if not rate:
+        all_rates = monobank_client.get_currencies_rate()
         rate = next(
             (
-                rate_
-                for rate_ in monobank_client.get_currencies_rate()
-                if rate_["currencyCodeA"] == currency_code
-                and rate_["currencyCodeB"] == DEFAULT_CURRENCY_CODE
+                rate
+                for rate in all_rates
+                if rate["currencyCodeA"] == currency_code
+                and rate["currencyCodeB"] == DEFAULT_CURRENCY_CODE
             ),
             None,
         )
         if not rate:
             return convert_money(amount)
 
+        rate_value = (
+            rate["rateBuy"]
+            if transaction_type == TransactionTypes.INCOME
+            else rate["rateSell"]
+        )
         redis.set_currency_rate(
-            rate=rate, currency_from=currency_code, currency_to=DEFAULT_CURRENCY_CODE
+            rate=rate_value,
+            currency_from=currency_code,
+            currency_to=DEFAULT_CURRENCY_CODE,
+            transaction_type=transaction_type.value,
+        )
+    else:
+        rate_value = (
+            rate["rateBuy"]
+            if transaction_type == TransactionTypes.INCOME
+            else rate["rateSell"]
         )
 
-    rate_value = (
-        rate["rateBuy"]
-        if transaction_type == TransactionTypes.INCOME
-        else rate["rateSell"]
-    )
     return convert_money(amount * rate_value)
 
 

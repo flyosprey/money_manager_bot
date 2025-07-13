@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from langchain_community.vectorstores import FAISS
-from langchain_openai.embeddings import OpenAIEmbeddings
 
-from money_manager.config import config
+# from langchain_openai.embeddings import OpenAIEmbeddings
+# from money_manager.config import config
 from money_manager.settings import FAISS_DIR
 from tbot.ai.utils import SuppressTokenErrorsMixin
 
@@ -15,7 +15,7 @@ class MemoryRAGBase(ABC):
         self.persist_dir = persist_dir
         self.index_path = persist_dir / f"{user_id}.faiss"
         self.doc_path = persist_dir / f"{user_id}.pkl"
-        self.embedding = OpenAIEmbeddings(api_key=config.openai.api_key)
+        self.embedding = None  # OpenAIEmbeddings(api_key=config.openai.api_key)
         self.vectorstore = self._get_vectorstore()
 
     def _get_vectorstore(self) -> FAISS:

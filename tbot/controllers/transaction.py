@@ -3,7 +3,8 @@ from pydantic import SecretStr
 from money_manager.config import TIMEZONE_KYIV
 from tbot.clients.walletapp_api.client import CloudWalletAppClient, WalletAppClient
 from tbot.constants import TransactionTypes
-from tbot.controllers.ai import delete_from_ai_memory, save_to_ai_memory
+
+# from tbot.controllers.ai import delete_from_ai_memory, save_to_ai_memory
 from tbot.dto.transactions.payload import SimpleTransaction
 from tbot.dto.walletapp_api.mcc_codes import MCCCodeCategory
 from tbot.errors import IncorrectMCCCodeError
@@ -142,7 +143,7 @@ def add_transaction(
         user_id=user_id, id=transaction_id, doc_id=transaction.time, body=body
     )
 
-    save_to_ai_memory(user_id, transaction)
+    # save_to_ai_memory(user_id, transaction)
 
 
 def delete_transaction(doc_id: int, user_id: int, secret_key: SecretStr):
@@ -169,7 +170,7 @@ def delete_transaction(doc_id: int, user_id: int, secret_key: SecretStr):
         owner_id=owner_id, owner_id_token=owner_id_token
     ).delete_transaction(transaction_payload=transaction.body)
 
-    delete_from_ai_memory(user_id, doc_id)
+    # delete_from_ai_memory(user_id, doc_id)
 
     UserTransactionsRepository.delete(user_id=user_id, doc_id=doc_id)
 

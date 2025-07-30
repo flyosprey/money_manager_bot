@@ -27,7 +27,8 @@ class MoneyManager(MoneyManagerBase):
         password_element.send_keys(self.password)
 
         login_button = self.driver.find_element(By.XPATH, ".//button[@type='submit']")
-        login_button.click()
+        # login_button.click()
+        self.driver.execute_script("arguments[0].click();", login_button)
 
         try:
             self.driver.find_element(

@@ -37,12 +37,12 @@ def menu(bot):
 
     bot.set_my_commands(
         [
-            types.BotCommand("/integrate", "Розпочати"),
+            types.BotCommand("/start", "Розпочати"),
             types.BotCommand("/about", "Для чого цей бот?"),
             types.BotCommand("/donate", "Підтримати донатом"),
             types.BotCommand("/setup_categories", "Налаштувати категорії"),
-            types.BotCommand("/ai_advice", "Порада радника"),
-            types.BotCommand("/question_to_ai", "Запитання раднику"),
+            # types.BotCommand("/ai_advice", "Порада радника"),
+            # types.BotCommand("/question_to_ai", "Запитання раднику"),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
             types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
             types.BotCommand(

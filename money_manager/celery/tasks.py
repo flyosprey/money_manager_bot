@@ -65,6 +65,8 @@ def setup_categories(user_id: int):
                 cloud_wallet_client.delete_transaction(transaction_payload=payload)
                 logger.info("Transaction for category %s deleted", category_name)
 
+    bot.send_message(chat_id=user_id, text="Категорії у WalletApp налаштовані. Можна починати роботу.")
+
 
 @shared_task
 def ai_advice_all_users(prompt: str, title: str):

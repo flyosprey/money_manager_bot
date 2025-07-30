@@ -6,6 +6,7 @@ from .models import (
     UserCategories,
     UserIntegrations,
     UserPayments,
+    UserTransactions,
     UserWalletLabel,
 )
 
@@ -78,6 +79,21 @@ class UserCategoriesAdmin(admin.ModelAdmin):
     )
     list_display_links = ("user_id", "name")
     search_fields = ("user_id", "name", "category_id")
+
+    def has_delete_permission(self, request, obj=None):
+        return True
+
+
+@admin.register(UserTransactions)
+class UserTransactionsAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_id",
+        "doc_id",
+        "id",
+        "body",
+    )
+    list_display_links = ("user_id", "doc_id", "id")
+    search_fields = ("user_id", "doc_id", "id")
 
     def has_delete_permission(self, request, obj=None):
         return True

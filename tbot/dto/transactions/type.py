@@ -1,7 +1,7 @@
 import enum
 
 
-class TransactionStatus(str, enum.Enum):
+class TransactionStates(str, enum.Enum):
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
     AWAITING_ADD_COMMENT = "AWAITING_ADD_COMMENT"

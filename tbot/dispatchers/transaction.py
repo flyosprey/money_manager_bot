@@ -1,18 +1,19 @@
 import re
 
+import structlog
 from telebot.types import CallbackQuery, Message
 
-from money_manager.celery.tasks import save_to_ai_memory
 from money_manager.config import Config
 from tbot.controllers.transaction import (
     add_transaction,
+    delete_transaction,
     get_amount,
     get_comment,
-    get_label_id,
     get_transaction_from_message,
+    modify_date_to_new,
 )
 from tbot.dependencies.redis import RedisWrapper
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot.keyboards import (
     transaction_categories_menu,
@@ -21,14 +22,24 @@ from tbot.keyboards import (
 )
 from tbot.utils import delete_message, edit_message
 from tbot_base.bot import tbot as bot
+from tbot_base.repository.user_transaction import UserTransactionsRepository
 from tbot_base.repository.wallet_label import UserWalletLabelRepository
+
+logger = structlog.get_logger(__name__)
+
+
+def fix_accept_delete_transaction_message(text: str) -> str:
+    return text.replace("\n\nВідхилено🚫", "").replace("\n\nЗаписано✅", "")
 
 
 def handle_accept_transaction(call: CallbackQuery, config: Config):
     transaction = get_transaction_from_message(call.message.text)
-    transaction.label_id = get_label_id(
-        user_id=call.from_user.id, label_name=transaction.label_name
-    )
+
+    if UserTransactionsRepository.select(
+        user_id=call.from_user.id, doc_id=transaction.time, first=True
+    ):
+        logger.info("Transaction with doc_id already exist %s", transaction.time)
+        return
 
     add_transaction(
         user_id=call.from_user.id,
@@ -36,22 +47,29 @@ def handle_accept_transaction(call: CallbackQuery, config: Config):
         transaction=transaction,
     )
 
+    text = fix_accept_delete_transaction_message(text=call.message.text)
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
-        text=f"{call.message.text}\n\nЗаписано✅",
+        text=f"{text}\n\nЗаписано✅",
+        reply_markup=transaction_menu(is_acceptable=False),
     )
 
-    save_to_ai_memory.delay(call.from_user.id, transaction.model_dump())
 
+def handle_reject_transaction(call: CallbackQuery, config: Config):
+    transaction = get_transaction_from_message(call.message.text)
+    delete_transaction(
+        user_id=call.from_user.id,
+        doc_id=transaction.time,
+        secret_key=config.secret_key,
+    )
 
-def handle_reject_transaction(call: CallbackQuery):
-    text = call.message.text.replace("\n\nВідхилено🚫", "")
+    text = fix_accept_delete_transaction_message(text=call.message.text)
     edit_message(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
         text=f"{text}\n\nВідхилено🚫",
-        reply_markup=transaction_menu(),
+        reply_markup=transaction_menu(is_deletable=False),
     )
 
 
@@ -61,11 +79,11 @@ def handle_awaiting_add_comment_transaction(call: CallbackQuery, redis: RedisWra
         text="Додайте коментар👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.ADD_COMMENT,
+        state=TransactionStates.ADD_COMMENT,
     )
 
 
@@ -75,22 +93,22 @@ def handle_awaiting_update_price_transaction(call: CallbackQuery, redis: RedisWr
         text="Вкажіть оновлену суму👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.UPDATE_PRICE,
+        state=TransactionStates.UPDATE_PRICE,
     )
 
 
 def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
     def send_error_message(chat_id, text):
         bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     text = message.text.strip()
     if not text:
@@ -117,8 +135,8 @@ def handle_add_comment_transaction(message: Message, redis: RedisWrapper):
 def handle_update_price_transaction(message: Message, redis: RedisWrapper):
     def send_error_message(chat_id, text):
         bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
     try:
@@ -133,7 +151,7 @@ def handle_update_price_transaction(message: Message, redis: RedisWrapper):
         send_error_message(message.chat.id, "Сума не може бути 0")
         return
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
+    transaction_data = redis.get_transaction_state(user_id=message.chat.id)
     transaction_text = transaction_data["text"]
     previous_amount = get_amount(text=transaction_text)
     updated_transaction_text = transaction_text.replace(
@@ -170,8 +188,8 @@ def finish_edit_transaction(
     message: Message,
     redis: RedisWrapper,
 ):
-    redis.set_transaction_status(
-        user_id=message.from_user.id, status=TransactionStatus.IDLE
+    redis.set_transaction_state(
+        user_id=message.from_user.id, state=TransactionStates.IDLE
     )
 
     bot.send_message(
@@ -203,69 +221,65 @@ def handle_awaiting_separate_transaction(call: CallbackQuery, redis: RedisWrappe
         text="Вкажіть суми транзакцій через кому/пробіл👇",
     )
 
-    redis.set_transaction_status(
+    redis.set_transaction_state(
         user_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=call.message.text,
-        status=TransactionStatus.SEPARATE_TRANSACTIONS,
+        state=TransactionStates.SEPARATE_TRANSACTIONS,
     )
 
 
 def handle_separate_transaction(message: Message, redis: RedisWrapper):
-    def send_error_message(chat_id, text):
-        bot.send_message(chat_id=chat_id, text=text)
-        redis.set_transaction_status(
-            user_id=message.from_user.id, status=TransactionStatus.IDLE
+    def error(text: str):
+        bot.send_message(chat_id=message.chat.id, text=text)
+        redis.set_transaction_state(
+            user_id=message.from_user.id, state=TransactionStates.IDLE
         )
 
-    amounts = []
-    for amount in re.split(r"\n|\s|,", message.text.strip()):
-        try:
-            amounts.append(float(amount))
-        except ValueError:
-            send_error_message(
-                message.chat.id, "Неправильна сума. Має бути в форматі 10.00/-10.00"
-            )
-            return
+    try:
+        amounts = [float(a) for a in re.split(r"[,\s\n]+", message.text.strip()) if a]
+    except ValueError:
+        error("Неправильна сума. Має бути в форматі 10.00/-10.00")
+        return
 
-    transaction_data = redis.get_transaction_status(user_id=message.chat.id)
-    transaction_text = transaction_data["text"]
-    previous_amount = get_amount(text=transaction_text)
-    previous_amount_float = float(previous_amount)
-    sum_amounts = sum(amounts)
-    if (sum_amounts > 0 > previous_amount_float) or (
-        sum_amounts < 0 < previous_amount_float
-    ):
-        amounts = [amount * -1 for amount in amounts]
-        sum_amounts = sum(amounts)
+    data = redis.get_transaction_state(user_id=message.chat.id)
+    original_text = data["text"]
 
-    if sum_amounts != previous_amount_float:
-        send_error_message(
-            message.chat.id,
-            "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції.",
+    total = sum(amounts)
+    original_amount = float(get_amount(original_text))
+    if (total > 0 > original_amount) or (total < 0 < original_amount):
+        amounts = [-a for a in amounts]
+        total = sum(amounts)
+
+    if total != original_amount:
+        error(
+            "Сума розділених транзакцій повинна дорівнювати сумі основної транзакції."
         )
         return
 
-    transactions = []
-    for amount in amounts:
-        updated_transaction_text = transaction_text.replace(
-            previous_amount, f"{amount:.2f}"
-        )
-        transactions.append(updated_transaction_text)
-
     delete_edit_transaction_messages(
-        transaction_message_id=transaction_data["message_id"], message=message
+        transaction_message_id=data["message_id"], message=message
     )
 
-    for transaction in transactions:
+    previous_transaction_text = original_text
+    previous_amount = original_amount
+    for amount in amounts:
+        updated_transaction_text = previous_transaction_text.replace(
+            f"{previous_amount:.2f}", f"{amount:.2f}"
+        )
+        updated_transaction_text = modify_date_to_new(
+            transaction_text=updated_transaction_text, seconds_diff=1
+        )
         bot.send_message(
             chat_id=message.chat.id,
-            text=transaction,
+            text=updated_transaction_text,
             reply_markup=transaction_menu(),
         )
+        previous_transaction_text = updated_transaction_text
+        previous_amount = amount
 
-    redis.set_transaction_status(
-        user_id=message.from_user.id, status=TransactionStatus.IDLE
+    redis.set_transaction_state(
+        user_id=message.from_user.id, state=TransactionStates.IDLE
     )
 
 
@@ -274,7 +288,7 @@ def handle_change_category_transaction(call: CallbackQuery):
     if not mcc:
         raise Exception("call.data category error!")
 
-    transaction = get_transaction_from_message(call.message.text)
+    transaction = get_transaction_from_message(text=call.message.text)
     text = re.sub(
         r"Категорія:.+",
         f"Категорія: {MCCTransactionCategoryName[transaction.type][int(mcc[1])]} ({mcc[1]})",

@@ -1,9 +1,6 @@
 import hashlib
 import hmac
 import json
-import re
-import subprocess
-import sys
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -12,33 +9,28 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from money_manager.config import TIMEZONE_KYIV, config
+from money_manager.config import config
 from tbot.dto.monobank.payload import Transaction
-from tbot.keyboards import transaction_menu
 from tbot.utils import (
     admin_bot_notification,
-    convert_currency_number_to_code,
-    convert_money,
-    convert_timestamp_to_datetime,
-    create_transaction_text,
     logger,
-)
-from tbot_base.dto.github.payload import (
-    PullRequestWebhook,
-    PushWebhook,
 )
 
 from .bot import tbot
+from .controllers import (
+    check_content_type,
+    execute_django_migration,
+    execute_git_pull,
+    get_branch_from_event,
+    is_prod_branch,
+    notify_user_about_transaction,
+)
+from .exceptions import DeployError
 from .repository.bot_user import BotUserRepository
 from .security.encrypting import EncryptManager
 
 for module in settings.BOT_HANDLERS:
     __import__(module)
-
-
-def check_content_type(content_type: str) -> None:
-    if content_type not in {"application/json"}:
-        raise PermissionDenied("Wrong content type!")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -86,36 +78,7 @@ class MonobankWebhookView(View):
 
         logger.info("Received body from monobank %s", raw_body)
         # if not self.skip_transaction(transaction=transaction):
-        currency = convert_currency_number_to_code(transaction.currency_code)
-        cashback = (
-            f"{convert_money(transaction.cashback_amount):.2f}₴"
-            if transaction.cashback_amount
-            else "відсутній"
-        )
-        commission = (
-            f"{convert_money(transaction.commission_rate):.2f}₴"
-            if transaction.commission_rate
-            else "відсутня"
-        )
-        date_ = convert_timestamp_to_datetime(
-            timestamp=transaction.time, timezone=TIMEZONE_KYIV
-        ).replace(tzinfo=None)
-        transaction_type = "+" if transaction.amount > 0 else "-"
-        tbot.send_message(
-            chat_id=user_id,
-            text=create_transaction_text(
-                currency=currency,
-                transaction_type=transaction_type,
-                date_=date_,
-                commission=commission,
-                cashback=cashback,
-                comment=transaction.comment,
-                description=transaction.description,
-                mcc_code=transaction.mcc,
-                amount=convert_money(transaction.amount),
-            ),
-            reply_markup=transaction_menu(),
-        )
+        notify_user_about_transaction(user_id=user_id, transaction=transaction)
 
         return HttpResponse(status=200)
 
@@ -131,10 +94,6 @@ class MonobankWebhookView(View):
             raise PermissionDenied
 
         return user_id
-
-    @staticmethod
-    def skip_transaction(transaction: Transaction) -> bool:
-        return bool(re.search(r"Mocking", transaction.description.lower()))
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -152,16 +111,14 @@ class GithubWebhookView(View):
             if event_type not in {"push", "pull_request"}:
                 raise PermissionDenied("Event type not permitted")
 
-            branch = self.get_branch_from_event(
-                event_type=event_type, raw_body=request.body
-            )
-            if not self.is_prod_branch(branch=branch):
+            branch = get_branch_from_event(event_type=event_type, raw_body=request.body)
+            if not is_prod_branch(branch=branch):
                 raise PermissionDenied("Branch not permitted")
 
-            git_output = self.execute_git_pull(
+            git_output = execute_git_pull(
                 branch=branch, project_path=config.deployment.project_path
             )
-            migration_output = self.execute_django_migration(
+            migration_output = execute_django_migration(
                 project_path=config.deployment.project_path
             )
             admin_bot_notification(message="New version deployed successfully!✅")
@@ -202,90 +159,3 @@ class GithubWebhookView(View):
             "sha256=" + hash_object.hexdigest(), signature_header
         ):
             raise PermissionDenied("Signature verification failed")
-
-    def get_branch_from_event(self, event_type: str, raw_body: bytes) -> str | None:
-        payload = json.loads(raw_body)
-        if event_type == "push":
-            webhook = PushWebhook(**payload)
-            return self.get_branch(webhook=webhook)
-
-        if event_type == "pull_request":
-            webhook = PullRequestWebhook(**payload)
-            if webhook.action not in {"closed"}:
-                raise PermissionDenied("Action not permitted")
-            return webhook.pull_request.base.ref
-
-        return
-
-    @staticmethod
-    def get_branch(webhook) -> str | None:
-        return webhook.ref.split("/")[-1] if webhook.ref else None
-
-    @staticmethod
-    def is_prod_branch(branch: str) -> bool:
-        return branch in {"main", "beta"}
-
-    @staticmethod
-    def execute_django_migration(project_path: str) -> dict[str, str]:
-        try:
-            make_migrations = subprocess.run(
-                [sys.executable, "manage.py", "makemigrations"],
-                capture_output=True,
-                text=True,
-                cwd=project_path,
-            )
-
-            if make_migrations.returncode != 0:
-                error_message = (
-                    f"{make_migrations.stderr} {make_migrations.stdout}".strip()
-                )
-                raise DjangoMigrationError(error_message)
-
-            migrate = subprocess.run(
-                [sys.executable, "manage.py", "migrate"],
-                capture_output=True,
-                text=True,
-                cwd=project_path,
-            )
-
-            if migrate.returncode != 0:
-                error_message = f"{migrate.stderr} {migrate.stdout}".strip()
-                raise DjangoMigrationError(error_message)
-
-            logger.info("Migrated successfully")
-            return {
-                "make_migrations": make_migrations.stdout,
-                "migrate": migrate.stdout,
-            }
-        except subprocess.SubprocessError as e:
-            logger.exception("Migration failed")
-            raise DjangoMigrationError("Migration failed") from e
-
-    @staticmethod
-    def execute_git_pull(branch: str, project_path: str) -> str:
-        try:
-            git_pull = subprocess.run(
-                ["/usr/bin/git", "pull", "origin", branch],
-                capture_output=True,
-                text=True,
-                cwd=project_path,
-            )
-
-            if git_pull.returncode == 0:
-                logger.info("Deployed successfully")
-                return git_pull.stdout
-
-            error_message = f"{git_pull.stderr} {git_pull.stdout}".strip()
-            raise DeployError(error_message)
-
-        except subprocess.SubprocessError as e:
-            logger.exception("Failed to pull the latest code")
-            raise DeployError("Git pull command failed") from e
-
-
-class DeployError(Exception):
-    pass
-
-
-class DjangoMigrationError(Exception):
-    pass

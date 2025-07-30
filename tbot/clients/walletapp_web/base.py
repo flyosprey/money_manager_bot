@@ -62,12 +62,14 @@ class MoneyManagerBase(ABC):
         )
         self.press_add_record()
 
-    def get_transaction_payload(self, timeout: int = 10) -> dict:
+    def get_transaction_payload(self, timeout: int = 30) -> dict:
         start_time = time.time()
         while time.time() - start_time < timeout:
             for req in self.driver.requests[self.start_requests_index :]:
                 if "_bulk_docs" in req.url and req.body:
-                    return json.loads(req.body)
+                    payload = json.loads(req.body)
+                    if payload.get("docs", [{}])[0].get("categoryId"):
+                        return payload
             time.sleep(0.2)
 
         raise TimeoutError("Timed out waiting for the latest _bulk_docs request.")

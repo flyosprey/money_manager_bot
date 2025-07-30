@@ -1,6 +1,6 @@
 from telebot import types
 
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryPagination
 from tbot.dto.walletapp_api.type import SettingsStates
 
@@ -13,24 +13,26 @@ COlUMN_OF_LABEL_BUTTONS = 2
 def menu(bot):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
 
-    markup.add(types.KeyboardButton("Розпочати"))
+    markup.add(
+        types.KeyboardButton(
+            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
+        ),
+    )
+
+    markup.add(
+        types.KeyboardButton("Порада радника"),
+        types.KeyboardButton("Запитання раднику"),
+    )
+
+    markup.add(
+        types.KeyboardButton("Налаштування гаманця обліку"),
+        types.KeyboardButton("Налаштувати категорії"),
+    )
 
     markup.add(
         types.KeyboardButton("Замінити токен Monobank"),
         types.KeyboardButton("Замінити пароль WalletApp"),
         types.KeyboardButton("Змінити аккаунт WalletApp"),
-    )
-
-    markup.add(
-        types.KeyboardButton("Налаштування гаманця обліку"),
-        types.KeyboardButton("Порада радника"),
-        types.KeyboardButton("Налаштувати категорії"),
-    )
-
-    markup.add(
-        types.KeyboardButton(
-            "Оновити звʼязок з Monobank (якщо не приходять транзакції)"
-        )
     )
 
     bot.set_my_commands(
@@ -40,6 +42,7 @@ def menu(bot):
             types.BotCommand("/donate", "Підтримати донатом"),
             types.BotCommand("/setup_categories", "Налаштувати категорії"),
             types.BotCommand("/ai_advice", "Порада радника"),
+            types.BotCommand("/question_to_ai", "Запитання раднику"),
             types.BotCommand("/reset_token", "Замінити токен Monobank"),
             types.BotCommand("/reset_pass", "Замінити пароль WalletApp"),
             types.BotCommand(
@@ -56,36 +59,48 @@ def menu(bot):
     return markup
 
 
-def transaction_menu(editable_menu: bool = True) -> types.InlineKeyboardMarkup:
+def transaction_menu(
+    editable_menu: bool = True, is_acceptable: bool = True, is_deletable: bool = True
+) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
-    set_default_transaction_keyboard(keyboard=keyboard)
+    set_default_transaction_keyboard(
+        keyboard=keyboard, is_acceptable=is_acceptable, is_deletable=is_deletable
+    )
+    if not is_acceptable:
+        return keyboard
+
     if editable_menu:
         set_editable_menu(keyboard=keyboard)
 
-    select_category = types.InlineKeyboardButton(
-        "Вибрати категорію📌", callback_data="category_page_1"
+    keyboard.add(
+        types.InlineKeyboardButton("Вибрати мітку🏷", callback_data="label_page_1")
     )
-    select_label = types.InlineKeyboardButton(
-        "Вибрати мітку🏷", callback_data="label_page_1"
+    keyboard.add(
+        types.InlineKeyboardButton(
+            "Вибрати категорію📌", callback_data="category_page_1"
+        )
     )
-
-    keyboard.add(select_label)
-    keyboard.add(select_category)
 
     return keyboard
 
 
 def set_default_transaction_keyboard(
     keyboard: types.InlineKeyboardMarkup,
+    is_acceptable: bool = True,
+    is_deletable: bool = True,
 ) -> types.InlineKeyboardMarkup:
-    add_transaction = types.InlineKeyboardButton(
-        "️Записати✍", callback_data=TransactionStatus.ACCEPTED
-    )
-    reject_transaction = types.InlineKeyboardButton(
-        "Відхилити🚫", callback_data=TransactionStatus.REJECTED
-    )
-    keyboard.add(add_transaction)
-    keyboard.add(reject_transaction)
+    if is_acceptable:
+        keyboard.add(
+            types.InlineKeyboardButton(
+                "️Записати✍", callback_data=TransactionStates.ACCEPTED
+            )
+        )
+    if is_deletable:
+        keyboard.add(
+            types.InlineKeyboardButton(
+                "Відхилити🚫", callback_data=TransactionStates.REJECTED
+            )
+        )
 
     return keyboard
 
@@ -93,20 +108,30 @@ def set_default_transaction_keyboard(
 def set_editable_menu(
     keyboard: types.InlineKeyboardMarkup,
 ) -> types.InlineKeyboardMarkup:
-    separate_transaction = types.InlineKeyboardButton(
-        "Розділити транзакції🖇",
-        callback_data=TransactionStatus.AWAITING_SEPARATE_TRANSACTIONS,
+    keyboard.add(
+        types.InlineKeyboardButton(
+            "Розділити транзакції🖇",
+            callback_data=TransactionStates.AWAITING_SEPARATE_TRANSACTIONS,
+        )
     )
-    add_comment = types.InlineKeyboardButton(
-        "Додати коментар💬", callback_data=TransactionStatus.AWAITING_ADD_COMMENT
+    keyboard.add(
+        types.InlineKeyboardButton(
+            "Додати коментар💬", callback_data=TransactionStates.AWAITING_ADD_COMMENT
+        )
     )
-    update_price = types.InlineKeyboardButton(
-        "Змінити ціну🫰", callback_data=TransactionStatus.AWAITING_UPDATE_PRICE
+    keyboard.add(
+        types.InlineKeyboardButton(
+            "Змінити ціну🫰", callback_data=TransactionStates.AWAITING_UPDATE_PRICE
+        )
     )
-    keyboard.add(separate_transaction)
-    keyboard.add(add_comment)
-    keyboard.add(update_price)
 
+    return keyboard
+
+
+def go_back_menu(keyboard: types.InlineKeyboardMarkup) -> types.InlineKeyboardMarkup:
+    keyboard.add(
+        types.InlineKeyboardButton("Повернутися назад🔙", callback_data="go_back_menu")
+    )
     return keyboard
 
 
@@ -118,6 +143,7 @@ def transaction_categories_menu(
     generate_categories_keyboard(
         transaction_type=transaction_type, page=page, keyboard=keyboard
     )
+    go_back_menu(keyboard=keyboard)
 
     return keyboard
 
@@ -132,6 +158,7 @@ def transaction_labels_menu(
         page=page,
         keyboard=keyboard,
     )
+    go_back_menu(keyboard=keyboard)
 
     return keyboard
 

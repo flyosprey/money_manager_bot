@@ -17,25 +17,25 @@ from tbot.dispatchers.transaction import (
     handle_separate_transaction,
     handle_update_price_transaction,
 )
-from tbot.dto.transactions.type import TransactionStatus
+from tbot.dto.transactions.type import TransactionStates
 from tbot_base.bot import tbot as bot
 
 
-@bot.callback_query_handler(func=lambda call: call.data == TransactionStatus.ACCEPTED)
+@bot.callback_query_handler(func=lambda call: call.data == TransactionStates.ACCEPTED)
 @exception_handler()
 def accept_transaction_handler(call: CallbackQuery):
     handle_accept_transaction(call=call, config=config)
 
 
-@bot.callback_query_handler(func=lambda call: call.data == TransactionStatus.REJECTED)
+@bot.callback_query_handler(func=lambda call: call.data == TransactionStates.REJECTED)
 @exception_handler()
 @unknown_category_message_handler()
 def reject_transaction_handler(call: CallbackQuery):
-    handle_reject_transaction(call=call)
+    handle_reject_transaction(call=call, config=config)
 
 
 @bot.callback_query_handler(
-    func=lambda call: call.data == TransactionStatus.AWAITING_ADD_COMMENT
+    func=lambda call: call.data == TransactionStates.AWAITING_ADD_COMMENT
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -46,7 +46,7 @@ def awaiting_add_comment_transaction_handler(
 
 
 @bot.callback_query_handler(
-    func=lambda call: call.data == TransactionStatus.AWAITING_UPDATE_PRICE
+    func=lambda call: call.data == TransactionStates.AWAITING_UPDATE_PRICE
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -58,9 +58,9 @@ def awaiting_update_price_transaction_handler(
 
 @bot.message_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
-    .get_transaction_status(message.from_user.id)
-    .get("status")
-    in {TransactionStatus.ADD_COMMENT.value}
+    .get_transaction_state(message.from_user.id)
+    .get("state")
+    == TransactionStates.ADD_COMMENT
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -72,9 +72,9 @@ def add_comment_transaction_handler(
 
 @bot.message_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
-    .get_transaction_status(message.from_user.id)
-    .get("status")
-    in {TransactionStatus.UPDATE_PRICE.value}
+    .get_transaction_state(message.from_user.id)
+    .get("state")
+    == TransactionStates.UPDATE_PRICE
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -85,7 +85,7 @@ def update_price_transaction_handler(
 
 
 @bot.callback_query_handler(
-    func=lambda call: call.data == TransactionStatus.AWAITING_SEPARATE_TRANSACTIONS
+    func=lambda call: call.data == TransactionStates.AWAITING_SEPARATE_TRANSACTIONS
 )
 @exception_handler()
 @unknown_category_message_handler()
@@ -97,9 +97,9 @@ def awaiting_separate_transaction_handler(
 
 @bot.message_handler(
     func=lambda message: RedisWrapper(dsn=config.redis.url)
-    .get_transaction_status(message.from_user.id)
-    .get("status")
-    in {TransactionStatus.SEPARATE_TRANSACTIONS.value}
+    .get_transaction_state(message.from_user.id)
+    .get("state")
+    == TransactionStates.SEPARATE_TRANSACTIONS
 )
 @exception_handler()
 @unknown_category_message_handler()

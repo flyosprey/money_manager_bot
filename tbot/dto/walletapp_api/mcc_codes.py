@@ -1,8 +1,10 @@
 from collections import defaultdict
 from typing import TypeVar
 
+from tbot.constants import TransactionTypes
+
 MCCCodeCategory = {
-    "-": {
+    TransactionTypes.OUTCOME: {
         5411: "Food & Beverages_Groceries",  # GROCERIES
         5499: "Food & Beverages_Groceries",  # GROCERIES
         5399: "Food & Beverages_Groceries",  # MISC_GENERAL_MERCHANDISE
@@ -57,7 +59,7 @@ MCCCodeCategory = {
         5: "Financial expenses_Taxes",  # Taxes,
         6: "Investments_Financial investments",  # INVESTING,
     },
-    "+": {
+    TransactionTypes.INCOME: {
         4829: "Income_Wage, invoices",  # Salary
         6538: "Income_Wage, invoices",  # Salary
         6012: "Income_Wage, invoices",  # Salary
@@ -1012,7 +1014,7 @@ MCCCodeCategory = {
 MCCTransactionCategoryT = TypeVar("MCCTransactionCategoryT", bound=MCCCodeCategory)
 
 MCCTransactionCategoryName = {
-    "-": {
+    TransactionTypes.OUTCOME: {
         5411: "Продукти🥦",
         5499: "Продукти🥦",
         5462: "Продукти🥦",
@@ -1065,7 +1067,7 @@ MCCTransactionCategoryName = {
         5: "Податки💲",
         6: "Інвестиції🕵️",
     },
-    "+": {
+    TransactionTypes.INCOME: {
         4829: "Зарплата💰",
         6536: "Зарплата💰",
         6538: "Зарплата💰",

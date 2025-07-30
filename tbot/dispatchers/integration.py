@@ -10,6 +10,7 @@ from tbot.controllers.integration import (
 )
 from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.users.type import UserStates
+from tbot.dto.walletapp_api.type import SetUpCategoriesStates
 from tbot.keyboards import menu
 from tbot.utils import delete_message, escape_text_markdown, normalize_credential
 from tbot_base.bot import tbot as bot
@@ -158,10 +159,19 @@ def handle_walletapp_password(message: Message, redis: RedisWrapper):
         update={"wallet_app_password": encrypt_manager.encrypt_key(walletapp_password)},
     )
     setup_categories.delay(message.from_user.id)
+    redis.set_setup_categories_state(
+        user_id=message.from_user.id,
+        state=SetUpCategoriesStates.SENT_TO_SET_UP,
+    )
+
     bot.send_message(
         chat_id=message.chat.id,
         text="Успішно інтегровано!✅"
-        "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції",
+        "Тепер при оплаті через монобанк вам сюди будуть приходити транзакції.",
+    )
+    bot.send_message(
+        chat_id=message.chat.id,
+        text="Залишилося зачекати, поки я налаштую категорії у WalletApp. Це займає до години часу.",
     )
 
 
@@ -219,7 +229,7 @@ def handle_walletapp_reset(
         wallet_app_password__isnull=False,
         wallet_app_login__isnull=False,
         first=True,
-    )
+    )[0]
     if not integration:
         bot.send_message(
             chat_id=message.chat.id, text="Спробуйте заново розпочати /start"
@@ -272,8 +282,3 @@ def handle_monobank_handler(
         chat_id=message.chat.id,
         text="🏦Токен Monobank оновлено✅",
     )
-
-
-def handle_setup_categories(message: Message):
-    bot.send_message(chat_id=message.chat.id, text="Categories sent to collect")
-    setup_categories.delay(message.from_user.id)

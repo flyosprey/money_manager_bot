@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from money_manager.config import Config
 from tbot.shell.commands.monobank import run_monobank_refresh
+from tbot.shell.commands.setup_categories import run_setting_up_categories
 
 
 @click.group()
@@ -23,6 +24,7 @@ def cli(ctx: Context, env_file: str):
 
 def main():
     cli.add_command(run_monobank_refresh)
+    cli.add_command(run_setting_up_categories)
 
     cli()
 

@@ -13,17 +13,16 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup
 
 from money_manager.config import TIMEZONE_UTC, config
+from tbot.constants import (
+    CURRENCIES_CODES_MAPPING,
+    DEFAULT_CURRENCY_CODE,
+    TransactionTypes,
+)
+from tbot.dependencies.redis import RedisWrapper
 from tbot.dto.walletapp_api.mcc_codes import MCCTransactionCategoryName
 from tbot_base.bot import tbot as bot
 
 logger = structlog.get_logger()
-
-
-CURRENCY_NUMBERS = {
-    980: {"code": "UAH", "symbol": "₴"},
-    840: {"code": "USD", "symbol": "$"},
-    978: {"code": "EUR", "symbol": "€"},
-}
 
 
 def escape_text_markdown(text: str) -> str:
@@ -81,6 +80,57 @@ def convert_money(money_in_cents: int) -> float:
     return float(money_in_cents / 100)
 
 
+def process_amount(
+    amount: int,
+    currency_code: int,
+    transaction_type: TransactionTypes,
+    monobank_client,
+) -> float:
+    if currency_code == DEFAULT_CURRENCY_CODE:
+        return convert_money(amount)
+
+    redis = RedisWrapper(dsn=config.redis.url)
+    rate = redis.get_currency_rate(
+        currency_from=currency_code,
+        currency_to=DEFAULT_CURRENCY_CODE,
+        transaction_type=transaction_type.value,
+    )
+
+    if not rate:
+        all_rates = monobank_client.get_currencies_rate()
+        rate = next(
+            (
+                rate
+                for rate in all_rates
+                if rate["currencyCodeA"] == currency_code
+                and rate["currencyCodeB"] == DEFAULT_CURRENCY_CODE
+            ),
+            None,
+        )
+        if not rate:
+            return convert_money(amount)
+
+        rate_value = (
+            rate["rateBuy"]
+            if transaction_type == TransactionTypes.INCOME
+            else rate["rateSell"]
+        )
+        redis.set_currency_rate(
+            rate=rate_value,
+            currency_from=currency_code,
+            currency_to=DEFAULT_CURRENCY_CODE,
+            transaction_type=transaction_type.value,
+        )
+    else:
+        rate_value = (
+            rate["rateBuy"]
+            if transaction_type == TransactionTypes.INCOME
+            else rate["rateSell"]
+        )
+
+    return convert_money(amount * rate_value)
+
+
 def convert_timestamp_to_datetime(
     timestamp: int, timezone: pytz.timezone = TIMEZONE_UTC
 ) -> datetime:
@@ -102,11 +152,11 @@ def convert_datetime_to_timestamp(time_: str | datetime) -> int:
 
 
 def convert_currency_number_to_code(currency_number: int) -> str:
-    return CURRENCY_NUMBERS.get(currency_number, {}).get("code", "")
+    return CURRENCIES_CODES_MAPPING.get(currency_number, {}).get("code", "")
 
 
 def convert_currency_number_to_symbol(currency_number: int) -> str:
-    return CURRENCY_NUMBERS.get(currency_number, {}).get("symbol", "")
+    return CURRENCIES_CODES_MAPPING.get(currency_number, {}).get("symbol", "")
 
 
 def edit_message(
@@ -159,7 +209,7 @@ def create_transaction_text(
     comment: str,
     mcc_code: int,
     date_: datetime | str,
-    transaction_type: str,
+    transaction_type: TransactionTypes,
 ) -> str:
     return (
         f"💰Валюта платежу: {currency}\n"

@@ -65,7 +65,7 @@ def notify_user_about_transaction(user_id: str, transaction: Transaction):
 
 
 def skip_transaction(transaction: Transaction) -> bool:
-    return bool(re.search(r"Mocking", transaction.description.lower()))
+    return bool(re.search(r"з.+(картки|фоп)", transaction.description.lower()))
 
 
 def check_content_type(content_type: str) -> None:

@@ -24,6 +24,7 @@ from .controllers import (
     get_branch_from_event,
     is_prod_branch,
     notify_user_about_transaction,
+    skip_transaction,
 )
 from .exceptions import DeployError
 from .repository.bot_user import BotUserRepository
@@ -77,8 +78,8 @@ class MonobankWebhookView(View):
             return JsonResponse({"error": e.error_dict}, status=422)
 
         logger.info("Received body from monobank %s", raw_body)
-        # if not self.skip_transaction(transaction=transaction):
-        notify_user_about_transaction(user_id=user_id, transaction=transaction)
+        if not skip_transaction(transaction=transaction):
+            notify_user_about_transaction(user_id=user_id, transaction=transaction)
 
         return HttpResponse(status=200)
 
